@@ -1,4 +1,4 @@
-// engine.jsx — Stage 4 Transform Engine. 4 states: preflight | running | done | failed.
+﻿// engine.jsx — Stage 4 Transform Engine. 4 states: preflight | running | done | failed.
 
 // ════════════════════════════════════════════════════════════════════════
 // Sample data

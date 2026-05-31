@@ -1,4 +1,4 @@
-// dashboard.jsx — Two layout variants. Variant A: top-nav + 2-col split. Variant B: sidebar + canvas.
+﻿// dashboard.jsx — Two layout variants. Variant A: top-nav + 2-col split. Variant B: sidebar + canvas.
 
 const Dashboard = ({ tier, layout, theme, setTheme, onSignOut }) => {
   const gates = TIER_GATES[tier];

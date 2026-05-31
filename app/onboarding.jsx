@@ -1,4 +1,4 @@
-// onboarding.jsx — 4-step wizard with traveling-spark progress
+﻿// onboarding.jsx — 4-step wizard with traveling-spark progress
 
 const ROLES = [
   { id: 'freelancer', icon: '🧑‍💻', name: 'Freelancer', desc: 'Client work, inherited messes.' },

@@ -1,4 +1,4 @@
-// deploy.jsx — Deploy Guide view. Host picker + step-by-step instructions.
+﻿// deploy.jsx — Deploy Guide view. Host picker + step-by-step instructions.
 
 const HOSTS = [
   {

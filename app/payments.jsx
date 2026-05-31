@@ -1,4 +1,4 @@
-// payments.jsx — Stage 5 Payment flows. Five scenes: planPicker, checkout, success, billing, paywall.
+﻿// payments.jsx — Stage 5 Payment flows. Five scenes: planPicker, checkout, success, billing, paywall.
 
 // USD ≈ ZAR rate (illustrative, May 2026)
 const ZAR_RATE = 18.8;

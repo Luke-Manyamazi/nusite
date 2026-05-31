@@ -1,4 +1,4 @@
-*,
+﻿*,
 *::before,
 *::after {
   box-sizing: border-box;
@@ -14,9 +14,9 @@
   --success: #22d47a;
   --warning: #f5a623;
   --error: #ff4c4c;
-  --syne: "Syne", sans-serif;
-  --dm: "DM Sans", sans-serif;
-  --mono: "JetBrains Mono", monospace;
+  --syne: "Poppins", sans-serif;
+  --dm: "Poppins", sans-serif;
+  --mono: "Poppins", monospace;
 
   /* theme-driven (dark default) */
   --void: #0a0a0f;

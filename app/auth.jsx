@@ -1,4 +1,4 @@
-// auth.jsx — Sign in screen with Google only. Side panel features live before/after transformation.
+﻿// auth.jsx — Sign in screen with Google only. Side panel features live before/after transformation.
 
 const AuthScreen = ({ onSignIn }) => {
   const [loading, setLoading] = React.useState(false);

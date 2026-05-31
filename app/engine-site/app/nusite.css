@@ -1,4 +1,4 @@
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+﻿*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
   :root{
     --void:#0A0A0F;
@@ -23,9 +23,9 @@
     --lime-tint:rgba(200,255,0,0.08);
     --lime-glow:rgba(200,255,0,0.25);
 
-    --syne:'Syne',sans-serif;
-    --dm:'DM Sans',sans-serif;
-    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --syne:'Poppins',sans-serif;
+    --dm:'Poppins',sans-serif;
+    --mono:'Poppins',sans-serif;
 
     --r-sm:8px;
     --r-md:12px;

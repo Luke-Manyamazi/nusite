@@ -1,4 +1,4 @@
-// ui.jsx — Shared NuSite app primitives. Globals exported to window.
+﻿// ui.jsx — Shared NuSite app primitives. Globals exported to window.
 
 const NuMark = ({ size = 22 }) => (
   <svg viewBox="0 0 38 38" width={size} height={size} fill="none" aria-hidden="true">
