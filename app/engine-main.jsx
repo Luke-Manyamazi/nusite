@@ -1,4 +1,4 @@
-// engine-main.jsx — Boot the Transform Engine.
+﻿// engine-main.jsx — Boot the Transform Engine.
 
 const ENGINE_DEFAULTS = /*EDITMODE-BEGIN*/{
   "state": "done",
@@ -45,7 +45,7 @@ function App() {
 
   const onClose = () => {
     // Back action — pretend to leave for the dashboard
-    window.location.href = 'NuSite App.html';
+    window.location.href = 'app.html';
   };
 
   const goto = (next) => {

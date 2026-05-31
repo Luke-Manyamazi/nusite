@@ -731,7 +731,7 @@
       </div>
       <div class="tl-item">
         <div class="tl-head"><span class="tl-num">STAGE 04</span><span class="tl-title">App / dashboard</span><span class="pill done">Design done</span> <span class="pill todo">Build to do</span></div>
-        <p class="tl-desc">Project list, recent transforms, usage meter, account settings. Mocked in <code>NuSite App.html</code>. Data is currently hard-coded React state.</p>
+        <p class="tl-desc">Project list, recent transforms, usage meter, account settings. Mocked in <code>app.html</code>. Data is currently hard-coded React state.</p>
       </div>
       <div class="tl-item current">
         <div class="tl-head"><span class="tl-num">STAGE 05</span><span class="tl-title">Engine</span><span class="pill done">Design done</span> <span class="pill miss">Build is the work</span></div>
@@ -795,7 +795,7 @@
       </thead>
       <tbody>
         <tr>
-          <td><b>Landing</b><span class="muted">NuSite Landing Page.html</span></td>
+          <td><b>Landing</b><span class="muted">landing.html</span></td>
           <td>Waitlist form fakes <code>.success</code> swap after a 400ms timeout. Footer mini-form same.</td>
           <td><span class="mono">POST /v1/waitlist</span> → email-provider list add. Confirm email (Stage 7 template) sent on 200.</td>
         </tr>
@@ -810,47 +810,47 @@
           <td>Persist host preference on <code>User</code>. Skip if already complete.</td>
         </tr>
         <tr>
-          <td><b>Dashboard</b><span class="muted">NuSite App.html</span></td>
+          <td><b>Dashboard</b><span class="muted">app.html</span></td>
           <td>Project list and usage meter from hard-coded array.</td>
           <td><span class="mono">GET /v1/projects</span>, <span class="mono">GET /v1/usage/current</span>.</td>
         </tr>
         <tr>
-          <td><b>Engine · input</b><span class="muted">NuSite Engine.html</span></td>
+          <td><b>Engine · input</b><span class="muted">engine.html</span></td>
           <td>Paste / URL / ZIP / GitHub tabs. ZIP file is read in-browser but never sent.</td>
           <td><span class="mono">POST /v1/projects</span> creates a project with input source. Persist files in object storage.</td>
         </tr>
         <tr>
-          <td><b>Engine · transform pick</b><span class="muted">NuSite Engine.html</span></td>
+          <td><b>Engine · transform pick</b><span class="muted">engine.html</span></td>
           <td>Selecting transforms toggles local state.</td>
           <td><span class="mono">POST /v1/transforms</span> with <code>projectId</code> + <code>types[]</code>. Returns a job ID.</td>
         </tr>
         <tr>
-          <td><b>Engine · running</b><span class="muted">NuSite Engine.html</span></td>
+          <td><b>Engine · running</b><span class="muted">engine.html</span></td>
           <td>Scripted progress bar with canned log lines.</td>
           <td>Server-sent events or WS stream of progress lines from the worker. See §06.</td>
         </tr>
         <tr>
-          <td><b>Engine · diff</b><span class="muted">NuSite Engine.html</span></td>
+          <td><b>Engine · diff</b><span class="muted">engine.html</span></td>
           <td>Pre-baked before/after panes.</td>
           <td><span class="mono">GET /v1/transforms/:id/diff</span> returns per-file diffs + summaries.</td>
         </tr>
         <tr>
-          <td><b>Engine · deploy guide</b><span class="muted">NuSite Engine.html</span></td>
+          <td><b>Engine · deploy guide</b><span class="muted">engine.html</span></td>
           <td>Renders a host-specific guide from the host the user picked.</td>
           <td><span class="mono">GET /v1/transforms/:id/deploy?host=vercel</span> → markdown or rendered HTML. Initially static-templated; later, host-aware.</td>
         </tr>
         <tr>
-          <td><b>Pricing</b><span class="muted">NuSite Landing Page.html</span></td>
+          <td><b>Pricing</b><span class="muted">landing.html</span></td>
           <td>Plan cards, monthly/annual toggle, all client-side.</td>
           <td>Buttons → <span class="mono">POST /v1/checkout</span> → Stripe/Paystack hosted checkout.</td>
         </tr>
         <tr>
-          <td><b>Billing</b><span class="muted">NuSite Billing.html</span></td>
+          <td><b>Billing</b><span class="muted">billing.html</span></td>
           <td>Invoice list, payment method, plan info — all hard-coded.</td>
           <td><span class="mono">GET /v1/subscription</span>, <span class="mono">GET /v1/invoices</span>. PDF on <span class="mono">/invoices/:id.pdf</span>.</td>
         </tr>
         <tr>
-          <td><b>Account / settings</b><span class="muted">NuSite App.html</span></td>
+          <td><b>Account / settings</b><span class="muted">app.html</span></td>
           <td>Form values are state.</td>
           <td><span class="mono">PATCH /v1/me</span>. <span class="mono">POST /v1/api-keys</span> for Premium API access.</td>
         </tr>
@@ -1084,7 +1084,7 @@
       <thead><tr><th style="width:30%">Where</th><th>Today (mock)</th><th>Tomorrow (real)</th></tr></thead>
       <tbody>
         <tr>
-          <td><b>Landing waitlist</b><span class="muted">NuSite Landing Page.html → <code>waitlistForm</code></span></td>
+          <td><b>Landing waitlist</b><span class="muted">landing.html → <code>waitlistForm</code></span></td>
           <td>Email validated client-side, <code>.success</code> class swap after 400ms.</td>
           <td><code>fetch('/v1/waitlist', { method:'POST', body: JSON.stringify({email}) })</code>. Show success on 200, error on 4xx. Trigger Stage 7 confirm email server-side.</td>
         </tr>
@@ -1220,7 +1220,7 @@
       <div class="stack-card">
         <div class="head"><span class="label">Payments</span><span class="pill ghost">Subs + invoices</span></div>
         <h4>Stripe <span class="ac">Subscriptions</span></h4>
-        <p class="why">Hosted checkout + customer portal. The portal gives you billing UI for free — you only build the "current plan" summary, which is already designed in <code>NuSite Billing.html</code>.</p>
+        <p class="why">Hosted checkout + customer portal. The portal gives you billing UI for free — you only build the "current plan" summary, which is already designed in <code>billing.html</code>.</p>
         <div class="alts">Alts: <b>Paystack</b> (ZA-friendly), <b>Lemon Squeezy</b> (MoR — handles VAT)</div>
       </div>
       <div class="stack-card">
@@ -1239,7 +1239,7 @@
 ├── apps/
 │   ├── <span class="ky">web/</span>                    <span class="cm">// Next.js — app + api + landing</span>
 │   │   ├── app/
-│   │   │   ├── (marketing)/      <span class="cm">// landing (port from NuSite Landing Page.html)</span>
+│   │   │   ├── (marketing)/      <span class="cm">// landing (port from landing.html)</span>
 │   │   │   ├── (auth)/           <span class="cm">// signin · magic-link callback</span>
 │   │   │   ├── (app)/            <span class="cm">// dashboard · engine · billing · settings</span>
 │   │   │   └── api/              <span class="cm">// /v1/* routes</span>
@@ -1336,10 +1336,10 @@
       <div class="ff">
         <h5>Companion files</h5>
         <p class="muted">
-          <a href="../NuSite Landing Page.html" style="text-decoration:underline">Landing</a> ·
-          <a href="../NuSite App.html" style="text-decoration:underline">App</a> ·
-          <a href="../NuSite Engine.html" style="text-decoration:underline">Engine</a> ·
-          <a href="../NuSite Billing.html" style="text-decoration:underline">Billing</a> ·
+          <a href="../pages/landing.html" style="text-decoration:underline">Landing</a> ·
+          <a href="../pages/app.html" style="text-decoration:underline">App</a> ·
+          <a href="../pages/engine.html" style="text-decoration:underline">Engine</a> ·
+          <a href="../pages/billing.html" style="text-decoration:underline">Billing</a> ·
           <a href="../launch/Launch Assets.html" style="text-decoration:underline">Launch assets hub</a>
         </p>
       </div>

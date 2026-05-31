@@ -1,4 +1,4 @@
-// payments-main.jsx — Boot payments + wire Tweaks.
+﻿// payments-main.jsx — Boot payments + wire Tweaks.
 
 const BILLING_DEFAULTS = /*EDITMODE-BEGIN*/{
   "scene": "planPicker",
@@ -35,9 +35,9 @@ function App() {
   const onBack = () => {
     if (t.scene === 'checkout') goto('planPicker');
     else if (t.scene === 'success') goto('billing');
-    else if (t.scene === 'billing') window.location.href = 'NuSite App.html';
+    else if (t.scene === 'billing') window.location.href = 'app.html';
     else if (t.scene === 'paywall') goto('billing');
-    else window.location.href = 'NuSite App.html';
+    else window.location.href = 'app.html';
   };
 
   return (
@@ -79,8 +79,8 @@ function App() {
         {t.scene === 'success' && (
           <Success
             planId={t.currentPlan === 'starter' ? selectedPlanId : t.currentPlan}
-            onGo={() => { window.location.href = 'NuSite Engine.html'; }}
-            onDashboard={() => { window.location.href = 'NuSite App.html'; }}
+            onGo={() => { window.location.href = 'engine.html'; }}
+            onDashboard={() => { window.location.href = 'app.html'; }}
           />
         )}
 
@@ -95,7 +95,7 @@ function App() {
         {t.scene === 'paywall' && (
           <Paywall
             onUpgrade={() => goto('planPicker')}
-            onDismiss={() => { window.location.href = 'NuSite App.html'; }}
+            onDismiss={() => { window.location.href = 'app.html'; }}
           />
         )}
       </div>
