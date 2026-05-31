@@ -504,35 +504,6 @@ const ActivityLog = ({ progress }) => {
 // ════════════════════════════════════════════════════════════════════════
 const DoneView = ({ tier, onDeploy }) => {
   const [view, setView] = React.useState('preview'); // 'preview' | 'code'
-  const [split, setSplit] = React.useState(50);
-  const splitterRef = React.useRef(null);
-  const dragging = React.useRef(false);
-
-  const onDown = (e) => {
-    dragging.current = true;
-    document.body.style.cursor = 'ew-resize';
-    e.preventDefault();
-  };
-  React.useEffect(() => {
-    const move = (e) => {
-      if (!dragging.current || !splitterRef.current) return;
-      const rect = splitterRef.current.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      const pct = Math.max(8, Math.min(92, (x / rect.width) * 100));
-      setSplit(pct);
-    };
-    const up = () => { dragging.current = false; document.body.style.cursor = '' };
-    window.addEventListener('mousemove', move);
-    window.addEventListener('mouseup', up);
-    window.addEventListener('touchmove', move, { passive: true });
-    window.addEventListener('touchend', up);
-    return () => {
-      window.removeEventListener('mousemove', move);
-      window.removeEventListener('mouseup', up);
-      window.removeEventListener('touchmove', move);
-      window.removeEventListener('touchend', up);
-    };
-  }, []);
 
   return (
     <div className="scene" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px 28px 24px', minHeight: 0, gap: 16 }}>
@@ -568,22 +539,28 @@ const DoneView = ({ tier, onDeploy }) => {
         </div>
       </div>
 
-      {/* Splitter */}
-      <div ref={splitterRef} className="splitter" style={{ flex: 1, minHeight: 380, '--split': `${split}%` }}>
+      {/* Side-by-side compare */}
+      <div style={{ flex: 1, minHeight: 380, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         {/* Before pane */}
-        <div className="pane before">
+        <div style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)', position: 'relative' }}>
+          <span style={{
+            position: 'absolute', top: 12, left: 12, zIndex: 2,
+            padding: '4px 10px', borderRadius: 6, fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase',
+            background: 'rgba(10,10,15,0.6)', backdropFilter: 'blur(8px)', border: '1px solid var(--border)',
+            color: 'var(--lavender)', fontFamily: 'var(--mono)',
+          }}>BEFORE · 2014</span>
           {view === 'preview' ? <BeforePreview /> : <CodePane code={BEFORE_CODE} lang="HTML · 2014" before />}
         </div>
-        {/* After pane (clipped) */}
-        <div className="pane after">
+        {/* After pane */}
+        <div style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)', position: 'relative' }}>
+          <span style={{
+            position: 'absolute', top: 12, right: 12, zIndex: 2,
+            padding: '4px 10px', borderRadius: 6, fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase',
+            background: 'rgba(10,10,15,0.6)', backdropFilter: 'blur(8px)', border: '1px solid rgba(200,255,0,0.3)',
+            color: 'var(--lime)', fontFamily: 'var(--mono)',
+          }}>✦ AFTER · TODAY</span>
           {view === 'preview' ? <AfterPreview /> : <CodePane code={AFTER_CODE} lang="page.tsx · 2025" />}
         </div>
-        {/* Drag handle */}
-        <div className="handle" onMouseDown={onDown} onTouchStart={onDown}></div>
-
-        {/* Labels */}
-        <span className="label before">BEFORE · 2014</span>
-        <span className="label after">✦ AFTER · TODAY</span>
       </div>
 
       {/* Bottom action bar */}

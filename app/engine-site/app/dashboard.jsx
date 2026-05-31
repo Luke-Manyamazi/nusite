@@ -57,7 +57,7 @@ const DashboardSidebar = ({ tier, gates, theme, setTheme, onSignOut }) => {
           <SearchBar />
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button className="btn btn-ghost btn-sm">{ic.bell}<span className="hide-sm">Updates</span></button>
-            <Avatar name="Kgomotso M." />
+            <Avatar name={localStorage.getItem("nusite-user") || "New User"} />
           </div>
         </div>
 
@@ -115,7 +115,7 @@ const TopNav = ({ tier, theme, setTheme, onSignOut }) => (
           <span style={{ position: 'absolute', top: 7, right: 7, width: 7, height: 7, borderRadius: '50%', background: 'var(--lime)', boxShadow: '0 0 6px var(--lime)' }}></span>
         </button>
         <TierBadge tier={tier} />
-        <Avatar name="Kgomotso M." />
+        <Avatar name={localStorage.getItem("nusite-user") || "New User"} />
       </div>
     </div>
   </div>
@@ -214,10 +214,10 @@ const Sidebar = ({ tier, theme, setTheme, active, setActive, onSignOut }) => {
           display: 'flex', alignItems: 'center', gap: 10, padding: '8px 8px', borderRadius: 8,
           color: 'var(--lavender)', fontSize: 12.5, marginTop: 4,
         }}>
-          <Avatar name="Kgomotso M." size={26} />
+          <Avatar name={localStorage.getItem("nusite-user") || "New User"} size={26} />
           <div style={{ flex: 1, textAlign: 'left', overflow: 'hidden' }}>
-            <div style={{ color: 'var(--ghost)', fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Kgomotso M.</div>
-            <div style={{ fontSize: 10.5, color: 'var(--lavender)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>kgomotso@studio.za</div>
+            <div style={{ color: 'var(--ghost)', fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{localStorage.getItem("nusite-user") || "New User"}</div>
+            <div style={{ fontSize: 10.5, color: 'var(--lavender)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{localStorage.getItem("nusite-email") || "your@email.com"}</div>
           </div>
         </button>
       </div>
@@ -254,7 +254,7 @@ const Greeting = ({ tier, gates, compact }) => (
         fontFamily: 'var(--syne)', fontWeight: 800,
         fontSize: compact ? 36 : 44, lineHeight: 1.05, letterSpacing: '-0.025em',
       }}>
-        Welcome back, <span style={{ color: 'var(--indigo-lt)' }}>Kgomotso.</span>
+        Welcome back<span style={{ color: "var(--indigo-lt)" }}>.</span>
       </h1>
       {!compact && (
         <p style={{ marginTop: 10, color: 'var(--lavender)', fontSize: 15, maxWidth: 540 }}>
@@ -711,10 +711,22 @@ const RecentProjectsGrid = () => (
         <button className="btn btn-ghost btn-sm">A11y</button>
       </div>
     </div>
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
-      {RECENT_PROJECTS.map((p, i) => <ProjectCard key={i} p={p} />)}
-      <NewProjectCard />
-    </div>
+    {RECENT_PROJECTS.length === 0 ? (
+      <div style={{
+        padding: '48px 24px', textAlign: 'center',
+        border: '1.5px dashed var(--border)', borderRadius: 14,
+        color: 'var(--lavender)',
+      }}>
+        <div style={{ fontSize: 32, marginBottom: 12 }}>✦</div>
+        <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--ghost)', marginBottom: 6 }}>No transforms yet</div>
+        <div style={{ fontSize: 13, marginBottom: 20 }}>Paste your first site above to get started.</div>
+      </div>
+    ) : (
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
+        {RECENT_PROJECTS.map((p, i) => <ProjectCard key={i} p={p} />)}
+        <NewProjectCard />
+      </div>
+    )}
   </div>
 );
 

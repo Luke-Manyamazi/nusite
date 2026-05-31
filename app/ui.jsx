@@ -94,7 +94,7 @@ const TierBadge = ({ tier = 'starter' }) => {
 };
 
 // Avatar
-const Avatar = ({ name = 'Kgomotso M.', size = 32 }) => {
+const Avatar = ({ name = 'New User', size = 32 }) => {
   const initials = name.split(/\s+/).map(s => s[0]).slice(0, 2).join('').toUpperCase();
   return (
     <span style={{
@@ -155,14 +155,8 @@ const TRANSFORMS = [
   { id: 'tailwind',   name: '→ Tailwind CSS',      desc: 'Utility-class rewrite',       icon: '🌬', accent: '#38BDF8', tier: 'premium' },
 ];
 
-// Sample recent project data
-const RECENT_PROJECTS = [
-  { name: 'oldsite-portfolio.html', transform: 'modernise', when: '12m ago', size: '847 lines', status: 'done' },
-  { name: 'mvp-landing.zip',        transform: 'responsive', when: '2h ago',  size: '12 files',  status: 'done' },
-  { name: 'client-bistro.com',      transform: 'darkmode',  when: 'Yesterday', size: '23 files', status: 'done' },
-  { name: 'portfolio-2014',          transform: 'react',     when: 'Thu',      size: '5 files',  status: 'done' },
-  { name: 'docs-styleguide.html',   transform: 'a11y',      when: 'Tue',      size: '212 lines', status: 'done' },
-];
+// Recent projects — populated from real transforms
+const RECENT_PROJECTS = [];
 
 // Export to window
 Object.assign(window, {

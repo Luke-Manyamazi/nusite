@@ -15,7 +15,9 @@ const SCENES = [
 
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
-  const [scene, setScene] = React.useState(t.startScene || 'signin');
+  const [scene, setScene] = React.useState(() => {
+    try { return localStorage.getItem('nusite-scene') || 'signin'; } catch(e) { return 'signin'; }
+  });
 
   // Theme — drive html[data-theme]
   React.useEffect(() => {
@@ -24,7 +26,7 @@ function App() {
 
   const goto = (next) => {
     setScene(next);
-    setTweak('startScene', next);
+    try { localStorage.setItem('nusite-scene', next); } catch(e) {}
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
@@ -42,7 +44,7 @@ function App() {
           layout={t.layout}
           theme={t.dark ? 'dark' : 'light'}
           setTheme={(theme) => setTweak('dark', theme === 'dark')}
-          onSignOut={() => goto('signin')}
+          onSignOut={() => { try { localStorage.removeItem('nusite-scene'); } catch(e) {} goto('signin'); }}
         />
       )}
 
