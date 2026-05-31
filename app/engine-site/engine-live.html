@@ -1,0 +1,1338 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NuSite — Engine · Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root{
+    --indigo:#5B4CFF;
+    --indigo-lt:#7B6FFF;
+    --indigo-dk:#3D33B8;
+    --lime:#C8FF00;
+    --void:#0A0A0F;
+    --void-2:#06060A;
+    --ghost:#F4F4FF;
+    --slate:#1C1C2E;
+    --slate-lt:#252538;
+    --slate-hi:#2F2F45;
+    --lavender:#8B85C1;
+    --lavender-dk:#5F5A8A;
+    --success:#22D47A;
+    --warning:#F5A623;
+    --error:#FF4C4C;
+    --border:rgba(244,244,255,0.08);
+    --border-strong:rgba(244,244,255,0.16);
+    --syne:'Poppins',sans-serif;
+    --dm:'Poppins',sans-serif;
+    --mono:'Poppins',sans-serif;
+  }
+
+  html,body{ height:100%; background: var(--void-2); color:var(--ghost); font-family:var(--dm); -webkit-font-smoothing:antialiased; }
+  body{ overflow-x: hidden; }
+  button{ font:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+  textarea{ font: inherit; color: inherit; }
+  a{ color: inherit; text-decoration: none; }
+
+  .page-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(900px 600px at 85% -10%, rgba(91,76,255,0.16), transparent 60%),
+      radial-gradient(700px 500px at 0% 100%, rgba(200,255,0,0.05), transparent 60%);
+  }
+  .dot-grid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image: radial-gradient(rgba(244,244,255,0.03) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 75%);
+  }
+
+  /* ─────── TOPBAR ─────── */
+  .topbar{
+    position: sticky; top: 0; z-index: 50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 28px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(14px);
+    background: rgba(6,6,10,0.78);
+  }
+  .topbar-left{ display:flex; align-items:center; gap:18px; }
+  .logo{ display:flex; align-items:center; gap:11px; }
+  .logo-mark{
+    width:32px; height:32px; background:var(--indigo);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 6px 18px rgba(91,76,255,0.35);
+  }
+  .logo-mark svg{ width:19px; height:19px; }
+  .wordmark{
+    font-family:var(--syne); font-weight:800; font-size:18px;
+    letter-spacing:-0.03em; line-height:1;
+  }
+  .wordmark .nu{ color:var(--indigo); }
+  .wordmark .site{ color:var(--ghost); }
+  .crumb{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.16em; text-transform:uppercase;
+    padding-left:18px; border-left:1px solid var(--border);
+    display:flex; align-items:center; gap:10px;
+  }
+  .crumb .pill{
+    background:rgba(91,76,255,0.12); color:var(--indigo-lt);
+    padding:4px 10px; border-radius:100px;
+    border:1px solid rgba(91,76,255,0.25);
+  }
+  .topbar-right{ display:flex; align-items:center; gap:14px; }
+  .live-pill{
+    display:inline-flex; align-items:center; gap: 8px;
+    font-family:var(--mono); font-size:11px;
+    color: var(--success);
+    letter-spacing:0.16em; text-transform: uppercase;
+    padding: 6px 12px; border-radius: 100px;
+    background: rgba(34,212,122,0.08);
+    border: 1px solid rgba(34,212,122,0.30);
+  }
+  .live-pill .pulse{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--success);
+    box-shadow: 0 0 10px var(--success);
+    animation: livePulse 1.4s ease-in-out infinite;
+  }
+  @keyframes livePulse{ 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .meta{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.12em; text-transform:uppercase;
+    display:flex; gap:18px;
+  }
+  .meta b{ color:var(--ghost); font-weight:500; }
+  .iconbtn{
+    width:34px; height:34px; border-radius:9px;
+    border:1px solid var(--border); background:var(--slate);
+    display:flex; align-items:center; justify-content:center;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .iconbtn:hover{ border-color: var(--border-strong); background:var(--slate-lt); }
+  .iconbtn svg{ width:15px; height:15px; }
+
+  /* ─────── LAYOUT ─────── */
+  .shell{
+    position: relative; z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 0;
+    min-height: calc(100vh - 64px);
+  }
+  .col{
+    padding: 26px 28px 36px;
+    display: flex; flex-direction: column;
+    min-height: 0;
+  }
+  .col.input-col{
+    border-right: 1px solid var(--border);
+    background: rgba(28,28,46,0.18);
+  }
+  .col-head{
+    display:flex; align-items:flex-end; justify-content: space-between;
+    margin-bottom: 18px;
+    gap: 12px;
+  }
+  .col-eyebrow{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .col-title{
+    font-family: var(--syne); font-weight: 700; font-size: 22px;
+    color: var(--ghost); letter-spacing: -0.01em;
+  }
+  .col-title .ac{ color: var(--indigo-lt); }
+
+  /* ─────── INPUT COLUMN ─────── */
+  .group{
+    margin-bottom: 22px;
+  }
+  .group-label{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 10px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .group-label .hint{ color: var(--lavender-dk); text-transform: none; letter-spacing: 0.04em; font-size: 11px; }
+
+  /* Sample chips */
+  .samples{ display:flex; flex-wrap:wrap; gap: 6px; }
+  .chip{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.08em;
+    padding: 7px 12px; border-radius: 8px;
+    background: var(--slate); border: 1px solid var(--border);
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .chip:hover{ color: var(--ghost); border-color: var(--border-strong); }
+  .chip.active{ color: var(--ghost); border-color: var(--indigo); background: rgba(91,76,255,0.10); }
+  .chip svg{ width: 11px; height: 11px; vertical-align: -1px; margin-right: 4px; }
+
+  /* Textarea */
+  .ta-wrap{
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #06070C;
+    transition: border-color .15s ease;
+    overflow: hidden;
+  }
+  .ta-wrap:focus-within{ border-color: rgba(91,76,255,0.4); }
+  .ta-bar{
+    display:flex; align-items:center; justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(244,244,255,0.025);
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .ta-bar b{ color: var(--ghost); font-weight: 500; }
+  .ta-bar .traffic{ display:flex; gap: 5px; }
+  .ta-bar .traffic span{ width: 9px; height: 9px; border-radius: 50%; }
+  .ta-bar .traffic span:nth-child(1){ background:#FF5F57; opacity:.7; }
+  .ta-bar .traffic span:nth-child(2){ background:#FEBC2E; opacity:.7; }
+  .ta-bar .traffic span:nth-child(3){ background:#28C840; opacity:.7; }
+  .ta-bar .clear{
+    color: var(--lavender); padding: 2px 6px; border-radius: 4px;
+    border: 1px solid var(--border);
+    transition: color .15s, border-color .15s;
+  }
+  .ta-bar .clear:hover{ color: var(--ghost); border-color: var(--border-strong); }
+  textarea.ta{
+    width: 100%;
+    background: transparent;
+    border: none; outline: none; resize: vertical;
+    padding: 14px 16px;
+    font-family: var(--mono); font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ghost);
+    min-height: 200px;
+    max-height: 360px;
+  }
+  textarea.ta::placeholder{ color: var(--lavender-dk); }
+
+  .ta-foot{
+    display:flex; align-items:center; justify-content: space-between;
+    padding: 7px 12px;
+    border-top: 1px solid var(--border);
+    background: rgba(244,244,255,0.015);
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.10em;
+  }
+  .ta-foot .chars b{ color: var(--ghost); font-weight: 500; }
+  .ta-foot .chars.over b{ color: var(--warning); }
+
+  /* Transform cards */
+  .transforms{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .tcard{
+    text-align: left;
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, transform .12s ease;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .tcard:hover{ border-color: var(--border-strong); }
+  .tcard.active{
+    border-color: transparent;
+    background: rgba(91,76,255,0.10);
+    box-shadow: 0 0 0 1px var(--indigo) inset;
+  }
+  .tcard .top{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 6px;
+  }
+  .tcard .glyph{
+    width: 26px; height: 26px; border-radius: 7px;
+    background: color-mix(in oklab, var(--ac, var(--indigo)) 18%, transparent);
+    color: var(--ac, var(--indigo-lt));
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--syne); font-weight: 800; font-size: 14px;
+  }
+  .tcard .check{
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1.5px solid var(--lavender-dk);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .tcard.active .check{
+    background: var(--indigo); border-color: var(--indigo); color: #fff;
+  }
+  .tcard.active .check svg{ width: 9px; height: 9px; }
+  .tcard .name{
+    font-family: var(--syne); font-weight: 700; font-size: 13px;
+    color: var(--ghost); letter-spacing: -0.005em;
+    margin-bottom: 2px;
+  }
+  .tcard .desc{
+    font-family: var(--dm); font-size: 11.5px;
+    color: var(--lavender); line-height: 1.45;
+  }
+
+  /* Custom prompt */
+  .custom-wrap{
+    margin-top: 8px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 9px;
+    padding: 10px 12px;
+    background: rgba(244,244,255,0.02);
+  }
+  .custom-wrap.show{ background: rgba(91,76,255,0.04); border-style: solid; border-color: rgba(91,76,255,0.30); }
+  .custom-toggle{
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+    display:flex; align-items: center; gap: 6px;
+  }
+  .custom-toggle svg{ width: 11px; height: 11px; transition: transform .2s ease; }
+  .custom-wrap.show .custom-toggle svg{ transform: rotate(45deg); }
+  .custom-wrap input{
+    width: 100%;
+    background: transparent;
+    border: none; outline: none;
+    margin-top: 8px;
+    color: var(--ghost);
+    font-family: var(--mono); font-size: 12px;
+    display: none;
+  }
+  .custom-wrap.show input{ display: block; }
+  .custom-wrap input::placeholder{ color: var(--lavender-dk); }
+
+  /* Run button */
+  .run-row{
+    display: flex; gap: 10px;
+    margin-top: 8px;
+  }
+  .run-btn{
+    flex: 1;
+    background: var(--lime); color: var(--void);
+    font-family: var(--syne); font-weight: 700; font-size: 15px;
+    padding: 14px 22px; border-radius: 11px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 12px 28px rgba(200,255,0,0.22);
+    transition: transform .12s ease, box-shadow .2s ease, opacity .15s ease;
+    letter-spacing: 0.005em;
+  }
+  .run-btn:hover:not(:disabled){ transform: translateY(-1px); box-shadow: 0 16px 36px rgba(200,255,0,0.28); }
+  .run-btn:disabled{ opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+  .run-btn .arr{ font-family: var(--syne); font-weight: 800; }
+  .stop-btn{
+    background: var(--slate); color: var(--ghost);
+    border: 1px solid var(--border);
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 0 18px; border-radius: 11px;
+    display: none;
+  }
+  body.running .run-btn{ display: none; }
+  body.running .stop-btn{ display: inline-flex; align-items: center; }
+
+  /* ─────── OUTPUT COLUMN ─────── */
+  .col.output-col{ background: rgba(6,6,10,0.45); position: relative; }
+  .output-states{ flex: 1; display: flex; flex-direction: column; min-height: 0; position: relative; }
+  .state{
+    flex: 1; display: none; flex-direction: column; min-height: 0;
+  }
+  .state.active{ display: flex; }
+
+  /* Empty state */
+  .empty-state{
+    align-items: center; justify-content: center;
+    text-align: center; padding: 40px 24px;
+  }
+  .empty-orb{
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 30%, rgba(255,255,255,0.10), transparent 50%),
+      radial-gradient(circle, var(--indigo-dk) 0%, var(--void) 80%);
+    box-shadow: 0 0 0 1px rgba(91,76,255,0.20), 0 0 60px rgba(91,76,255,0.20) inset;
+    margin-bottom: 22px;
+    position: relative;
+    opacity: 0.6;
+  }
+  .empty-orb::before{
+    content:''; position: absolute; inset: -10px;
+    border-radius: 50%;
+    border: 1px dashed rgba(91,76,255,0.25);
+  }
+  .empty-title{
+    font-family: var(--syne); font-weight: 700; font-size: 22px;
+    color: var(--ghost); letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .empty-sub{
+    font-family: var(--dm); font-size: 14px;
+    color: var(--lavender); line-height: 1.5;
+    max-width: 38ch;
+  }
+  .empty-tips{
+    margin-top: 22px;
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  }
+  .empty-tips .t{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.12em;
+    padding: 5px 9px; border-radius: 5px;
+    background: rgba(244,244,255,0.04); border: 1px solid var(--border);
+  }
+  .empty-tips .t b{ color: var(--ghost); font-weight: 500; }
+
+  /* Running state */
+  .run-state{
+    align-items: center; justify-content: center;
+    padding: 40px 24px;
+  }
+  .orb{
+    position:relative; width:160px; height:160px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.15), transparent 50%),
+                radial-gradient(circle, var(--indigo) 0%, var(--indigo-dk) 70%, var(--void) 100%);
+    box-shadow:
+      0 0 60px rgba(91,76,255,0.35),
+      0 0 120px rgba(91,76,255,0.20),
+      inset 0 -20px 60px rgba(0,0,0,0.4),
+      inset 0 20px 40px rgba(255,255,255,0.06);
+    margin-bottom: 24px;
+  }
+  .orb::before{
+    content:''; position:absolute; inset:-10px; border-radius:50%;
+    background: conic-gradient(from var(--ring,0deg), transparent 0deg, transparent 270deg, var(--lime) 320deg, transparent 360deg);
+    -webkit-mask: radial-gradient(circle, transparent 49%, black 50%, black 53%, transparent 54%);
+            mask: radial-gradient(circle, transparent 49%, black 50%, black 53%, transparent 54%);
+    animation: spinRing 3s linear infinite;
+  }
+  @property --ring { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+  @keyframes spinRing { from{--ring:0deg} to{--ring:360deg} }
+  .orb svg{ width: 50px; height: 50px; color: rgba(255,255,255,0.85); }
+
+  .run-title{
+    font-family: var(--syne); font-weight: 700; font-size: 22px;
+    color: var(--ghost); margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .run-title .ac{ color: var(--lime); }
+  .run-sub{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+  .run-log{
+    width: 100%; max-width: 480px;
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-family: var(--mono); font-size: 11.5px;
+    line-height: 1.85;
+    color: var(--lavender);
+    text-align: left;
+    min-height: 110px;
+  }
+  .run-log .line{ animation: lineIn .25s ease-out both; }
+  .run-log .line .t{ color: var(--lavender-dk); margin-right: 10px; }
+  .run-log .line .body b{ color: var(--ghost); font-weight: 500; }
+  .run-log .line .body .ok{ color: var(--lime); }
+  @keyframes lineIn{ from{opacity:0; transform: translateY(2px)} to{opacity:1; transform:none} }
+
+  /* Done state */
+  .done-state{ overflow: hidden; }
+  .stat-bar{
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--slate);
+    overflow: hidden;
+    margin-bottom: 14px;
+    flex-shrink: 0;
+  }
+  .stat-bar .cell{
+    padding: 12px 16px;
+    border-right: 1px solid var(--border);
+  }
+  .stat-bar .cell:last-child{ border-right: none; }
+  .stat-bar .lbl{
+    font-family: var(--mono); font-size: 9.5px;
+    color: var(--lavender); letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .stat-bar .val{
+    font-family: var(--syne); font-weight: 700; font-size: 17px;
+    color: var(--ghost); letter-spacing: -0.005em;
+  }
+  .stat-bar .val .ac{ color: var(--indigo-lt); }
+  .stat-bar .val .lime{ color: var(--lime); }
+
+  /* Tabs */
+  .tabs{
+    display: flex; gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+  .tabs button{
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 10px 16px;
+    color: var(--lavender);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .tabs button.active{ color: var(--ghost); border-bottom-color: var(--lime); }
+  .tabs button:hover{ color: var(--ghost); }
+  .tabs button svg{ width: 11px; height: 11px; }
+  .tab-right{ margin-left: auto; display:flex; gap: 6px; padding-bottom: 6px; }
+  .tab-action{
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--lavender); letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 6px 10px; border-radius: 7px;
+    background: var(--slate); border: 1px solid var(--border);
+    display:inline-flex; align-items: center; gap: 6px;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .tab-action:hover{ color: var(--ghost); border-color: var(--border-strong); }
+  .tab-action.ok{ color: var(--success); border-color: rgba(34,212,122,0.4); }
+  .tab-action svg{ width: 11px; height: 11px; }
+
+  .tab-panels{
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+    position: relative;
+  }
+  .tab-panel{
+    position: absolute; inset: 0;
+    display: none; flex-direction: column;
+    padding-top: 14px;
+  }
+  .tab-panel.active{ display: flex; }
+
+  /* Preview iframe */
+  .preview-frame{
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+  }
+  .preview-frame iframe{
+    width: 100%; height: 100%;
+    border: none;
+    background: #fff;
+  }
+  .preview-bar{
+    position: absolute; top: 8px; left: 8px;
+    display:flex; align-items: center; gap: 6px;
+    padding: 5px 10px;
+    background: rgba(10,10,15,0.7);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(244,244,255,0.10);
+    border-radius: 100px;
+    font-family: var(--mono); font-size: 10px;
+    color: var(--ghost); letter-spacing: 0.12em; text-transform: uppercase;
+    z-index: 2;
+  }
+  .preview-bar .dot{
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--lime); box-shadow: 0 0 8px var(--lime);
+  }
+
+  /* Code view */
+  .codes{
+    flex: 1;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    min-height: 0;
+  }
+  .codes.single{ grid-template-columns: 1fr; }
+  .code-block{
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #06070C;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    min-height: 0;
+  }
+  .code-block .ch{
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(244,244,255,0.025);
+    display:flex; align-items:center; justify-content: space-between;
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .code-block .ch b{ color: var(--ghost); font-weight: 500; }
+  .code-block.before .ch{ color: var(--lavender-dk); }
+  .code-block.after .ch{ color: var(--lime); }
+  pre.code{
+    margin: 0; padding: 12px 14px;
+    font-family: var(--mono); font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--ghost);
+    overflow: auto;
+    flex: 1;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  pre.code.before{ color: #888; }
+  pre.code .tg{ color: var(--indigo-lt); }
+  pre.code .at{ color: var(--lime); }
+  pre.code .vl{ color: #FF6B6B; }
+  pre.code .cm{ color: var(--lavender-dk); }
+
+  /* Error state */
+  .err-state{
+    align-items: center; justify-content: center;
+    text-align: center; padding: 40px 24px;
+  }
+  .err-icon{
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(255,76,76,0.10);
+    border: 1px solid rgba(255,76,76,0.30);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px;
+    color: var(--error);
+    font-family: var(--syne); font-weight: 800; font-size: 28px;
+  }
+  .err-title{
+    font-family: var(--syne); font-weight: 700; font-size: 20px;
+    color: var(--ghost); margin-bottom: 8px;
+  }
+  .err-sub{
+    font-family: var(--dm); font-size: 14px;
+    color: var(--lavender); line-height: 1.5;
+    max-width: 44ch;
+    margin-bottom: 16px;
+  }
+  .err-detail{
+    max-width: 480px;
+    background: var(--slate);
+    border: 1px solid rgba(255,76,76,0.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--error); line-height: 1.5;
+    text-align: left;
+    word-break: break-word;
+  }
+  .err-actions{ margin-top: 18px; display:flex; gap: 10px; }
+  .err-btn{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--ghost); letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 9px 14px; border-radius: 8px;
+    background: var(--slate); border: 1px solid var(--border-strong);
+  }
+  .err-btn:hover{ border-color: var(--lavender); }
+  .err-btn.primary{ background: var(--indigo); border-color: var(--indigo); }
+
+  /* Truncation warning */
+  .trunc-warn{
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: rgba(245,166,35,0.08);
+    border: 1px solid rgba(245,166,35,0.30);
+    color: var(--warning);
+    font-family: var(--mono); font-size: 11px;
+    line-height: 1.5;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .trunc-warn b{ font-weight: 600; }
+  .trunc-warn .icon{
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--warning); color: var(--void);
+    flex-shrink: 0; display:flex; align-items:center; justify-content:center;
+    font-family: var(--syne); font-weight: 800; font-size: 12px;
+  }
+
+  @media (max-width: 1100px){
+    .shell{ grid-template-columns: 1fr; }
+    .col.input-col{ border-right: none; border-bottom: 1px solid var(--border); }
+    .codes{ grid-template-columns: 1fr; }
+    .meta{ display: none; }
+    .crumb{ display: none; }
+  }
+  @media (max-width: 720px){
+    .topbar{ padding: 10px 16px; }
+    .col{ padding: 18px 18px 28px; }
+    .stat-bar{ grid-template-columns: repeat(2, 1fr); }
+    .stat-bar .cell:nth-child(2){ border-right: none; }
+    .stat-bar .cell:nth-child(1), .stat-bar .cell:nth-child(2){ border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body data-screen-label="Engine · Live">
+
+<div class="page-bg"></div>
+<div class="dot-grid"></div>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+      <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+    </div>
+    <div class="crumb">
+      <span class="pill">Path A</span>
+      <span>Engine · Live</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="live-pill"><span class="pulse"></span>API · Live</div>
+    <div class="meta">
+      <span>Model · <b>Claude</b></span>
+      <span>Cap · <b>1024 tok</b></span>
+    </div>
+    <a class="iconbtn" href="engine.html" title="Open the cinematic prototype">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9h.01"/><path d="M15 9h.01"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>
+    </a>
+    <a class="iconbtn" href="landing.html" title="Back to landing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+  </div>
+</header>
+
+<main class="shell">
+
+  <!-- ═══════════════ INPUT ═══════════════ -->
+  <section class="col input-col">
+    <div class="col-head">
+      <div>
+        <div class="col-eyebrow">01 · Source</div>
+        <div class="col-title">Paste a page <span class="ac">to transform.</span></div>
+      </div>
+    </div>
+
+    <!-- SAMPLES -->
+    <div class="group">
+      <div class="group-label">
+        <span>Samples</span>
+        <span class="hint">Click to load · ~500–1200 chars each</span>
+      </div>
+      <div class="samples" id="samples">
+        <button class="chip" data-sample="portfolio">📐 1999 Portfolio</button>
+        <button class="chip" data-sample="restaurant">🍝 Old Restaurant</button>
+        <button class="chip" data-sample="bio">🦉 Plain Bio</button>
+        <button class="chip" data-sample="landing">📰 Cluttered Landing</button>
+      </div>
+    </div>
+
+    <!-- PASTE BOX -->
+    <div class="group">
+      <div class="group-label">
+        <span>Source HTML</span>
+        <span class="hint">Single page · works best ≤ 1500 chars</span>
+      </div>
+      <div class="ta-wrap">
+        <div class="ta-bar">
+          <span class="traffic"><span></span><span></span><span></span></span>
+          <span><b id="taFilename">input.html</b></span>
+          <button class="clear" id="clearBtn">Clear</button>
+        </div>
+        <textarea class="ta" id="paste" placeholder="<!DOCTYPE html>&#10;<html>&#10;<head><title>My old site</title></head>&#10;<body bgcolor='#eeeeee'>&#10;  <table>...</table>&#10;</body>&#10;</html>"></textarea>
+        <div class="ta-foot">
+          <span class="chars" id="charCount"><b>0</b> chars</span>
+          <span id="charHint">⌘ + Enter to transform</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSFORM PICKER -->
+    <div class="group">
+      <div class="group-label">
+        <span>Transformation</span>
+        <span class="hint">Pick one</span>
+      </div>
+      <div class="transforms" id="transforms">
+        <button class="tcard active" data-tf="modernise" style="--ac:#A78BFA">
+          <div class="top"><div class="glyph">◈</div><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg></div></div>
+          <div class="name">Modernise design</div>
+          <div class="desc">Clean type, modern CSS, sensible spacing.</div>
+        </button>
+        <button class="tcard" data-tf="responsive" style="--ac:#00E5FF">
+          <div class="top"><div class="glyph">▢</div><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg></div></div>
+          <div class="name">Make responsive</div>
+          <div class="desc">Fluid grids, breakpoints, mobile-first.</div>
+        </button>
+        <button class="tcard" data-tf="darkmode" style="--ac:#FCD34D">
+          <div class="top"><div class="glyph">◑</div><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg></div></div>
+          <div class="name">Add dark mode</div>
+          <div class="desc">Token-driven theme, system preference aware.</div>
+        </button>
+        <button class="tcard" data-tf="all" style="--ac:#C8FF00">
+          <div class="top"><div class="glyph">✦</div><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg></div></div>
+          <div class="name">All three, please</div>
+          <div class="desc">Modernise + responsive + dark mode.</div>
+        </button>
+      </div>
+
+      <div class="custom-wrap" id="customWrap">
+        <button class="custom-toggle" id="customToggle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add a custom instruction
+        </button>
+        <input type="text" id="customPrompt" placeholder="e.g. use only black + one accent, drop all images" />
+      </div>
+    </div>
+
+    <!-- RUN -->
+    <div class="run-row">
+      <button class="run-btn" id="runBtn">Transform <span class="arr">→</span></button>
+      <button class="stop-btn" id="stopBtn">Cancel</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════ OUTPUT ═══════════════ -->
+  <section class="col output-col">
+    <div class="col-head">
+      <div>
+        <div class="col-eyebrow">02 · Result</div>
+        <div class="col-title">A modern, deployable <span class="ac">page.</span></div>
+      </div>
+    </div>
+
+    <div class="output-states">
+
+      <!-- EMPTY -->
+      <div class="state empty-state active" data-state="empty">
+        <div class="empty-orb"></div>
+        <div class="empty-title">Drop in some old code.</div>
+        <div class="empty-sub">Pick a sample on the left, or paste any HTML page. Choose a transform, hit go — you'll see a live before/after in a few seconds.</div>
+        <div class="empty-tips">
+          <span class="t">Real call · <b>Claude API</b></span>
+          <span class="t">No backend</span>
+          <span class="t">No card</span>
+        </div>
+      </div>
+
+      <!-- RUNNING -->
+      <div class="state run-state" data-state="running">
+        <div class="orb">
+          <svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg>
+        </div>
+        <div class="run-title">Transforming · <span class="ac">live.</span></div>
+        <div class="run-sub" id="runSub">Calling the model · this is a real API request</div>
+        <div class="run-log" id="runLog"></div>
+      </div>
+
+      <!-- DONE -->
+      <div class="state done-state" data-state="done">
+        <div class="trunc-warn" id="truncWarn" style="display:none">
+          <div class="icon">!</div>
+          <div>
+            <b>Output may be truncated.</b> The 1024-token cap kicked in before <code>&lt;/html&gt;</code> appeared. The preview will still show what came back. Try a smaller input or simpler transform.
+          </div>
+        </div>
+        <div class="stat-bar">
+          <div class="cell"><div class="lbl">Time</div><div class="val"><span class="lime" id="statTime">—</span></div></div>
+          <div class="cell"><div class="lbl">Input</div><div class="val"><span id="statIn">—</span></div></div>
+          <div class="cell"><div class="lbl">Output</div><div class="val"><span class="ac" id="statOut">—</span></div></div>
+          <div class="cell"><div class="lbl">Transform</div><div class="val" id="statTransform" style="font-size:13px;text-transform:capitalize">—</div></div>
+        </div>
+
+        <div class="tabs">
+          <button class="active" data-tab="preview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg>
+            Live preview
+          </button>
+          <button data-tab="diff">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v18"/><path d="M15 3v18"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>
+            Before / After
+          </button>
+          <button data-tab="code">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Code
+          </button>
+          <div class="tab-right">
+            <button class="tab-action" id="copyBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+              Copy HTML
+            </button>
+            <button class="tab-action" id="openTab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3h7v7"/><path d="M10 14L21 3"/><path d="M21 14v7H3V3h7"/></svg>
+              Open
+            </button>
+          </div>
+        </div>
+
+        <div class="tab-panels">
+          <div class="tab-panel active" data-panel="preview">
+            <div class="preview-frame">
+              <div class="preview-bar"><span class="dot"></span>After</div>
+              <iframe id="previewIframe" sandbox="allow-same-origin"></iframe>
+            </div>
+          </div>
+          <div class="tab-panel" data-panel="diff">
+            <div class="codes">
+              <div class="code-block before">
+                <div class="ch"><span>Before · <b id="beforeFn">input.html</b></span><span id="beforeLines">— lines</span></div>
+                <pre class="code before" id="beforeCode"></pre>
+              </div>
+              <div class="code-block after">
+                <div class="ch"><span>After · <b id="afterFn">output.html</b></span><span id="afterLines">— lines</span></div>
+                <pre class="code" id="afterCode"></pre>
+              </div>
+            </div>
+          </div>
+          <div class="tab-panel" data-panel="code">
+            <div class="codes single">
+              <div class="code-block after">
+                <div class="ch"><span>Output · <b id="codeFn">output.html</b></span><span id="codeMeta">—</span></div>
+                <pre class="code" id="fullCode"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ERROR -->
+      <div class="state err-state" data-state="error">
+        <div class="err-icon">!</div>
+        <div class="err-title">Transform failed.</div>
+        <div class="err-sub" id="errSub">Something went wrong on the way to the model. Could be rate-limit, network, or the input. Try a smaller sample, or retry.</div>
+        <div class="err-detail" id="errDetail">—</div>
+        <div class="err-actions">
+          <button class="err-btn primary" id="retryBtn">Retry</button>
+          <button class="err-btn" id="backBtn">Edit input</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<!-- ═══════════════ SAMPLES ═══════════════ -->
+<script id="sample-portfolio" type="text/plain">
+<!DOCTYPE html>
+<html>
+<head><title>Studio Lebani</title></head>
+<body bgcolor="#dddddd">
+  <center>
+    <table width="780" cellpadding="6" cellspacing="0" border="0">
+      <tr><td bgcolor="#222222">
+        <font face="Times" color="#ffffff" size="6"><b>Studio Lebani</b></font>
+      </td></tr>
+      <tr><td bgcolor="#ffffff">
+        <font face="Arial" size="3">
+          A design practice for editorial, identity and packaging.
+          <br><br>
+          <b>Selected works</b><br>
+          <a href="work1.html">Identity — Maison de The (2018)</a><br>
+          <a href="work2.html">Editorial — Quartz No. 12 (2019)</a><br>
+          <a href="work3.html">Packaging — Loop &amp; Co (2021)</a><br><br>
+          Contact: <font color="#0000ee">hello@lebani.studio</font>
+        </font>
+      </td></tr>
+    </table>
+  </center>
+</body>
+</html>
+</script>
+
+<script id="sample-restaurant" type="text/plain">
+<!DOCTYPE html>
+<html>
+<head><title>Trattoria Marra</title></head>
+<body bgcolor="#fff8e7" text="#3a2a18">
+<center><img src="logo.gif" alt="Trattoria Marra"></center>
+<center><font face="Georgia" size="7">Trattoria Marra</font></center>
+<center><font face="Georgia" size="3"><i>Open since 1987 — Cape Town</i></font></center>
+<hr width="60%">
+<table align="center" width="640" cellpadding="10">
+  <tr><td>
+    <font face="Georgia" size="3">
+      <b>TODAY'S PASTA</b><br>
+      Pici cacio e pepe · R145<br>
+      Rigatoni amatriciana · R165<br>
+      Tagliolini al limone · R150<br><br>
+      <b>MAINS</b><br>
+      Osso buco · R285<br>
+      Branzino al forno · R310<br><br>
+      Book on 021 555 0142 or just walk in.<br>
+      89 Loop Street, City Bowl.
+    </font>
+  </td></tr>
+</table>
+</body>
+</html>
+</script>
+
+<script id="sample-bio" type="text/plain">
+<html>
+<head><title>About me</title></head>
+<body>
+<h1>Tom Owusu</h1>
+<p>I'm a software engineer in Cape Town. I build small tools and write
+about the web. I worked at <b>Yoco</b> from 2018 to 2022 and now do
+contract work for a few startups.</p>
+<p>You can find me on:</p>
+<ul>
+  <li><a href="https://twitter.com/tomo">Twitter</a></li>
+  <li><a href="https://github.com/tomo">GitHub</a></li>
+  <li><a href="mailto:tom@owusu.dev">Email</a></li>
+</ul>
+<p>Currently building a tool to make old code feel new again.</p>
+<hr>
+<p><small>Last updated October 2024.</small></p>
+</body>
+</html>
+</script>
+
+<script id="sample-landing" type="text/plain">
+<!DOCTYPE html>
+<html><head><title>CloudBills - SaaS Billing</title></head>
+<body bgcolor="#f4f4f4">
+<table width="100%" bgcolor="#003366">
+<tr><td><font color="white" size="5" face="Arial">CloudBills</font></td>
+<td align="right"><a href="signup.html"><font color="white">Sign up</font></a></td></tr>
+</table>
+<center>
+<font face="Arial" size="7" color="#003366"><b>Stop chasing invoices.</b></font><br>
+<font face="Arial" size="3">CloudBills is the easiest way for SaaS
+companies to send invoices, take card payments and stop losing
+revenue to failed charges.</font><br><br>
+<a href="signup.html"><font face="Arial" color="white" size="4"
+style="background:#FF6600;padding:10px 20px">Start free trial</font></a>
+<br><br><br>
+<table width="800"><tr>
+<td valign="top"><b>Send invoices</b><br>Pre-made templates that
+look professional in any inbox.</td>
+<td valign="top"><b>Take payments</b><br>Cards, ACH, EFT. We
+handle all the receipts and reconciliation.</td>
+<td valign="top"><b>Recover failures</b><br>Auto-retry, dunning
+emails, the works. Get paid more.</td>
+</tr></table>
+</center>
+</body></html>
+</script>
+
+<script>
+  // ─────────────────────────────────────────
+  // State
+  // ─────────────────────────────────────────
+  const state = {
+    sample: null,
+    transform: 'modernise',
+    customPrompt: '',
+    aborted: false,
+    lastInput: '',
+    lastOutput: '',
+    lastTimeMs: 0,
+    lastTransform: '',
+  };
+
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
+
+  // ─────────────────────────────────────────
+  // Samples
+  // ─────────────────────────────────────────
+  const samples = {
+    portfolio: document.getElementById('sample-portfolio').textContent.trim(),
+    restaurant: document.getElementById('sample-restaurant').textContent.trim(),
+    bio: document.getElementById('sample-bio').textContent.trim(),
+    landing: document.getElementById('sample-landing').textContent.trim(),
+  };
+
+  document.querySelectorAll('.samples .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const key = chip.dataset.sample;
+      $('#paste').value = samples[key];
+      document.querySelectorAll('.samples .chip').forEach(c => c.classList.toggle('active', c === chip));
+      $('#taFilename').textContent = key + '.html';
+      state.sample = key;
+      updateChars();
+      $('#paste').focus();
+    });
+  });
+
+  // ─────────────────────────────────────────
+  // Char count
+  // ─────────────────────────────────────────
+  function updateChars(){
+    const n = $('#paste').value.length;
+    const el = $('#charCount');
+    el.innerHTML = `<b>${n.toLocaleString()}</b> chars`;
+    el.classList.toggle('over', n > 1500);
+    $('#runBtn').disabled = n === 0;
+  }
+  $('#paste').addEventListener('input', updateChars);
+  $('#clearBtn').addEventListener('click', () => {
+    $('#paste').value = '';
+    document.querySelectorAll('.samples .chip').forEach(c => c.classList.remove('active'));
+    state.sample = null;
+    $('#taFilename').textContent = 'input.html';
+    updateChars();
+    $('#paste').focus();
+  });
+  updateChars();
+
+  // ─────────────────────────────────────────
+  // Transform picker
+  // ─────────────────────────────────────────
+  $$('.tcard').forEach(card => {
+    card.addEventListener('click', () => {
+      $$('.tcard').forEach(c => c.classList.toggle('active', c === card));
+      state.transform = card.dataset.tf;
+    });
+  });
+
+  // Custom prompt toggle
+  $('#customToggle').addEventListener('click', () => {
+    $('#customWrap').classList.toggle('show');
+    if($('#customWrap').classList.contains('show')) $('#customPrompt').focus();
+  });
+  $('#customPrompt').addEventListener('input', (e) => { state.customPrompt = e.target.value; });
+
+  // ─────────────────────────────────────────
+  // State switcher
+  // ─────────────────────────────────────────
+  function setState(name){
+    $$('.state').forEach(s => s.classList.toggle('active', s.dataset.state === name));
+    document.body.classList.toggle('running', name === 'running');
+  }
+
+  // ─────────────────────────────────────────
+  // Tabs
+  // ─────────────────────────────────────────
+  $$('.tabs button[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $$('.tabs button[data-tab]').forEach(b => b.classList.toggle('active', b === btn));
+      $$('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === btn.dataset.tab));
+    });
+  });
+
+  // ─────────────────────────────────────────
+  // Logging helper
+  // ─────────────────────────────────────────
+  function addLog(html){
+    const log = $('#runLog');
+    const t = new Date();
+    const ts = `${String(t.getSeconds()).padStart(2,'0')}.${String(t.getMilliseconds()).padStart(3,'0').slice(0,2)}s`;
+    const line = document.createElement('div');
+    line.className = 'line';
+    line.innerHTML = `<span class="t">${ts}</span><span class="body">${html}</span>`;
+    log.appendChild(line);
+    log.scrollTop = log.scrollHeight;
+  }
+  function clearLog(){ $('#runLog').innerHTML = ''; }
+
+  // ─────────────────────────────────────────
+  // Prompt builder
+  // ─────────────────────────────────────────
+  const TRANSFORM_NAMES = {
+    modernise: 'Modernise the design',
+    responsive: 'Make it responsive',
+    darkmode: 'Add dark mode',
+    all: 'Modernise + responsive + dark mode'
+  };
+
+  function buildPrompt(input, transform, custom){
+    const tName = TRANSFORM_NAMES[transform] || transform;
+
+    const instructions = {
+      modernise: `Rewrite as a single self-contained modern HTML5 document with all CSS inlined in a <style> tag. Use a clean, contemporary type system (one display font + one body font from Google Fonts via <link>), tasteful spacing, flexbox/grid layout, sensible color palette with CSS custom properties, and modern semantic markup (<header>, <main>, <section>, etc.). Drop deprecated tags (<font>, <center>, table-layout, bgcolor). Keep ALL of the original content (names, dates, copy, links).`,
+
+      responsive: `Rewrite as a single self-contained modern HTML5 document with all CSS inlined in a <style> tag. Make it fully responsive (mobile-first, fluid type, flexbox/grid, media queries at 720px and 1024px). Keep the existing visual character but ensure it works perfectly on phones. Drop deprecated tags. Keep ALL original content.`,
+
+      darkmode: `Rewrite as a single self-contained modern HTML5 document with all CSS inlined in a <style> tag. Add a token-driven dark/light theme using CSS custom properties on :root, respect prefers-color-scheme, AND include a small theme toggle button in the top-right that switches a data-theme attribute on <html>. Use modern semantic markup. Drop deprecated tags. Keep ALL original content.`,
+
+      all: `Rewrite as a single self-contained modern HTML5 document with all CSS inlined in a <style> tag. Apply ALL of: (1) modernise typography & layout, (2) make fully responsive (fluid type, flexbox/grid, media queries), (3) add token-driven dark/light theme with prefers-color-scheme and a working toggle button (toggling data-theme on <html>). Use semantic markup. Drop deprecated tags. Keep ALL original content.`
+    };
+
+    const customLine = custom ? `\n\nADDITIONAL INSTRUCTION FROM USER: ${custom}` : '';
+
+    return `You are NuSite, a website transformation engine. Transform the input HTML according to the requested transformation.
+
+TRANSFORMATION: ${tName}
+
+RULES:
+${instructions[transform] || instructions.modernise}${customLine}
+
+CRITICAL OUTPUT FORMAT:
+- Return ONLY the complete transformed HTML document, starting with <!DOCTYPE html> and ending with </html>.
+- No markdown code fences. No commentary. No "Here is the transformed..." preamble.
+- Inline all styles. No external CSS files (Google Fonts <link> is fine).
+- Aim for compact, well-structured output. The response is hard-capped at 1024 output tokens — be efficient.
+
+INPUT HTML:
+${input}`;
+  }
+
+  // ─────────────────────────────────────────
+  // Run transform
+  // ─────────────────────────────────────────
+  $('#runBtn').addEventListener('click', run);
+  $('#paste').addEventListener('keydown', (e) => {
+    if((e.metaKey || e.ctrlKey) && e.key === 'Enter'){ e.preventDefault(); run(); }
+  });
+  $('#stopBtn').addEventListener('click', () => { state.aborted = true; setState('empty'); });
+  $('#retryBtn').addEventListener('click', run);
+  $('#backBtn').addEventListener('click', () => setState('empty'));
+
+  async function run(){
+    const input = $('#paste').value.trim();
+    if(!input){ $('#paste').focus(); return; }
+
+    state.aborted = false;
+    state.lastInput = input;
+    state.lastTransform = state.transform;
+    clearLog();
+    setState('running');
+
+    const t0 = performance.now();
+    $('#runSub').textContent = `Calling the model · ${TRANSFORM_NAMES[state.transform]}`;
+
+    addLog(`Reading input · <b>${input.length.toLocaleString()}</b> chars`);
+    await sleep(120);
+    if(state.aborted) return;
+    addLog(`Selected transform · <b>${TRANSFORM_NAMES[state.transform]}</b>`);
+    await sleep(120);
+    if(state.aborted) return;
+    addLog(`Sending to <b>Claude</b> · awaiting response…`);
+
+    if(typeof window.claude === 'undefined' || !window.claude.complete){
+      return showError('Claude helper not available',
+        'window.claude.complete is missing. This page expects to run inside a host that provides the in-artifact helper.');
+    }
+
+    let output;
+    try {
+      const prompt = buildPrompt(input, state.transform, state.customPrompt);
+      output = await window.claude.complete(prompt);
+    } catch (err) {
+      if(state.aborted) return;
+      return showError('Model call failed', String(err && err.message || err));
+    }
+    if(state.aborted) return;
+
+    const tMs = Math.round(performance.now() - t0);
+    state.lastOutput = cleanOutput(output);
+    state.lastTimeMs = tMs;
+
+    addLog(`Received · <span class="ok">${state.lastOutput.length.toLocaleString()} chars</span>`);
+    await sleep(140);
+    addLog(`Done in <b>${(tMs/1000).toFixed(1)}s</b>`);
+
+    renderDone();
+  }
+
+  function cleanOutput(raw){
+    if(!raw) return '';
+    let s = String(raw).trim();
+    // Strip markdown code fences if model included them
+    s = s.replace(/^```(?:html)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
+    return s.trim();
+  }
+
+  function showError(title, detail){
+    $('#errSub').textContent = title;
+    $('#errDetail').textContent = detail || '(no detail)';
+    setState('error');
+  }
+
+  function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+  // ─────────────────────────────────────────
+  // Render done state
+  // ─────────────────────────────────────────
+  function renderDone(){
+    const input = state.lastInput, output = state.lastOutput;
+    const beforeLines = input.split('\n').length;
+    const afterLines = output.split('\n').length;
+    const truncated = output && !/<\/html>\s*$/i.test(output);
+
+    $('#truncWarn').style.display = truncated ? 'flex' : 'none';
+    $('#statTime').textContent = `${(state.lastTimeMs/1000).toFixed(1)}s`;
+    $('#statIn').innerHTML = `${input.length.toLocaleString()} <span style="color:var(--lavender);font-size:11px;font-family:var(--mono);text-transform:none;letter-spacing:0">chars</span>`;
+    $('#statOut').innerHTML = `${output.length.toLocaleString()} <span style="color:var(--lavender);font-size:11px;font-family:var(--mono);text-transform:none;letter-spacing:0">chars</span>`;
+    $('#statTransform').textContent = TRANSFORM_NAMES[state.lastTransform];
+
+    // Preview iframe — use srcdoc for self-contained rendering
+    const ifr = $('#previewIframe');
+    ifr.srcdoc = output || '<html><body style="font-family:sans-serif;padding:24px;color:#666">(empty output)</body></html>';
+
+    // Code blocks
+    const filename = (state.sample || 'input') + '.html';
+    const outFilename = (state.sample || 'output') + '.modern.html';
+    $('#beforeFn').textContent = filename;
+    $('#afterFn').textContent = outFilename;
+    $('#codeFn').textContent = outFilename;
+    $('#beforeLines').textContent = `${beforeLines} lines`;
+    $('#afterLines').textContent = `${afterLines} lines`;
+    $('#codeMeta').textContent = `${output.length.toLocaleString()} chars · ${afterLines} lines`;
+
+    $('#beforeCode').innerHTML = highlight(input);
+    $('#afterCode').innerHTML = highlight(output);
+    $('#fullCode').innerHTML = highlight(output);
+
+    setState('done');
+
+    // Reset tab to preview
+    $$('.tabs button[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === 'preview'));
+    $$('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === 'preview'));
+  }
+
+  // ─────────────────────────────────────────
+  // Tiny HTML syntax highlighter
+  // ─────────────────────────────────────────
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function highlight(s){
+    if(!s) return '';
+    return escapeHtml(s)
+      .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="cm">$1</span>')
+      .replace(/(&lt;\/?)([a-zA-Z][\w-]*)/g, '$1<span class="tg">$2</span>')
+      .replace(/([a-zA-Z\-]+)=(&quot;|&#39;)([^&]*?)(&quot;|&#39;)/g, '<span class="at">$1</span>=<span class="vl">$2$3$4</span>');
+  }
+
+  // ─────────────────────────────────────────
+  // Copy + open in new tab
+  // ─────────────────────────────────────────
+  $('#copyBtn').addEventListener('click', async () => {
+    if(!state.lastOutput) return;
+    try{
+      await navigator.clipboard.writeText(state.lastOutput);
+      const btn = $('#copyBtn');
+      const orig = btn.innerHTML;
+      btn.classList.add('ok');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg> Copied';
+      setTimeout(()=>{ btn.classList.remove('ok'); btn.innerHTML = orig; }, 1600);
+    }catch{}
+  });
+  $('#openTab').addEventListener('click', () => {
+    if(!state.lastOutput) return;
+    const blob = new Blob([state.lastOutput], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    setTimeout(()=> URL.revokeObjectURL(url), 30000);
+  });
+
+  // Persist input between reloads
+  const saved = localStorage.getItem('nusite-engine-live-input');
+  if(saved){ $('#paste').value = saved; updateChars(); }
+  $('#paste').addEventListener('input', () => {
+    localStorage.setItem('nusite-engine-live-input', $('#paste').value);
+  });
+</script>
+</body>
+</html>
