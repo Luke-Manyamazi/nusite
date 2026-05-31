@@ -4,6 +4,13 @@
 
 **NuSite** is an AI-powered website transformation engine by Camluk Technologies (Pty) Ltd. It converts static websites into modern, responsive React applications.
 
+## 🌐 Live sites
+
+| Site | URL |
+|---|---|
+| Landing page | https://nusite-landing.netlify.app |
+| Engine | https://nusite-engine.netlify.app |
+
 ---
 
 ## 📁 Project structure
@@ -118,9 +125,7 @@ CSS custom properties defined at the top of each page's `<style>` block. Two the
 Light mode overrides `--void`, `--ghost`, `--slate`, `--lavender`, and border/shadow variables. Indigo, lime, and success colours are shared across themes.
 
 ### Typography
-- **Syne** 600/700/800 — display, wordmark, CTAs, pricing numbers
-- **DM Sans** 300/400/500 — body, UI, descriptions
-- **JetBrains Mono** 400/600 — code, labels, badges, micro-copy
+- **Poppins** 300/400/500/600/700/800 — all text across the app
 
 ---
 
@@ -188,6 +193,6 @@ Tested on current Chrome, Firefox, Safari. Uses CSS custom properties, `backdrop
 ## 📄 Credits & licence
 
 - **Product & brand:** NuSite — a product of Camluk Technologies (Pty) Ltd, Cape Town, South Africa
-- **Fonts:** Syne, DM Sans, JetBrains Mono — OFL via Google Fonts
+- **Fonts:** Poppins — OFL via Google Fonts
 
 © 2025 Camluk Technologies (Pty) Ltd. All rights reserved.
