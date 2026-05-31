@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NuSite — Your site. Reimagined.</title>
+<link rel="icon" href="./nusite_logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ───────── Nav ───────── -->
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a href="#" class="logo" aria-label="NuSite home">
+      <span class="logo-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/>
+          <path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+          <rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/>
+          <circle cx="32" cy="8" r="3" fill="#C8FF00"/>
+        </svg>
+      </span>
+      <span class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="#how">How It Works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+
+    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#features">Features</a>
+  <a href="#how">How It Works</a>
+  <a href="#pricing">Pricing</a>
+  <a href="#faq">FAQ</a>
+  <a href="#waitlist" class="nav-cta" style="display:inline-block">Join Waitlist</a>
+</div>
+
+<!-- ───────── Hero ───────── -->
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow">
+        <span class="dot"></span>
+        <span>Public launch · Coming soon</span>
+        <span class="sep">·</span>
+        <span style="color:var(--lime)">400+ on the waitlist</span>
+      </span>
+
+      <h1 class="hero-title">
+        <span class="line">
+          <span class="word" style="animation-delay:.05s">Your</span> <span class="word" style="animation-delay:.18s">site.</span>
+        </span>
+        <span class="line reimagined">
+          <span class="word" style="animation-delay:.42s">Reimagined.</span>
+        </span>
+      </h1>
+
+      <p class="hero-sub">
+        Paste old code. Drop a URL. Upload a ZIP. <strong>NuSite</strong> transforms any website into something modern, responsive and ready to ship — in seconds.
+      </p>
+
+      <div class="hero-ctas">
+        <a href="#waitlist" class="btn btn-primary">Join the Waitlist <span class="arrow">→</span></a>
+        <a href="#how" class="btn btn-ghost">See it in action</a>
+      </div>
+
+      <div class="hero-social">
+        <div class="avatars" aria-hidden="true">
+          <span class="av"></span><span class="av"></span><span class="av"></span><span class="av"></span><span class="av"></span>
+        </div>
+        <span><span class="star">✦</span> Join <b>400+ developers and founders</b> already on the waitlist</span>
+      </div>
+    </div>
+
+    <!-- Code transformation visual -->
+    <div class="hero-visual">
+      <div class="codeframe" aria-hidden="true">
+        <div class="codeframe-top">
+          <span class="traffic"><span></span><span></span><span></span></span>
+          <span class="codeframe-title">~/projects/legacy → <b>nusite.transform()</b></span>
+        </div>
+        <div class="codepanes">
+          <div class="pane pane-old">
+            <div class="pane-label"><span>BEFORE · legacy.html</span><span>2014</span></div>
+<code id="oldCode"></code>
+          </div>
+
+          <div class="arrow-col">
+            <svg viewBox="0 0 36 36" fill="none">
+              <defs>
+                <linearGradient id="ag" x1="0" x2="1">
+                  <stop offset="0" stop-color="#5B4CFF"/>
+                  <stop offset="1" stop-color="#C8FF00"/>
+                </linearGradient>
+              </defs>
+              <path d="M6 18 H28 M22 12 L28 18 L22 24" stroke="url(#ag)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <div class="pane pane-new">
+            <div class="pane-label"><span>AFTER · index.jsx</span><span>v1</span></div>
+<code id="newCode"></code>
+            <span class="badge-complete">✦ Transform complete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Social proof marquee ───────── -->
+<section class="proof">
+  <div class="wrap">
+    <div class="proof-label">Works with your stack</div>
+  </div>
+  <div class="marquee">
+    <div class="marquee-track" id="marquee">
+      <!-- items injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ───────── How it works ───────── -->
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow"><span class="bar"></span>How It Works<span class="bar"></span></div>
+      <h2 class="sec-title">How NuSite works</h2>
+      <p class="sec-sub">Three steps. Seconds, not days.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal" data-delay="100">
+        <div class="step-num">01</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V3"/><path d="M5 10l7-7 7 7"/><path d="M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
+        </div>
+        <div class="step-name">Step One</div>
+        <div class="step-title">Input your site</div>
+        <div class="step-desc">Paste HTML, drop a ZIP, paste a URL, or connect your GitHub repo. NuSite handles the rest.</div>
+        <div class="step-pills">
+          <span class="step-pill">Paste</span>
+          <span class="step-pill">ZIP</span>
+          <span class="step-pill">URL</span>
+          <span class="step-pill">GitHub</span>
+        </div>
+        <div class="step-connector">
+          <svg viewBox="0 0 40 8" fill="none"><line x1="0" y1="4" x2="34" y2="4" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 4"/><path d="M30 1 L36 4 L30 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        </div>
+      </div>
+
+      <div class="step reveal" data-delay="200">
+        <div class="step-num">02</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+        <div class="step-name">Step Two</div>
+        <div class="step-title">Choose your transform</div>
+        <div class="step-desc">Pick from 8 AI-powered transformations — make it responsive, convert to React, modernise the design, and more.</div>
+        <div class="step-pills">
+          <span class="step-pill">8 Types</span>
+          <span class="step-pill">Stackable</span>
+          <span class="step-pill">Custom prompt</span>
+        </div>
+        <div class="step-connector">
+          <svg viewBox="0 0 40 8" fill="none"><line x1="0" y1="4" x2="34" y2="4" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 4"/><path d="M30 1 L36 4 L30 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        </div>
+      </div>
+
+      <div class="step reveal" data-delay="300">
+        <div class="step-num">03</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14"/><path d="M5 10l7 7 7-7"/><path d="M3 17v3a1 1 0 001 1h16a1 1 0 001-1v-3"/></svg>
+        </div>
+        <div class="step-name">Step Three</div>
+        <div class="step-title">Download & deploy</div>
+        <div class="step-desc">Get clean, transformed code. Follow your custom deployment guide tailored to your host and ship it.</div>
+        <div class="step-pills">
+          <span class="step-pill">Vercel</span>
+          <span class="step-pill">Netlify</span>
+          <span class="step-pill">GitHub Pages</span>
+          <span class="step-pill">+5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Transformations ───────── -->
+<section class="sec" id="features" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow"><span class="bar"></span>Transformations<span class="bar"></span></div>
+      <h2 class="sec-title">8 ways to transform</h2>
+      <p class="sec-sub">Pick one. Stack them. Make it yours.</p>
+    </div>
+
+    <div class="tgrid">
+      <div class="tcard reveal" style="--accent:#00E5FF" data-delay="100">
+        <span class="ticon">⬛</span>
+        <div class="tname">Static → Responsive</div>
+        <div class="tdesc">Fluid layouts, breakpoints &amp; mobile-first CSS.</div>
+        <span class="tier tier-starter">Starter</span>
+      </div>
+      <div class="tcard reveal" style="--accent:#FF6B6B" data-delay="100">
+        <span class="ticon">✦</span>
+        <div class="tname">Add CSS Motion</div>
+        <div class="tdesc">Animations, transitions and scroll effects.</div>
+        <span class="tier tier-starter">Starter</span>
+      </div>
+      <div class="tcard reveal" style="--accent:#61DAFB" data-delay="200">
+        <span class="ticon">⚛</span>
+        <div class="tname">HTML → React</div>
+        <div class="tdesc">Convert static HTML into clean React components.</div>
+        <span class="tier tier-pro">Pro</span>
+      </div>
+      <div class="tcard reveal" style="--accent:#A78BFA" data-delay="200">
+        <span class="ticon">◈</span>
+        <div class="tname">Modernise Design</div>
+        <div class="tdesc">Contemporary CSS, typography and colour palette.</div>
+        <span class="tier tier-starter">Starter</span>
+      </div>
+      <div class="tcard reveal" style="--accent:#FCD34D" data-delay="100">
+        <span class="ticon">◑</span>
+        <div class="tname">Add Dark Mode</div>
+        <div class="tdesc">Dark-mode toggle with CSS custom properties.</div>
+        <span class="tier tier-pro">Pro</span>
+      </div>
+      <div class="tcard reveal" style="--accent:#34D399" data-delay="100">
+        <span class="ticon">⚡</span>
+        <div class="tname">Performance Fix</div>
+        <div class="tdesc">Optimise images, defer scripts, lazy-load assets.</div>
+        <span class="tier tier-pro">Pro</span>
+      </div>
+      <div class="tcard reveal" style="--accent:#F97316" data-delay="200">
+        <span class="ticon">♿</span>
+        <div class="tname">Accessibility Audit</div>
+        <div class="tdesc">ARIA labels, semantic HTML and keyboard nav.</div>
+        <span class="tier tier-pro">Pro</span>
+      </div>
+      <div class="tcard reveal" style="--accent:#38BDF8" data-delay="200">
+        <span class="ticon">🌬</span>
+        <div class="tname">Convert to Tailwind</div>
+        <div class="tdesc">Replace bespoke CSS with Tailwind utility classes.</div>
+        <span class="tier tier-prem">Premium</span>
+      </div>
+    </div>
+
+    <div class="tnote reveal"><span class="star">✦</span> Premium users can stack multiple transforms or write a custom prompt.</div>
+  </div>
+</section>
+
+<!-- ───────── Pricing ───────── -->
+<section class="sec" id="pricing">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow"><span class="bar"></span>Pricing<span class="bar"></span></div>
+      <h2 class="sec-title">Simple, honest pricing</h2>
+      <p class="sec-sub">Start free. Upgrade when you're ready.</p>
+    </div>
+
+    <div class="toggle-wrap reveal">
+      <div class="price-toggle" id="priceToggle">
+        <span class="pill-bg"></span>
+        <button data-mode="monthly" class="active">Monthly</button>
+        <button data-mode="annual">Annual<span class="save">2 MO FREE</span></button>
+      </div>
+    </div>
+
+    <div class="pricing">
+      <!-- Starter -->
+      <div class="pcard starter reveal" data-delay="100">
+        <div class="ptier">Starter</div>
+        <div class="pprice">Free</div>
+        <div class="psub">No card required</div>
+        <div class="pdivider"></div>
+        <ul class="pfeat">
+          <li><span class="check">✓</span> 5 transforms per month</li>
+          <li><span class="check">✓</span> Paste input only</li>
+          <li><span class="check">✓</span> 3 basic transformation types</li>
+          <li class="off"><span class="x">✗</span> No deployment guide</li>
+          <li class="off"><span class="x">✗</span> NuSite watermark on output</li>
+          <li class="off"><span class="x">✗</span> No project history</li>
+        </ul>
+        <a href="#waitlist" class="pcta ghost">Get Started Free</a>
+      </div>
+
+      <!-- Pro -->
+      <div class="pcard pro reveal" data-delay="200">
+        <span class="ribbon">MOST POPULAR</span>
+        <div class="ptier">Pro</div>
+        <div class="pprice">
+          <sup>$</sup><span class="amount" data-monthly="10" data-annual="8">10</span>
+          <span class="per">/ month</span>
+        </div>
+        <div class="psub" id="proSub">Billed monthly · Cancel anytime</div>
+        <div class="pdivider"></div>
+        <ul class="pfeat">
+          <li><span class="check">✓</span> 50 transforms per month</li>
+          <li><span class="check">✓</span> Paste + ZIP + URL inputs</li>
+          <li><span class="check">✓</span> All 8 transformation types</li>
+          <li><span class="check">✓</span> Deployment guide included</li>
+          <li><span class="check">✓</span> No watermark</li>
+          <li><span class="check">✓</span> 10 saved projects</li>
+          <li><span class="check">✓</span> Email support</li>
+        </ul>
+        <a href="#waitlist" class="pcta lime">Start Pro</a>
+      </div>
+
+      <!-- Premium -->
+      <div class="pcard premium reveal" data-delay="300">
+        <div class="ptier">Premium</div>
+        <div class="pprice">
+          <sup>$</sup><span class="amount" data-monthly="20" data-annual="17">20</span>
+          <span class="per">/ month</span>
+        </div>
+        <div class="psub" id="premSub">Billed monthly · Cancel anytime</div>
+        <div class="pdivider"></div>
+        <ul class="pfeat">
+          <li><span class="check">✓</span> Unlimited transforms</li>
+          <li><span class="check">✓</span> All inputs including GitHub repo</li>
+          <li><span class="check">✓</span> All transforms + custom prompt</li>
+          <li><span class="check">✓</span> Side-by-side preview + sandbox</li>
+          <li><span class="check">✓</span> Unlimited project history</li>
+          <li><span class="check">✓</span> Priority support</li>
+          <li><span class="check">✓</span> Early access to new transforms</li>
+        </ul>
+        <a href="#waitlist" class="pcta indigo">Go Premium</a>
+      </div>
+    </div>
+
+    <div class="pricing-note reveal">All plans include a 7-day free trial on paid tiers. No charge until trial ends.</div>
+  </div>
+</section>
+
+<!-- ───────── Audience ───────── -->
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow"><span class="bar"></span>Who it's for<span class="bar"></span></div>
+      <h2 class="sec-title">Built for people who ship</h2>
+    </div>
+
+    <div class="audience">
+      <div class="acard reveal" data-delay="100">
+        <span class="aicon">🧑‍💻</span>
+        <div class="atype">Freelancers</div>
+        <div class="ahook">"Stop spending days cleaning up client sites."</div>
+        <div class="adesc">Inherited a messy client codebase? NuSite modernises it in seconds — so you can spend more time billing and less time fighting old CSS.</div>
+      </div>
+      <div class="acard reveal" data-delay="200">
+        <span class="aicon">🚀</span>
+        <div class="atype">Startup Founders</div>
+        <div class="ahook">"Your MVP looks like 2015. Fix it without hiring a designer."</div>
+        <div class="adesc">Launched fast, looks rough. NuSite fixes it in seconds — no design budget required, no agency retainer, just a modern site that ships today.</div>
+      </div>
+      <div class="acard reveal" data-delay="300">
+        <span class="aicon">🏢</span>
+        <div class="atype">Small Agencies</div>
+        <div class="ahook">"Modernise 10 client sites in the time it used to take for one."</div>
+        <div class="adesc">Manages multiple client projects. Needs reliable, repeatable output and deployment instructions to hand off cleanly to each client.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Waitlist CTA ───────── -->
+<section class="waitlist" id="waitlist">
+  <div class="wrap waitlist-inner">
+    <h2>Be first when NuSite launches.</h2>
+    <p class="lead">We're putting the finishing touches on the app. Join the waitlist and get early access, a free Pro trial, and a founding member discount.</p>
+
+    <form class="wform" id="waitlistForm" novalidate>
+      <input type="email" required placeholder="your@email.com" aria-label="Email address" />
+      <button type="submit">Join the Waitlist <span class="arrow">→</span></button>
+    </form>
+    <div class="wform-foot" id="wformFoot">🔒 No spam. Unsubscribe anytime.</div>
+
+    <div class="wsuccess" id="wsuccess" role="status" aria-live="polite">
+      <h3><span class="ck">✓</span> You're on the list!</h3>
+      <p>We'll be in touch soon. In the meantime, share NuSite with someone who needs it.</p>
+      <div class="share-row">
+        <a href="https://twitter.com/intent/tweet?text=Just%20joined%20the%20NuSite%20waitlist%20%E2%9C%A6%20Your%20site.%20Reimagined.%20https%3A%2F%2Fnusite.app" target="_blank" rel="noopener" class="share-btn">Share on X</a>
+        <button type="button" class="share-btn" id="copyLink">Copy link</button>
+      </div>
+    </div>
+
+    <div class="perks">
+      <div class="perk">
+        <div class="pi">✦</div>
+        <b>Early access</b>
+        before public launch
+      </div>
+      <div class="perk">
+        <div class="pi">⚡</div>
+        <b>Free Pro trial</b>
+        for 30 days
+      </div>
+      <div class="perk">
+        <div class="pi">🎁</div>
+        <b>Founding discount</b>
+        locked in forever
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── FAQ ───────── -->
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow"><span class="bar"></span>FAQ<span class="bar"></span></div>
+      <h2 class="sec-title">Questions</h2>
+      <p class="sec-sub">Everything you need to know before joining the waitlist.</p>
+    </div>
+
+    <div class="faq" id="faq">
+      <div>
+        <div class="qitem">
+          <button class="qbtn" aria-expanded="false">When does NuSite launch?<span class="chev">▾</span></button>
+          <div class="qans"><div class="qans-inner">We're in the final stages of development. Waitlist members get first access. Sign up above to be notified the moment we go live.</div></div>
+        </div>
+        <div class="qitem">
+          <button class="qbtn" aria-expanded="false">What kind of websites can NuSite transform?<span class="chev">▾</span></button>
+          <div class="qans"><div class="qans-inner">Any website with accessible HTML, CSS and JS. Paste raw code, upload a ZIP of your project, drop in a live URL (Pro), or connect a GitHub repo (Premium).</div></div>
+        </div>
+        <div class="qitem">
+          <button class="qbtn" aria-expanded="false">Will it work on large codebases?<span class="chev">▾</span></button>
+          <div class="qans"><div class="qans-inner">Yes. NuSite processes files intelligently, handling large projects by transforming them file by file with full context maintained.</div></div>
+        </div>
+        <div class="qitem">
+          <button class="qbtn" aria-expanded="false">Do I need to know how to code?<span class="chev">▾</span></button>
+          <div class="qans"><div class="qans-inner">Not necessarily. NuSite generates clean code with clear deployment instructions. If you can follow a guide, you can ship the result.</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="qitem">
+          <button class="qbtn" aria-expanded="false">What does the deployment guide include?<span class="chev">▾</span></button>
+          <div class="qans"><div class="qans-inner">After your transform, NuSite asks where you're hosting (Vercel, Netlify, cPanel, GitHub Pages, AWS, Firebase, DigitalOcean, Docker/VPS) and gives you step-by-step instructions tailored to your platform.</div></div>
+        </div>
+        <div class="qitem">
+          <button class="qbtn" aria-expanded="false">Can I cancel my subscription?<span class="chev">▾</span></button>
+          <div class="qans"><div class="qans-inner">Yes, anytime. No questions, no friction. Cancel from your account dashboard and you keep access until the end of your billing period.</div></div>
+        </div>
+        <div class="qitem">
+          <button class="qbtn" aria-expanded="false">Is my code stored?<span class="chev">▾</span></button>
+          <div class="qans"><div class="qans-inner">Your code is processed securely and not stored permanently on our servers. Pro and Premium users can opt into saving project history in their account.</div></div>
+        </div>
+        <div class="qitem">
+          <button class="qbtn" aria-expanded="false">Who built NuSite?<span class="chev">▾</span></button>
+          <div class="qans"><div class="qans-inner">NuSite is a product of Camluk Technologies (Pty) Ltd, a Cape Town-based technology company.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Footer ───────── -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <a href="#" class="logo" style="display:inline-flex">
+          <span class="logo-icon-wrap" aria-hidden="true">
+            <svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg>
+          </span>
+          <span class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></span>
+        </a>
+        <div class="foot-tagline">Your site. Reimagined.</div>
+        <div class="foot-camluk">
+          A product by <b>Camluk Technologies (Pty) Ltd</b><br>
+          Cape Town, South Africa
+        </div>
+        <div class="socials">
+          <a href="#" aria-label="X (Twitter)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2H21l-6.52 7.45L22 22h-6.793l-4.79-6.27L4.5 22H1.74l7.02-8.02L1 2h6.96l4.34 5.73L18.244 2zm-2.38 18h1.61L7.21 4h-1.7l10.355 16z"/></svg></a>
+          <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 015.78 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.4-5.26 5.68.41.36.78 1.07.78 2.16v3.2c0 .31.21.68.8.56C20.21 21.38 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.38-1.85 3.62 0 4.29 2.38 4.29 5.48v6.26zM5.34 7.43a2.06 2.06 0 110-4.13 2.06 2.06 0 010 4.13zm1.78 13.02H3.56V9h3.56v11.45z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="foot-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li class="soon">Changelog</li>
+          <li class="soon">Roadmap</li>
+        </ul>
+      </div>
+
+      <div class="foot-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Camluk</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+
+      <div class="foot-col">
+        <h4>Stay Updated</h4>
+        <p style="font-size:13px; color:var(--lavender); margin-bottom: 14px;">Get launch updates and product news.</p>
+        <form class="foot-mini-form" id="footForm" novalidate>
+          <input type="email" placeholder="your@email.com" aria-label="Email"/>
+          <button type="submit">Subscribe</button>
+        </form>
+        <div id="footFormMsg" style="font-size:11.5px; color:var(--lime); margin-top:10px; min-height:14px;"></div>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <span>© 2025 Camluk Technologies (Pty) Ltd. All rights reserved.</span>
+      <a href="https://nusite.app">nusite.app</a>
+    </div>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
