@@ -63,13 +63,24 @@ Rename `NuSite Landing Page.html` to `index.html` and drop it onto any static ho
 
 | File | Description |
 |---|---|
-| `NuSite Landing Page.html` | Marketing site — the primary public-facing page |
+| `NuSite Landing Page.html` | Marketing site — self-contained single file (CSS + JS inlined) |
+| `index.html` + `script.js` + `styles.css` | Marketing site — split-file version with external assets |
 | `NuSite App.html` | Web application UI |
 | `NuSite Engine.html` | Transformation engine interface |
 | `NuSite Billing.html` | Subscription and payment UI |
 | `Engine Live.html` | Real-time engine demo |
 
-All pages are self-contained HTML files — CSS and JS inlined, no build step required.
+### Landing page versions
+
+There are two builds of the marketing landing page in `app/pages/`:
+
+**Self-contained (`NuSite Landing Page.html`)**
+All CSS and JS inlined into a single file. Best for quick sharing, drag-and-drop deploys, or sending as a standalone file. Open directly in a browser — no server needed.
+
+**Split-file (`index.html` + `script.js` + `styles.css`)**
+HTML, CSS, and JS separated into individual files, with `nusite_logo.png` as an external asset. Better for version-controlled diffs, incremental edits, and hosts that expect a standard `index.html` entry point.
+
+To deploy the split-file version, serve the `app/pages/` folder as the web root — all asset paths are relative.
 
 ---
 
