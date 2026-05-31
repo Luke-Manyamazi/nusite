@@ -1,9 +1,9 @@
 ﻿// engine-main.jsx — Boot the Transform Engine.
 
 const ENGINE_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "state": "done",
-  "progress": 100,
-  "autoplay": true,
+  "state": "preflight",
+  "progress": 0,
+  "autoplay": false,
   "tier": "pro",
   "dark": true
 }/*EDITMODE-END*/;
