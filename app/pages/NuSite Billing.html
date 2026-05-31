@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NuSite — Billing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app/nusite.css">
+<style>
+  /* Payment-specific extras */
+  .billing-shell{
+    position:relative; z-index:1; min-height:100vh;
+    display:flex; flex-direction:column;
+  }
+  .billing-bar{
+    display:flex; align-items:center; gap:18px;
+    padding:14px 28px; border-bottom:1px solid var(--border);
+    background: rgba(10,10,15,0.7); backdrop-filter: blur(16px) saturate(140%);
+    position:sticky; top:0; z-index:30;
+  }
+  html[data-theme="light"] .billing-bar{ background: rgba(250,250,255,0.7) }
+
+  /* Plan card highlights */
+  .plan-card{
+    position:relative; border-radius:18px; padding:28px 26px;
+    background: var(--slate); border:1px solid var(--border);
+    display:flex; flex-direction:column; transition: transform .2s, border-color .2s;
+  }
+  .plan-card.featured{
+    background: linear-gradient(180deg, rgba(91,76,255,0.18), rgba(91,76,255,0.06)), var(--slate);
+    border-color: var(--indigo);
+    box-shadow: 0 12px 40px rgba(91,76,255,0.25), 0 0 0 1px var(--indigo);
+    transform: translateY(-8px);
+  }
+  .plan-card.premium-tier{
+    background: linear-gradient(135deg, rgba(200,255,0,0.05), transparent), var(--slate);
+    border-color: rgba(200,255,0,0.3);
+  }
+  .plan-card .plan-badge{
+    position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+    padding:5px 14px; border-radius:100px; background: var(--lime); color: var(--void);
+    font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.18em;
+    box-shadow: 0 4px 14px rgba(200,255,0,0.4);
+    white-space:nowrap;
+  }
+  .plan-card .plan-badge.current{
+    background: var(--slate-hi); color: var(--ghost); border:1px solid var(--border-strong);
+    box-shadow:none;
+  }
+
+  /* Price ticker */
+  .price-flip{
+    position:relative; display:flex; align-items:baseline; gap:4px;
+    transition: opacity .25s;
+  }
+
+  /* Annual savings sticker */
+  .save-sticker{
+    display:inline-flex; align-items:center; gap:4px;
+    padding:3px 8px; border-radius:100px;
+    background: var(--lime-tint); border:1px solid rgba(200,255,0,0.3);
+    color: var(--lime); font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.1em;
+  }
+
+  /* Toggle for monthly/annual */
+  .billing-toggle{
+    display:inline-flex; align-items:center; padding:4px;
+    background: var(--slate-lt); border:1px solid var(--border); border-radius:100px;
+    gap:0;
+  }
+  .billing-toggle button{
+    padding:8px 16px; border-radius:100px; font-family:var(--syne); font-weight:700; font-size:13px;
+    color: var(--lavender); transition: all .2s;
+  }
+  .billing-toggle button.active{
+    background: var(--ghost); color: var(--void);
+  }
+
+  /* Feature check rows */
+  .fcheck{ display:flex; align-items:flex-start; gap:10px; padding:6px 0; font-size:13.5px }
+  .fcheck .ck{
+    width:16px; height:16px; border-radius:50%; flex-shrink:0; margin-top:2px;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--lime); color: var(--void);
+  }
+  .fcheck.off .ck{ background: rgba(244,244,255,0.08); color: var(--lavender-dk) }
+  .fcheck.off{ color: var(--lavender) }
+
+  /* Inputs for card form */
+  .pf-input{
+    width:100%; padding:13px 14px;
+    background: var(--slate-lt); border:1.5px solid var(--border); border-radius:10px;
+    color: var(--ghost); font-family: var(--dm); font-size:14px;
+    transition: border-color .15s, background .15s;
+  }
+  .pf-input::placeholder{ color: var(--lavender); opacity:0.6 }
+  .pf-input:focus{ border-color: var(--indigo); background: var(--slate-hi) }
+  .pf-input.mono{ font-family: var(--mono); letter-spacing:0.06em }
+  .pf-label{
+    font-family:var(--mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase;
+    color: var(--lavender); margin-bottom:6px; display:flex; align-items:center; gap:8px;
+  }
+
+  /* Fake card preview that updates as you type */
+  .ccard{
+    aspect-ratio: 1.6 / 1; max-width: 360px;
+    border-radius:14px; padding:18px 20px;
+    background:
+      radial-gradient(circle at 80% 20%, rgba(200,255,0,0.2), transparent 50%),
+      linear-gradient(135deg, var(--indigo) 0%, var(--indigo-dk) 100%);
+    color:#fff; position:relative; overflow:hidden;
+    box-shadow: 0 16px 40px rgba(91,76,255,0.4);
+    display:flex; flex-direction:column;
+  }
+  .ccard::after{
+    content:''; position:absolute; top:-20%; right:-10%; width:80%; height:120%;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.12), transparent 60%);
+    transform: rotate(20deg); pointer-events:none;
+  }
+
+  /* Cinematic success backdrop */
+  .success-stage{
+    flex:1; position:relative; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; padding:40px 32px;
+    overflow:hidden;
+  }
+  .success-orb{
+    width:140px; height:140px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.2), transparent 50%),
+                radial-gradient(circle, var(--indigo) 0%, var(--indigo-dk) 70%, var(--void) 100%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 0 80px var(--indigo-glow), 0 0 160px rgba(91,76,255,0.5);
+    position:relative;
+  }
+  .success-orb::before{
+    content:''; position:absolute; inset:-14px; border-radius:50%;
+    background: conic-gradient(from var(--ring,0deg), transparent 0deg, transparent 270deg, var(--lime) 320deg, transparent 360deg);
+    -webkit-mask: radial-gradient(circle, transparent 49%, black 50%, black 53%, transparent 54%);
+            mask: radial-gradient(circle, transparent 49%, black 50%, black 53%, transparent 54%);
+    animation: spinRing 3s linear infinite;
+  }
+  @property --ring { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+  @keyframes spinRing { from{--ring:0deg} to{--ring:360deg} }
+
+  /* Confetti */
+  .confetti{
+    position:absolute; width:7px; height:14px; border-radius:2px;
+    opacity:0; animation: confettiFall 5s ease-out infinite;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translate(0, -40vh) rotate(0deg); opacity:0 }
+    10%  { opacity:1 }
+    100% { transform: translate(var(--cx, 0), 100vh) rotate(var(--cr, 720deg)); opacity:0 }
+  }
+
+  /* Spark burst */
+  .burst{
+    position:absolute; left:50%; top:50%; width:6px; height:6px; border-radius:50%;
+    background: var(--lime); box-shadow: 0 0 12px var(--lime), 0 0 20px rgba(200,255,0,0.5);
+    animation: burstFly 1.5s ease-out forwards;
+  }
+  @keyframes burstFly {
+    0%   { transform: translate(-50%,-50%) scale(0); opacity:1 }
+    100% { transform: translate(calc(-50% + var(--bx,0px)), calc(-50% + var(--by,0px))) scale(0.5); opacity:0 }
+  }
+
+  /* Paywall dashboard backdrop */
+  .pw-bg{
+    position:absolute; inset:0; z-index:1;
+    filter: blur(10px) brightness(0.5);
+    pointer-events:none; overflow:hidden;
+  }
+
+  /* Trial ribbon */
+  .trial-ribbon{
+    display:flex; align-items:center; gap:14px;
+    padding:10px 22px;
+    background: linear-gradient(90deg, var(--indigo-tint), rgba(200,255,0,0.08), var(--indigo-tint));
+    border-bottom:1px solid var(--border);
+    font-size:13px;
+  }
+  .trial-ribbon .pill{
+    font-family:var(--mono); font-size:10px; letter-spacing:0.14em; padding:3px 8px;
+    background: var(--lime); color: var(--void); border-radius:100px; font-weight:600;
+  }
+
+  /* Receipt-style code block for invoice rows */
+  .invoice-row{
+    display:grid; grid-template-columns: 110px 1fr 100px 110px 60px;
+    align-items:center; gap:14px; padding:14px 22px;
+    border-top:1px solid var(--border); transition: background .15s; cursor:pointer;
+  }
+  .invoice-row:hover{ background: var(--slate-lt) }
+  .invoice-row .date{ font-family: var(--mono); font-size:12px; color: var(--lavender) }
+  .invoice-row .desc{ font-family: var(--dm); font-size:13.5px }
+  .invoice-row .amt{ font-family: var(--syne); font-weight:700; font-size:14px; text-align:right }
+  .invoice-row .stat{
+    font-family: var(--mono); font-size:10px; letter-spacing:0.1em;
+    padding:3px 8px; border-radius:100px; text-align:center;
+    background: rgba(34,212,122,0.1); color: var(--success); border:1px solid rgba(34,212,122,0.25);
+    width:fit-content;
+  }
+</style>
+</head>
+<body>
+<div class="void-bg"></div>
+<div class="dot-grid"></div>
+<div id="app"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="app/tweaks-panel.jsx"></script>
+<script type="text/babel" src="app/ui.jsx"></script>
+<script type="text/babel" src="app/payments.jsx"></script>
+<script type="text/babel" src="app/payments-main.jsx"></script>
+</body>
+</html>

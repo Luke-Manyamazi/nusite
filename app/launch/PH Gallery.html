@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NuSite — Product Hunt Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root{
+    --indigo:#5B4CFF;
+    --indigo-lt:#7B6FFF;
+    --indigo-dk:#3D33B8;
+    --lime:#C8FF00;
+    --void:#0A0A0F;
+    --void-2:#06060A;
+    --ghost:#F4F4FF;
+    --slate:#1C1C2E;
+    --slate-lt:#252538;
+    --slate-hi:#2F2F45;
+    --lavender:#8B85C1;
+    --success:#22D47A;
+    --warning:#F5A623;
+    --error:#FF4C4C;
+    --border:rgba(244,244,255,0.08);
+    --border-strong:rgba(244,244,255,0.16);
+    --syne:'Syne',sans-serif;
+    --dm:'DM Sans',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+
+  html,body{ height:100%; background:var(--void-2); color:var(--ghost); font-family:var(--dm); -webkit-font-smoothing:antialiased; }
+  body{ overflow-x:hidden; }
+  button{ font:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+
+  /* ─────── PAGE CHROME ─────── */
+  .page-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(900px 600px at 85% -10%, rgba(91,76,255,0.18), transparent 60%),
+      radial-gradient(700px 500px at 0% 100%, rgba(200,255,0,0.04), transparent 60%);
+  }
+  .dot-grid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image: radial-gradient(rgba(244,244,255,0.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: linear-gradient(180deg, transparent 0, black 30%, black 70%, transparent 100%);
+  }
+
+  .topbar{
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px 36px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    background: rgba(10,10,15,0.6);
+  }
+  .topbar-left{ display:flex; align-items:center; gap:18px; }
+  .logo{ display:flex; align-items:center; gap:11px; }
+  .logo-mark{
+    width:34px; height:34px; background:var(--indigo);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 6px 18px rgba(91,76,255,0.35);
+  }
+  .logo-mark svg{ width:20px; height:20px; }
+  .wordmark{
+    font-family:var(--syne); font-weight:800; font-size:20px;
+    letter-spacing:-0.03em; line-height:1;
+  }
+  .wordmark .nu{ color:var(--indigo); }
+  .wordmark .site{ color:var(--ghost); }
+
+  .crumb{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.16em; text-transform:uppercase;
+    padding-left:18px; border-left:1px solid var(--border);
+    display:flex; align-items:center; gap:10px;
+  }
+  .crumb .pill{
+    background:rgba(91,76,255,0.12); color:var(--indigo-lt);
+    padding:4px 10px; border-radius:100px;
+    border:1px solid rgba(91,76,255,0.25);
+  }
+
+  .topbar-right{ display:flex; align-items:center; gap:14px; }
+  .meta{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.12em; text-transform:uppercase;
+    display:flex; gap:18px;
+  }
+  .meta b{ color:var(--ghost); font-weight:500; }
+  .iconbtn{
+    width:36px; height:36px; border-radius:9px;
+    border:1px solid var(--border); background:var(--slate);
+    display:flex; align-items:center; justify-content:center;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .iconbtn:hover{ border-color: var(--border-strong); background:var(--slate-lt); }
+  .iconbtn svg{ width:16px; height:16px; }
+
+  /* ─────── MAIN STAGE ─────── */
+  .stage{
+    position:relative; z-index:2;
+    padding: 36px 36px 24px;
+    display:flex; flex-direction:column; align-items:center;
+    gap: 22px;
+    min-height: calc(100vh - 78px);
+  }
+  .stage-head{
+    width:100%; max-width:1270px;
+    display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
+  }
+  .stage-title{
+    font-family:var(--syne); font-weight:700; font-size:22px;
+    color:var(--ghost); letter-spacing:-0.01em;
+  }
+  .stage-sub{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.14em; text-transform:uppercase; margin-top:4px;
+  }
+  .stage-counter{
+    font-family:var(--syne); font-weight:700; color:var(--ghost);
+    font-size:18px; letter-spacing:-0.01em;
+    display:flex; align-items:baseline; gap:6px;
+  }
+  .stage-counter span.cur{ color:var(--indigo-lt); }
+  .stage-counter span.sep{ color:var(--lavender); }
+  .stage-counter span.tot{ color:var(--lavender); font-weight:500; }
+
+  /* ─────── FRAME VIEWER ─────── */
+  .viewer{
+    position:relative;
+    width:100%; max-width:1270px;
+  }
+  .frame-stage{
+    position:relative;
+    width:100%;
+    aspect-ratio: 1270 / 760;
+    border-radius:18px;
+    overflow:hidden;
+    background:#000;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.04) inset,
+      0 30px 80px rgba(0,0,0,0.55),
+      0 0 0 1px var(--border);
+  }
+  .frame{
+    position:absolute; inset:0;
+    opacity:0; pointer-events:none; transition: opacity .35s ease;
+    overflow:hidden;
+  }
+  .frame.active{ opacity:1; pointer-events:auto; }
+
+  /* PH frames are designed to look correct at 1270×760 — we scale them
+     to fit the stage via CSS transforms */
+  .frame-inner{
+    width:1270px; height:760px;
+    transform-origin: 0 0;
+    position:absolute; top:0; left:0;
+  }
+
+  /* Nav buttons */
+  .navbtn{
+    position:absolute; top:50%; transform: translateY(-50%);
+    width:44px; height:44px; border-radius:50%;
+    background: rgba(10,10,15,0.75);
+    backdrop-filter: blur(8px);
+    border:1px solid var(--border-strong);
+    color:var(--ghost);
+    display:flex; align-items:center; justify-content:center;
+    z-index:5;
+    transition: background .2s ease, transform .15s ease;
+  }
+  .navbtn:hover{ background: rgba(91,76,255,0.55); transform: translateY(-50%) scale(1.04); }
+  .navbtn:disabled{ opacity:0.3; cursor:not-allowed; }
+  .navbtn.prev{ left:-22px; }
+  .navbtn.next{ right:-22px; }
+  .navbtn svg{ width:18px; height:18px; }
+
+  /* Thumbs */
+  .thumbs{
+    width:100%; max-width:1270px;
+    display:grid; grid-template-columns: repeat(6, 1fr); gap:12px;
+    margin-top: 6px;
+  }
+  .thumb{
+    position:relative;
+    aspect-ratio: 1270 / 760;
+    border-radius: 9px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    cursor:pointer;
+    background:#000;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .thumb:hover{ border-color: var(--border-strong); transform: translateY(-2px); }
+  .thumb.active{
+    border-color: var(--indigo-lt);
+    box-shadow: 0 0 0 2px rgba(91,76,255,0.4), 0 6px 22px rgba(91,76,255,0.35);
+  }
+  .thumb-inner{
+    width:1270px; height:760px;
+    transform-origin: 0 0;
+    position:absolute; top:0; left:0;
+    pointer-events:none;
+  }
+  .thumb-no{
+    position:absolute; top:6px; left:8px;
+    font-family:var(--mono); font-size:9px; font-weight:600;
+    color:rgba(255,255,255,0.7);
+    background: rgba(0,0,0,0.55);
+    padding: 2px 6px; border-radius: 4px;
+    letter-spacing:0.1em;
+  }
+
+  /* Footer toolbar */
+  .toolbar{
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding: 18px 36px 36px;
+    flex-wrap:wrap;
+  }
+  .tool{
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:0.12em; text-transform:uppercase;
+    padding: 9px 14px;
+    border:1px solid var(--border); border-radius:8px;
+    background:var(--slate); color:var(--lavender);
+    display:inline-flex; align-items:center; gap:8px;
+    transition: color .2s ease, border-color .2s ease, background .2s ease;
+  }
+  .tool:hover{ color:var(--ghost); border-color: var(--border-strong); }
+  .tool.active{ color:var(--ghost); border-color: var(--indigo); background: rgba(91,76,255,0.12); }
+  .tool kbd{
+    font-family:var(--mono); font-size:10px;
+    padding:1px 5px; border-radius:4px;
+    background: rgba(244,244,255,0.08); color:var(--ghost);
+    border:1px solid var(--border);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FRAME SHARED STYLES
+  ═══════════════════════════════════════════════════════════════ */
+  .ph-bg-void{
+    position:absolute; inset:0;
+    background: var(--void);
+  }
+  .ph-bg-void::before{
+    content:''; position:absolute;
+    top:-200px; right:-200px; width:760px; height:760px;
+    background: radial-gradient(circle, rgba(91,76,255,0.22) 0%, transparent 60%);
+  }
+  .ph-bg-void::after{
+    content:''; position:absolute;
+    bottom:-220px; left:-180px; width:680px; height:680px;
+    background: radial-gradient(circle, rgba(200,255,0,0.06) 0%, transparent 60%);
+  }
+  .ph-dotgrid{
+    position:absolute; inset:0;
+    background-image: radial-gradient(rgba(244,244,255,0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at 50% 50%, black 0%, transparent 75%);
+  }
+  .ph-content{ position:relative; z-index:1; width:100%; height:100%; padding: 60px 72px; display:flex; flex-direction:column; }
+  .ph-watermark{
+    position:absolute; bottom:36px; left:72px;
+    display:flex; align-items:center; gap:10px;
+    z-index:2;
+  }
+  .ph-watermark .logo-mark{ width:30px; height:30px; border-radius:7px; }
+  .ph-watermark .logo-mark svg{ width:18px; height:18px; }
+  .ph-watermark .wordmark{ font-size:18px; }
+  .ph-frame-no{
+    position:absolute; bottom:38px; right:72px;
+    font-family:var(--mono); font-size:11px;
+    color:var(--lavender); letter-spacing:0.18em; text-transform:uppercase;
+    z-index:2;
+  }
+  .ph-frame-no b{ color:var(--ghost); font-weight:500; }
+
+  .ph-eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:var(--mono); font-size:12px;
+    color:var(--lavender); letter-spacing:0.16em; text-transform:uppercase;
+    padding: 8px 14px;
+    background: rgba(91,76,255,0.10);
+    border:1px solid rgba(91,76,255,0.25);
+    border-radius:100px;
+    margin-bottom: 24px; align-self:flex-start;
+  }
+  .ph-eyebrow .dot{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--lime);
+    box-shadow:0 0 10px var(--lime);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FRAME 1 — COVER
+  ═══════════════════════════════════════════════════════════════ */
+  .f1 .ph-content{ justify-content:center; }
+  .f1-title{
+    font-family:var(--syne); font-weight:800;
+    font-size: 152px; line-height: 0.92; letter-spacing:-0.04em;
+    color:var(--ghost);
+  }
+  .f1-title .ri{
+    color:var(--indigo-lt);
+    position:relative; display:inline-block;
+  }
+  .f1-title .ri::after{
+    content:''; position:absolute;
+    left:2%; right:6%; bottom:0.06em; height:0.08em;
+    background: linear-gradient(90deg, var(--lime), transparent);
+  }
+  .f1-sub{
+    font-family:var(--dm); font-size:24px; line-height:1.45;
+    color:var(--lavender);
+    max-width: 760px;
+    margin-top: 28px;
+  }
+  .f1-sub b{ color:var(--ghost); font-weight:500; }
+  .f1-tagrow{
+    display:flex; gap:10px; margin-top: 38px;
+  }
+  .f1-tag{
+    font-family:var(--mono); font-size:13px;
+    color:var(--ghost);
+    padding: 9px 16px;
+    border:1px solid var(--border-strong);
+    border-radius: 100px;
+    background: rgba(244,244,255,0.04);
+  }
+  .f1-tag.live{
+    background: rgba(200,255,0,0.10);
+    border-color: rgba(200,255,0,0.35);
+    color: var(--lime);
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .f1-tag.live::before{
+    content:''; width:7px; height:7px; border-radius:50%;
+    background: var(--lime);
+    box-shadow: 0 0 10px var(--lime);
+  }
+
+  /* Glow rings behind the title */
+  .f1-glow{
+    position:absolute; top:50%; left:50%;
+    width: 900px; height: 900px;
+    border-radius:50%;
+    transform: translate(-50%,-50%);
+    background: radial-gradient(circle, rgba(91,76,255,0.22) 0%, transparent 55%);
+    pointer-events:none;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FRAME 2 — THE ENGINE (before/after panes)
+  ═══════════════════════════════════════════════════════════════ */
+  .f2 .ph-content{ padding-top: 56px; }
+  .f2-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:32px; margin-bottom: 26px; }
+  .f2-head h2{
+    font-family:var(--syne); font-weight:800; font-size:56px; line-height:1;
+    letter-spacing:-0.03em; color:var(--ghost);
+  }
+  .f2-head h2 .ac{ color:var(--lime); }
+  .f2-head p{
+    font-family:var(--dm); font-size:18px; color:var(--lavender);
+    max-width: 360px; text-align:right; line-height:1.45;
+  }
+
+  .f2-panes{
+    flex:1;
+    display:grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap:0; align-items:stretch;
+    margin-bottom: 22px;
+  }
+  .f2-pane{
+    background: var(--void-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.85;
+    overflow: hidden;
+    position:relative;
+  }
+  .f2-pane-label{
+    font-family:var(--mono); font-size:10px;
+    letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--lavender);
+    margin-bottom: 14px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .f2-pane-label .traffic{
+    display:flex; gap:5px;
+  }
+  .f2-pane-label .traffic span{ width:9px; height:9px; border-radius:50%; background:rgba(244,244,255,0.18); }
+  .f2-pane-label .traffic span:nth-child(1){ background:#FF5F57; }
+  .f2-pane-label .traffic span:nth-child(2){ background:#FEBC2E; }
+  .f2-pane-label .traffic span:nth-child(3){ background:#28C840; }
+
+  .f2-pane.old .f2-pane-label{ color:#6b6b80; }
+  .f2-pane.old code{ color:#6b6b80; white-space:pre; display:block; }
+  .f2-pane.old .tag{ color:#7a7a90; }
+  .f2-pane.old .at{ color:#666680; }
+  .f2-pane.old .tx{ color:#8a8aa0; }
+
+  .f2-pane.new{
+    border-color: rgba(91,76,255,0.35);
+    background: linear-gradient(180deg, #0D0E1E 0%, #08080F 100%);
+    box-shadow: 0 0 60px rgba(91,76,255,0.16);
+  }
+  .f2-pane.new .f2-pane-label{ color: var(--indigo-lt); }
+  .f2-pane.new code{ color: var(--ghost); white-space:pre; display:block; }
+  .f2-pane.new .tag{ color: var(--indigo-lt); }
+  .f2-pane.new .at{ color: var(--lime); }
+  .f2-pane.new .kw{ color:#FF6B6B; }
+  .f2-pane.new .tx{ color: var(--ghost); }
+
+  .f2-arrow{
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .f2-arrow .ring{
+    width:64px; height:64px; border-radius:50%;
+    background: var(--indigo);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 0 0 6px rgba(91,76,255,0.18), 0 20px 40px rgba(91,76,255,0.4);
+  }
+  .f2-arrow .ring svg{ width:26px; height:26px; color:#fff; }
+
+  .f2-badge{
+    position:absolute; top:18px; right:18px;
+    font-family:var(--mono); font-size:11px;
+    background: var(--lime); color: var(--void);
+    padding: 6px 10px; border-radius: 6px;
+    font-weight:600; letter-spacing:0.10em; text-transform:uppercase;
+  }
+
+  .f2-stats{
+    display:grid; grid-template-columns: repeat(4, 1fr); gap:16px;
+  }
+  .f2-stat{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding: 16px 18px;
+    background: rgba(28,28,46,0.6);
+  }
+  .f2-stat .lbl{
+    font-family:var(--mono); font-size:10px;
+    color:var(--lavender); letter-spacing:0.16em; text-transform:uppercase;
+    margin-bottom: 6px;
+  }
+  .f2-stat .val{
+    font-family:var(--syne); font-weight:700; color:var(--ghost);
+    font-size: 22px; letter-spacing:-0.01em;
+  }
+  .f2-stat .val .ac{ color: var(--lime); }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FRAME 3 — 8 TRANSFORMS GRID
+  ═══════════════════════════════════════════════════════════════ */
+  .f3 .ph-content{ padding-top:56px; }
+  .f3-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:26px; gap:24px; }
+  .f3-head h2{ font-family:var(--syne); font-weight:800; font-size:60px; line-height:1; letter-spacing:-0.03em; color:var(--ghost); }
+  .f3-head h2 .ac{ color: var(--indigo-lt); }
+  .f3-head p{ font-family:var(--dm); font-size:18px; color:var(--lavender); }
+  .f3-grid{
+    flex:1;
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .tcard{
+    background: var(--slate);
+    border:1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px 18px;
+    position:relative;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .tcard::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background: var(--ac);
+  }
+  .tcard-icon{
+    width:40px; height:40px; border-radius:9px;
+    background: color-mix(in oklab, var(--ac) 22%, transparent);
+    color: var(--ac);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--syne); font-weight:700; font-size:20px;
+    margin-bottom: 16px;
+  }
+  .tcard-name{
+    font-family:var(--syne); font-weight:700; font-size:16px;
+    color: var(--ghost); letter-spacing:-0.005em;
+    margin-bottom: 6px;
+  }
+  .tcard-desc{
+    font-family:var(--dm); font-size:12.5px; color:var(--lavender);
+    line-height:1.5; flex:1;
+  }
+  .tcard-tier{
+    margin-top: 14px;
+    font-family:var(--mono); font-size:9.5px; letter-spacing:0.16em; text-transform:uppercase;
+    color: var(--lavender);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .tcard-tier .pill{
+    padding:3px 8px; border-radius:4px;
+    background: rgba(244,244,255,0.06); color: var(--ghost);
+    border:1px solid var(--border);
+  }
+  .tcard-tier .pill.pro{ color: var(--indigo-lt); border-color: rgba(91,76,255,0.35); background: rgba(91,76,255,0.10); }
+  .tcard-tier .pill.prem{ color: var(--void); background: var(--lime); border-color: var(--lime); }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FRAME 4 — DEPLOYMENT (where it ships)
+  ═══════════════════════════════════════════════════════════════ */
+  .f4 .ph-content{ padding-top: 56px; }
+  .f4-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom: 30px; gap:24px; }
+  .f4-head h2{ font-family:var(--syne); font-weight:800; font-size:56px; line-height:1; letter-spacing:-0.03em; color:var(--ghost); max-width: 720px;}
+  .f4-head h2 .ac{ color: var(--lime); }
+  .f4-head p{ font-family:var(--dm); font-size:18px; color:var(--lavender); max-width: 340px; text-align:right; line-height:1.45; }
+
+  .f4-body{ flex:1; display:grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .f4-card{
+    background: var(--slate);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding: 24px 26px;
+    display:flex; flex-direction:column;
+  }
+  .f4-card h3{
+    font-family:var(--syne); font-weight:700; font-size: 22px; color:var(--ghost);
+    letter-spacing:-0.01em; margin-bottom: 18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .f4-card h3 .num{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.14em;
+    color: var(--indigo-lt); padding: 3px 8px; border-radius:5px;
+    background: rgba(91,76,255,0.12); border:1px solid rgba(91,76,255,0.30);
+    font-weight:500;
+  }
+  .platforms{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; flex:1; }
+  .plat{
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+    display:flex; align-items:center; gap:10px;
+    background: rgba(244,244,255,0.025);
+  }
+  .plat .glyph{
+    width:30px; height:30px; border-radius:7px;
+    background: var(--slate-lt);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--syne); font-weight:800; font-size:14px;
+    color: var(--ghost);
+  }
+  .plat .glyph.vc{ background:#000; color:#fff; }
+  .plat .glyph.nl{ background:#00C7B7; color:#063838; }
+  .plat .glyph.gh{ background:#24292E; color:#fff; }
+  .plat .glyph.cf{ background:#F38020; color:#fff; }
+  .plat .glyph.cp{ background:#2A5470; color:#fff; }
+  .plat .glyph.fb{ background:#FFA000; color:#fff; }
+  .plat-name{ font-family:var(--syne); font-weight:700; font-size:13px; color:var(--ghost); }
+  .plat-sub{ font-family:var(--mono); font-size:10px; color:var(--lavender); letter-spacing:0.08em; text-transform:uppercase; margin-top:1px; }
+
+  .terminal{
+    background:#06070C;
+    border:1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.85;
+    color: var(--ghost);
+    flex:1;
+  }
+  .terminal .cm{ color: var(--indigo-lt); }
+  .terminal .cm::before{ content:'$ '; color: var(--lavender); }
+  .terminal .ok{ color: var(--success); }
+  .terminal .info{ color:var(--lavender); }
+  .terminal .url{ color: var(--lime); text-decoration: underline; text-decoration-color: rgba(200,255,0,0.4); }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FRAME 5 — PRICING
+  ═══════════════════════════════════════════════════════════════ */
+  .f5 .ph-content{ padding-top: 56px; }
+  .f5-head{ text-align:center; margin-bottom: 30px; }
+  .f5-head h2{ font-family:var(--syne); font-weight:800; font-size:56px; line-height:1; letter-spacing:-0.03em; color:var(--ghost); }
+  .f5-head h2 .ac{ color: var(--indigo-lt); }
+  .f5-head p{ font-family:var(--dm); font-size:18px; color:var(--lavender); margin-top: 12px; }
+
+  .f5-grid{
+    flex:1;
+    display:grid;
+    grid-template-columns: 1fr 1.1fr 1fr;
+    gap: 18px;
+    align-items: stretch;
+  }
+  .pcard{
+    background: var(--slate);
+    border:1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 28px 26px;
+    display:flex; flex-direction:column;
+    position:relative;
+  }
+  .pcard.pro{
+    background: linear-gradient(160deg, #5B4CFF 0%, #4A3DDB 100%);
+    border-color: transparent;
+    box-shadow: 0 24px 60px rgba(91,76,255,0.35), 0 0 0 1px rgba(255,255,255,0.06) inset;
+  }
+  .pcard.prem{
+    background: linear-gradient(160deg, #15172A 0%, #0E1024 100%);
+    border-color: rgba(200,255,0,0.32);
+  }
+  .pcard-badge{
+    position:absolute; top:-12px; right:24px;
+    font-family:var(--mono); font-size:10px; letter-spacing:0.18em; text-transform:uppercase;
+    padding: 6px 11px; border-radius:6px;
+    background:var(--lime); color:var(--void);
+    font-weight:700;
+  }
+  .pcard-name{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.22em; text-transform:uppercase;
+    color: var(--lavender); margin-bottom: 14px;
+  }
+  .pcard.pro .pcard-name{ color: rgba(255,255,255,0.7); }
+  .pcard.prem .pcard-name{ color: var(--lime); }
+  .pcard-price{
+    font-family:var(--syne); font-weight:800; color: var(--ghost);
+    font-size: 60px; line-height:1; letter-spacing:-0.03em;
+    display:flex; align-items:baseline; gap: 6px;
+    margin-bottom: 6px;
+  }
+  .pcard.pro .pcard-price{ color: #fff; }
+  .pcard-price .per{
+    font-family:var(--dm); font-size:14px; font-weight:400; color:var(--lavender);
+    letter-spacing:0;
+  }
+  .pcard.pro .pcard-price .per{ color: rgba(255,255,255,0.65); }
+  .pcard-tag{
+    font-family:var(--dm); font-size:13px; color:var(--lavender); margin-bottom: 20px;
+  }
+  .pcard.pro .pcard-tag{ color: rgba(255,255,255,0.7); }
+  .pcard ul{ list-style:none; padding:0; margin: 0 0 22px; }
+  .pcard li{
+    display:flex; align-items:flex-start; gap:10px;
+    font-family:var(--dm); font-size:13.5px;
+    color: var(--ghost);
+    padding: 7px 0;
+  }
+  .pcard.pro li{ color: #fff; }
+  .pcard li svg{ width:14px; height:14px; flex-shrink:0; margin-top:4px; color: var(--success); }
+  .pcard.pro li svg{ color: var(--lime); }
+  .pcard.prem li svg{ color: var(--lime); }
+  .pcard-cta{
+    margin-top:auto;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-family:var(--syne); font-weight:700; font-size:14px;
+    text-align:center; letter-spacing: 0.005em;
+    border:1px solid var(--border-strong);
+    color: var(--ghost);
+    background: transparent;
+  }
+  .pcard.pro .pcard-cta{
+    background: var(--lime); color: var(--void); border-color: var(--lime);
+  }
+  .pcard.prem .pcard-cta{
+    background: var(--indigo); color: #fff; border-color: var(--indigo);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FRAME 6 — CTA / WAITLIST
+  ═══════════════════════════════════════════════════════════════ */
+  .f6{ background: linear-gradient(160deg, #5B4CFF 0%, #4030BB 60%, #2A1F8A 100%); }
+  .f6 .ph-bg-void, .f6 .ph-dotgrid{ display:none; }
+  .f6 .ph-content{ justify-content:center; padding-left: 110px; padding-right:110px; }
+  .f6::before{
+    content:''; position:absolute;
+    top:-200px; right:-200px; width:760px; height:760px;
+    background: radial-gradient(circle, rgba(200,255,0,0.16) 0%, transparent 60%);
+    pointer-events:none; z-index:0;
+  }
+  .f6::after{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at 50% 50%, black 0%, transparent 70%);
+  }
+  .f6 .ph-content{ z-index:1; }
+  .f6 .ph-eyebrow{
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.2);
+    color: #fff;
+  }
+  .f6 .ph-eyebrow .dot{ background: var(--lime); }
+  .f6-title{
+    font-family:var(--syne); font-weight:800;
+    font-size: 112px; line-height: 0.94; letter-spacing:-0.035em;
+    color: #fff;
+  }
+  .f6-title .ac{ color: var(--lime); }
+  .f6-sub{
+    font-family:var(--dm); font-size: 22px; color: rgba(255,255,255,0.78);
+    line-height: 1.5; margin-top: 24px; max-width: 740px;
+  }
+  .f6-form{
+    margin-top: 38px;
+    display:flex; gap: 10px; max-width: 600px;
+  }
+  .f6-input{
+    flex:1;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-family: var(--dm); font-size: 16px;
+    color: rgba(255,255,255,0.85);
+  }
+  .f6-cta{
+    background: var(--lime); color: var(--void);
+    font-family: var(--syne); font-weight:700; font-size: 15px;
+    padding: 0 26px; border-radius: 12px;
+    display:flex; align-items:center; gap: 8px;
+    box-shadow: 0 12px 32px rgba(200,255,0,0.30);
+  }
+  .f6-perks{
+    margin-top: 30px;
+    display:flex; gap: 28px;
+    font-family:var(--mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+    color: rgba(255,255,255,0.75);
+  }
+  .f6-perks span b{ color:#fff; font-weight:600; }
+  .f6-perks .glyph{ color: var(--lime); margin-right: 6px; }
+  .f6 .ph-watermark .logo-mark{ background: rgba(255,255,255,0.18); }
+  .f6 .ph-frame-no{ color: rgba(255,255,255,0.7); }
+  .f6 .ph-frame-no b{ color: #fff; }
+
+  /* ─────── ZOOM MODE ─────── */
+  body.zoom .topbar, body.zoom .stage-head, body.zoom .thumbs, body.zoom .toolbar{ display:none; }
+  body.zoom .stage{ padding: 0; }
+  body.zoom .viewer{ max-width:none; width: 1270px; }
+  body.zoom .frame-stage{ border-radius: 0; box-shadow:none; }
+
+  @media (max-width: 1340px){
+    .topbar{ padding: 18px 22px; }
+    .stage{ padding: 26px 22px 18px; }
+    .toolbar{ padding: 14px 22px 28px; }
+    .navbtn.prev{ left:12px; }
+    .navbtn.next{ right:12px; }
+  }
+  @media (max-width: 900px){
+    .meta{ display:none; }
+    .crumb{ display:none; }
+    .thumbs{ grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body data-screen-label="PH Gallery">
+
+<div class="page-bg"></div>
+<div class="dot-grid"></div>
+
+<!-- ───────── TOP BAR ───────── -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/>
+          <path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+          <rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/>
+          <circle cx="32" cy="8" r="3" fill="#C8FF00"/>
+        </svg>
+      </div>
+      <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+    </div>
+    <div class="crumb">
+      <span class="pill">Launch</span>
+      <span>Product Hunt Gallery</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="meta">
+      <span>Frame · <b>1270×760</b></span>
+      <span>Set · <b>6 images</b></span>
+      <span>Stage <b>7/7</b></span>
+    </div>
+    <a class="iconbtn" href="../NuSite Landing Page.html" title="Back to landing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+  </div>
+</header>
+
+<!-- ───────── STAGE ───────── -->
+<main class="stage">
+  <div class="stage-head">
+    <div>
+      <div class="stage-title" id="frameTitle">Cover · Your site. Reimagined.</div>
+      <div class="stage-sub" id="frameSub">Opening frame — the headline claim</div>
+    </div>
+    <div class="stage-counter"><span class="cur" id="ctCur">01</span><span class="sep">/</span><span class="tot">06</span></div>
+  </div>
+
+  <div class="viewer">
+    <button class="navbtn prev" id="prevBtn" title="Previous (←)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="navbtn next" id="nextBtn" title="Next (→)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+
+    <div class="frame-stage" id="frameStage">
+      <!-- ════════════ FRAME 1 ════════════ -->
+      <div class="frame f1 active" data-title="Cover · Your site. Reimagined." data-sub="Opening frame — the headline claim">
+        <div class="frame-inner">
+          <div class="ph-bg-void"></div>
+          <div class="ph-dotgrid"></div>
+          <div class="f1-glow"></div>
+          <div class="ph-content">
+            <div class="ph-eyebrow"><span class="dot"></span>Now live on Product Hunt</div>
+            <h1 class="f1-title">
+              Your&nbsp;site.<br/>
+              <span class="ri">Reimagined.</span>
+            </h1>
+            <p class="f1-sub">
+              Paste old code. Drop a URL. Upload a ZIP. <b>NuSite transforms any website</b> into something modern, responsive and ready to ship — in seconds.
+            </p>
+            <div class="f1-tagrow">
+              <span class="f1-tag live">Live today</span>
+              <span class="f1-tag">8 AI transforms</span>
+              <span class="f1-tag">Paste · ZIP · URL · GitHub</span>
+              <span class="f1-tag">Free tier · No card</span>
+            </div>
+          </div>
+          <div class="ph-watermark">
+            <div class="logo-mark">
+              <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                <rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <circle cx="32" cy="8" r="3" fill="#C8FF00"/>
+              </svg>
+            </div>
+            <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+          </div>
+          <div class="ph-frame-no">01 · <b>Cover</b></div>
+        </div>
+      </div>
+
+      <!-- ════════════ FRAME 2 — Engine ════════════ -->
+      <div class="frame f2" data-title="The engine · Before / after" data-sub="The product as the visual">
+        <div class="frame-inner">
+          <div class="ph-bg-void"></div>
+          <div class="ph-dotgrid"></div>
+          <div class="ph-content">
+            <div class="f2-head">
+              <h2>Paste in.<br/><span class="ac">Modern site out.</span></h2>
+              <p>The same page, transformed in seconds. No re-build, no design budget, no babysitting.</p>
+            </div>
+            <div class="f2-panes">
+              <div class="f2-pane old">
+                <div class="f2-pane-label">
+                  <span>Before · index.html</span>
+                  <span class="traffic"><span></span><span></span><span></span></span>
+                </div>
+<code><span class="tag">&lt;table</span> <span class="at">border=</span><span class="tx">"1"</span> <span class="at">cellpadding=</span><span class="tx">"4"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;tr&gt;&lt;td</span> <span class="at">bgcolor=</span><span class="tx">"#003366"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;font</span> <span class="at">color=</span><span class="tx">"white"</span><span class="tag">&gt;</span>Acme Inc<span class="tag">&lt;/font&gt;</span>
+  <span class="tag">&lt;/td&gt;&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;&lt;td&gt;</span>
+    <span class="tag">&lt;center&gt;</span><span class="tag">&lt;b&gt;</span>Welcome<span class="tag">&lt;/b&gt;</span><span class="tag">&lt;/center&gt;</span>
+    <span class="tx">Hand-coded in '07.</span>
+    <span class="tag">&lt;br&gt;&lt;br&gt;</span>
+    <span class="tag">&lt;img</span> <span class="at">src=</span><span class="tx">"logo.gif"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="tag">&lt;/table&gt;</span></code>
+              </div>
+              <div class="f2-arrow">
+                <div class="ring">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                </div>
+              </div>
+              <div class="f2-pane new">
+                <span class="f2-badge">✦ Transform complete</span>
+                <div class="f2-pane-label">
+                  <span>After · index.tsx</span>
+                  <span class="traffic"><span></span><span></span><span></span></span>
+                </div>
+<code><span class="kw">export</span> <span class="kw">const</span> <span class="tx">Hero</span> = () =&gt; (
+  <span class="tag">&lt;section</span> <span class="at">className=</span><span class="tx">"hero"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;header</span> <span class="at">className=</span><span class="tx">"glass"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;Logo</span> <span class="at">name=</span><span class="tx">"Acme"</span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/header&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>Welcome<span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;p&gt;</span>Rebuilt with care.<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;Image</span> <span class="at">src=</span><span class="tx">"/logo.svg"</span><span class="tag"> /&gt;</span>
+  <span class="tag">&lt;/section&gt;</span>
+);</code>
+              </div>
+            </div>
+            <div class="f2-stats">
+              <div class="f2-stat"><div class="lbl">Time</div><div class="val"><span class="ac">~12s</span> / page</div></div>
+              <div class="f2-stat"><div class="lbl">Lines saved</div><div class="val">~340 →&nbsp;<span class="ac">88</span></div></div>
+              <div class="f2-stat"><div class="lbl">Lighthouse</div><div class="val">38 →&nbsp;<span class="ac">98</span></div></div>
+              <div class="f2-stat"><div class="lbl">Deploy</div><div class="val">Vercel,&nbsp;Netlify…</div></div>
+            </div>
+          </div>
+          <div class="ph-watermark">
+            <div class="logo-mark">
+              <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                <rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <circle cx="32" cy="8" r="3" fill="#C8FF00"/>
+              </svg>
+            </div>
+            <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+          </div>
+          <div class="ph-frame-no">02 · <b>The engine</b></div>
+        </div>
+      </div>
+
+      <!-- ════════════ FRAME 3 — 8 transforms ════════════ -->
+      <div class="frame f3" data-title="8 ways to transform" data-sub="The transformation menu">
+        <div class="frame-inner">
+          <div class="ph-bg-void"></div>
+          <div class="ph-dotgrid"></div>
+          <div class="ph-content">
+            <div class="f3-head">
+              <h2>8 ways to <span class="ac">transform.</span></h2>
+              <p>Pick one. Stack them. Make it yours.</p>
+            </div>
+            <div class="f3-grid">
+              <div class="tcard" style="--ac:#00E5FF">
+                <div class="tcard-icon">▢</div>
+                <div class="tcard-name">Static → Responsive</div>
+                <div class="tcard-desc">Make any old page work on every screen — fluid grids, breakpoints, touch targets.</div>
+                <div class="tcard-tier"><span>Mobile-first</span><span class="pill">Starter</span></div>
+              </div>
+              <div class="tcard" style="--ac:#FF6B6B">
+                <div class="tcard-icon">✦</div>
+                <div class="tcard-name">Add CSS Motion</div>
+                <div class="tcard-desc">Tasteful entrance, hover and scroll-reveal animations — never gimmicky.</div>
+                <div class="tcard-tier"><span>Tasteful</span><span class="pill">Starter</span></div>
+              </div>
+              <div class="tcard" style="--ac:#61DAFB">
+                <div class="tcard-icon">⚛</div>
+                <div class="tcard-name">HTML → React</div>
+                <div class="tcard-desc">Turn flat pages into clean component trees with props, hooks and routing.</div>
+                <div class="tcard-tier"><span>Componentised</span><span class="pill pro">Pro</span></div>
+              </div>
+              <div class="tcard" style="--ac:#A78BFA">
+                <div class="tcard-icon">◈</div>
+                <div class="tcard-name">Modernise Design</div>
+                <div class="tcard-desc">Type system, spacing, colour — drag your 2015 layout into 2026.</div>
+                <div class="tcard-tier"><span>Type · Colour · Grid</span><span class="pill">Starter</span></div>
+              </div>
+              <div class="tcard" style="--ac:#FCD34D">
+                <div class="tcard-icon">◑</div>
+                <div class="tcard-name">Add Dark Mode</div>
+                <div class="tcard-desc">A proper token-driven dark theme that respects <code>prefers-color-scheme</code>.</div>
+                <div class="tcard-tier"><span>Token-driven</span><span class="pill pro">Pro</span></div>
+              </div>
+              <div class="tcard" style="--ac:#34D399">
+                <div class="tcard-icon">⚡</div>
+                <div class="tcard-name">Performance Fix</div>
+                <div class="tcard-desc">Image, font, JS and CSS surgery — Lighthouse 90+ out of the box.</div>
+                <div class="tcard-tier"><span>Lighthouse 90+</span><span class="pill pro">Pro</span></div>
+              </div>
+              <div class="tcard" style="--ac:#F97316">
+                <div class="tcard-icon">♿</div>
+                <div class="tcard-name">Accessibility Audit</div>
+                <div class="tcard-desc">Fix contrast, labels, focus rings and ARIA. Compliance, not just a sticker.</div>
+                <div class="tcard-tier"><span>WCAG 2.2 AA</span><span class="pill pro">Pro</span></div>
+              </div>
+              <div class="tcard" style="--ac:#38BDF8">
+                <div class="tcard-icon">~</div>
+                <div class="tcard-name">Convert to Tailwind</div>
+                <div class="tcard-desc">Strip stale stylesheets, port to utility classes with a sensible config.</div>
+                <div class="tcard-tier"><span>Utility-first</span><span class="pill prem">Premium</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-watermark">
+            <div class="logo-mark">
+              <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                <rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <circle cx="32" cy="8" r="3" fill="#C8FF00"/>
+              </svg>
+            </div>
+            <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+          </div>
+          <div class="ph-frame-no">03 · <b>8 transforms</b></div>
+        </div>
+      </div>
+
+      <!-- ════════════ FRAME 4 — Deployment ════════════ -->
+      <div class="frame f4" data-title="Ships where you ship" data-sub="Deployment guides for every host">
+        <div class="frame-inner">
+          <div class="ph-bg-void"></div>
+          <div class="ph-dotgrid"></div>
+          <div class="ph-content">
+            <div class="f4-head">
+              <h2>Built to ship —<br/>where <span class="ac">you</span> already ship.</h2>
+              <p>Every transform comes with a deployment guide tailored to your host. Copy, paste, push.</p>
+            </div>
+            <div class="f4-body">
+              <div class="f4-card">
+                <h3><span class="num">01</span>Pick your host</h3>
+                <div class="platforms">
+                  <div class="plat"><div class="glyph vc">▲</div><div><div class="plat-name">Vercel</div><div class="plat-sub">vercel deploy</div></div></div>
+                  <div class="plat"><div class="glyph nl">N</div><div><div class="plat-name">Netlify</div><div class="plat-sub">netlify deploy</div></div></div>
+                  <div class="plat"><div class="glyph gh">⌥</div><div><div class="plat-name">GitHub Pages</div><div class="plat-sub">gh-pages branch</div></div></div>
+                  <div class="plat"><div class="glyph cf">CF</div><div><div class="plat-name">Cloudflare Pages</div><div class="plat-sub">wrangler pages</div></div></div>
+                  <div class="plat"><div class="glyph cp">cP</div><div><div class="plat-name">cPanel / SFTP</div><div class="plat-sub">rsync upload</div></div></div>
+                  <div class="plat"><div class="glyph fb">🔥</div><div><div class="plat-name">Firebase Hosting</div><div class="plat-sub">firebase deploy</div></div></div>
+                </div>
+              </div>
+              <div class="f4-card">
+                <h3><span class="num">02</span>Run the guide</h3>
+                <div class="terminal">
+<span class="info">// generated guide · vercel</span>
+<span class="cm">git init &amp;&amp; git add -A</span>
+<span class="cm">git commit -m "nusite: modernised"</span>
+<span class="cm">vercel --prod</span>
+
+<span class="ok">✓</span>  Building project
+<span class="ok">✓</span>  Uploaded 12 files
+<span class="ok">✓</span>  Deployed to <span class="url">acme.vercel.app</span>
+
+<span class="info">// next steps</span>
+<span class="cm">vercel domains add acme.com</span>
+<span class="ok">✓</span>  Linked custom domain
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-watermark">
+            <div class="logo-mark">
+              <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                <rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <circle cx="32" cy="8" r="3" fill="#C8FF00"/>
+              </svg>
+            </div>
+            <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+          </div>
+          <div class="ph-frame-no">04 · <b>Deploy</b></div>
+        </div>
+      </div>
+
+      <!-- ════════════ FRAME 5 — Pricing ════════════ -->
+      <div class="frame f5" data-title="Simple, honest pricing" data-sub="Three tiers, no surprises">
+        <div class="frame-inner">
+          <div class="ph-bg-void"></div>
+          <div class="ph-dotgrid"></div>
+          <div class="ph-content">
+            <div class="f5-head">
+              <h2>Simple, <span class="ac">honest</span> pricing.</h2>
+              <p>Start free. Upgrade when you ship.</p>
+            </div>
+            <div class="f5-grid">
+              <div class="pcard">
+                <div class="pcard-name">Starter</div>
+                <div class="pcard-price">$0<span class="per">/forever</span></div>
+                <div class="pcard-tag">No card. Just try it.</div>
+                <ul>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>5 transforms / month</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>Paste input</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>3 transform types</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>Watermarked output</li>
+                </ul>
+                <div class="pcard-cta">Get Started Free</div>
+              </div>
+              <div class="pcard pro">
+                <div class="pcard-badge">Most popular</div>
+                <div class="pcard-name">Pro</div>
+                <div class="pcard-price">$10<span class="per">/month</span></div>
+                <div class="pcard-tag">For people who actually ship.</div>
+                <ul>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>50 transforms / month</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>Paste · ZIP · URL inputs</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>All 8 transforms</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>Deploy guides · No watermark</li>
+                </ul>
+                <div class="pcard-cta">Start Pro</div>
+              </div>
+              <div class="pcard prem">
+                <div class="pcard-name">Premium</div>
+                <div class="pcard-price">$20<span class="per">/month</span></div>
+                <div class="pcard-tag">Agencies and power users.</div>
+                <ul>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>Unlimited transforms</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>GitHub repo input</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>Custom prompt &amp; stack transforms</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>Priority support · Early access</li>
+                </ul>
+                <div class="pcard-cta">Go Premium</div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-watermark">
+            <div class="logo-mark">
+              <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                <rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <circle cx="32" cy="8" r="3" fill="#C8FF00"/>
+              </svg>
+            </div>
+            <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+          </div>
+          <div class="ph-frame-no">05 · <b>Pricing</b></div>
+        </div>
+      </div>
+
+      <!-- ════════════ FRAME 6 — Try it ════════════ -->
+      <div class="frame f6" data-title="Try it today" data-sub="Closing CTA — drives the upvote click">
+        <div class="frame-inner">
+          <div class="ph-content">
+            <div class="ph-eyebrow"><span class="dot"></span>Live on Product Hunt today</div>
+            <h1 class="f6-title">
+              Old code in.<br/>
+              <span class="ac">New site out.</span>
+            </h1>
+            <p class="f6-sub">
+              NuSite is live. Free tier, no card. Bring a messy page — we'll hand you a modern one. If you like it, an upvote on Product Hunt makes our week.
+            </p>
+            <div class="f6-form">
+              <div class="f6-input">you@startup.com</div>
+              <div class="f6-cta">Try NuSite free →</div>
+            </div>
+            <div class="f6-perks">
+              <span><span class="glyph">✦</span><b>Free</b> tier</span>
+              <span><span class="glyph">⚡</span>30-day <b>Pro</b> trial</span>
+              <span><span class="glyph">🎁</span>Founding <b>discount</b></span>
+            </div>
+          </div>
+          <div class="ph-watermark">
+            <div class="logo-mark" style="background:rgba(255,255,255,0.18)">
+              <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                <rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/>
+                <circle cx="32" cy="8" r="3" fill="#C8FF00"/>
+              </svg>
+            </div>
+            <div class="wordmark"><span class="nu" style="color:#fff">Nu</span><span class="site">Site</span></div>
+          </div>
+          <div class="ph-frame-no">06 · <b>Try it</b></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ───────── THUMBNAILS ───────── -->
+  <div class="thumbs" id="thumbs"></div>
+</main>
+
+<!-- ───────── TOOLBAR ───────── -->
+<footer class="toolbar">
+  <button class="tool" id="zoomBtn" title="Toggle full-bleed (Z)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M3 9V3h6"/><path d="M21 9V3h-6"/><path d="M3 15v6h6"/><path d="M21 15v6h-6"/></svg>
+    Full-bleed
+  </button>
+  <span class="tool"><kbd>←</kbd> <kbd>→</kbd> Navigate</span>
+  <span class="tool"><kbd>Z</kbd> Full-bleed</span>
+  <span class="tool"><kbd>1</kbd>–<kbd>6</kbd> Jump</span>
+</footer>
+
+<script>
+  // ───────── State ─────────
+  const total = 6;
+  let cur = 0;
+  const frames = Array.from(document.querySelectorAll('.frame'));
+  const stage = document.getElementById('frameStage');
+  const thumbsWrap = document.getElementById('thumbs');
+  const ctCur = document.getElementById('ctCur');
+  const titleEl = document.getElementById('frameTitle');
+  const subEl = document.getElementById('frameSub');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  // ───────── Build thumbnails by cloning frame markup and scaling ─────────
+  frames.forEach((fr, i) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb' + (i === 0 ? ' active' : '');
+    thumb.dataset.idx = i;
+    const inner = fr.querySelector('.frame-inner').cloneNode(true);
+    inner.classList.add('thumb-inner-cloned');
+    const tnInner = document.createElement('div');
+    tnInner.className = 'thumb-inner';
+    tnInner.appendChild(inner);
+    thumb.appendChild(tnInner);
+    const no = document.createElement('div');
+    no.className = 'thumb-no';
+    no.textContent = String(i+1).padStart(2,'0');
+    thumb.appendChild(no);
+    thumb.addEventListener('click', () => go(i));
+    thumbsWrap.appendChild(thumb);
+  });
+
+  // ───────── Scale frame-inner to fit its container ─────────
+  function rescale(){
+    const fitW = stage.clientWidth;
+    const scale = fitW / 1270;
+    stage.querySelectorAll('.frame-inner').forEach(el => {
+      el.style.transform = `scale(${scale})`;
+    });
+    document.querySelectorAll('.thumb').forEach(t => {
+      const w = t.clientWidth;
+      const s = w / 1270;
+      const inner = t.querySelector('.thumb-inner > .frame-inner') || t.querySelector('.thumb-inner');
+      if(inner) inner.style.transform = `scale(${s})`;
+    });
+  }
+
+  function go(i){
+    cur = ((i % total) + total) % total;
+    frames.forEach((fr, idx) => fr.classList.toggle('active', idx === cur));
+    document.querySelectorAll('.thumb').forEach((t, idx) => t.classList.toggle('active', idx === cur));
+    ctCur.textContent = String(cur+1).padStart(2,'0');
+    const f = frames[cur];
+    titleEl.textContent = f.dataset.title || '';
+    subEl.textContent = f.dataset.sub || '';
+  }
+
+  prevBtn.addEventListener('click', () => go(cur - 1));
+  nextBtn.addEventListener('click', () => go(cur + 1));
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowLeft') go(cur - 1);
+    else if(e.key === 'ArrowRight') go(cur + 1);
+    else if(e.key.toLowerCase() === 'z'){ document.body.classList.toggle('zoom'); rescale(); }
+    else if(/^[1-6]$/.test(e.key)){ go(parseInt(e.key,10) - 1); }
+  });
+  document.getElementById('zoomBtn').addEventListener('click', () => {
+    document.body.classList.toggle('zoom');
+    document.getElementById('zoomBtn').classList.toggle('active');
+    rescale();
+  });
+
+  window.addEventListener('resize', rescale);
+  rescale();
+</script>
+
+</body>
+</html>

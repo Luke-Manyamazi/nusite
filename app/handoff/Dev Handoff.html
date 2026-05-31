@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NuSite — Stage 8 · Developer Handoff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root{
+    --indigo:#5B4CFF;
+    --indigo-lt:#7B6FFF;
+    --indigo-dk:#3D33B8;
+    --lime:#C8FF00;
+    --void:#0A0A0F;
+    --void-2:#06060A;
+    --ghost:#F4F4FF;
+    --slate:#1C1C2E;
+    --slate-lt:#252538;
+    --slate-hi:#2F2F45;
+    --lavender:#8B85C1;
+    --success:#22D47A;
+    --warning:#F5A623;
+    --error:#FF4C4C;
+    --border:rgba(244,244,255,0.08);
+    --border-strong:rgba(244,244,255,0.16);
+    --syne:'Syne',sans-serif;
+    --dm:'DM Sans',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+
+  html{ scroll-behavior: smooth; }
+  html,body{ height:100%; background: var(--void-2); color:var(--ghost); font-family:var(--dm); -webkit-font-smoothing:antialiased; }
+  body{ overflow-x: hidden; }
+  a{ color: inherit; text-decoration: none; }
+  button{ font:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+
+  .page-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(900px 600px at 85% -10%, rgba(91,76,255,0.16), transparent 60%),
+      radial-gradient(700px 500px at 0% 100%, rgba(200,255,0,0.04), transparent 60%);
+  }
+  .dot-grid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image: radial-gradient(rgba(244,244,255,0.030) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 75%);
+  }
+
+  /* TOPBAR */
+  .topbar{
+    position: sticky; top: 0; z-index: 50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 36px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(14px);
+    background: rgba(6,6,10,0.78);
+  }
+  .topbar-left{ display:flex; align-items:center; gap:18px; }
+  .logo{ display:flex; align-items:center; gap:11px; }
+  .logo-mark{
+    width:32px; height:32px; background:var(--indigo);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 6px 18px rgba(91,76,255,0.35);
+  }
+  .logo-mark svg{ width:19px; height:19px; }
+  .wordmark{
+    font-family:var(--syne); font-weight:800; font-size:18px;
+    letter-spacing:-0.03em; line-height:1;
+  }
+  .wordmark .nu{ color:var(--indigo); }
+  .wordmark .site{ color:var(--ghost); }
+  .crumb{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.16em; text-transform:uppercase;
+    padding-left:18px; border-left:1px solid var(--border);
+    display:flex; align-items:center; gap:10px;
+  }
+  .crumb .pill{
+    background:rgba(91,76,255,0.12); color:var(--indigo-lt);
+    padding:4px 10px; border-radius:100px;
+    border:1px solid rgba(91,76,255,0.25);
+  }
+  .topbar-right{ display:flex; align-items:center; gap:14px; }
+  .meta{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.12em; text-transform:uppercase;
+    display:flex; gap:18px;
+  }
+  .meta b{ color:var(--ghost); font-weight:500; }
+  .ghostbtn{
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ghost);
+    padding: 8px 14px; border-radius: 8px;
+    background: var(--slate); border: 1px solid var(--border);
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .ghostbtn:hover{ border-color: var(--border-strong); background: var(--slate-lt); }
+  .ghostbtn svg{ width: 13px; height: 13px; }
+
+  /* ─────── LAYOUT ─────── */
+  .shell{
+    position: relative; z-index: 2;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+
+  /* SIDEBAR — nav */
+  aside.toc{
+    position: sticky;
+    top: 64px; /* below topbar */
+    align-self: start;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    padding: 32px 8px 32px 36px;
+    border-right: 1px solid var(--border);
+  }
+  .toc-eyebrow{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .toc-title{
+    font-family: var(--syne); font-weight: 700; font-size: 16px;
+    color: var(--ghost); letter-spacing: -0.005em;
+    margin-bottom: 18px;
+  }
+  .toc-list{
+    display: flex; flex-direction: column;
+    border-left: 1px solid var(--border);
+    margin-left: 4px;
+  }
+  .toc-list a{
+    font-family: var(--dm); font-size: 13px;
+    color: var(--lavender); line-height: 1.4;
+    padding: 7px 0 7px 18px;
+    margin-left: -1px;
+    border-left: 1px solid transparent;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .toc-list a:hover{ color: var(--ghost); }
+  .toc-list a.active{
+    color: var(--ghost);
+    border-left-color: var(--indigo-lt);
+  }
+  .toc-list a .num{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.1em;
+    margin-right: 8px;
+  }
+  .toc-list a.active .num{ color: var(--indigo-lt); }
+
+  /* MAIN COLUMN */
+  main.doc{
+    padding: 36px 56px 80px;
+    max-width: 980px;
+  }
+
+  /* HERO */
+  .hero{
+    margin-bottom: 56px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow{
+    display:inline-flex; align-items:center; gap: 10px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 7px 14px; border-radius: 100px;
+    background: rgba(91,76,255,0.10);
+    border: 1px solid rgba(91,76,255,0.25);
+    margin-bottom: 22px;
+  }
+  .hero-eyebrow .dot{
+    width:6px; height:6px; border-radius:50%; background:var(--lime);
+    box-shadow:0 0 10px var(--lime);
+  }
+  .hero h1{
+    font-family: var(--syne); font-weight: 800;
+    font-size: clamp(40px, 4.6vw, 64px);
+    line-height: 0.98; letter-spacing: -0.035em;
+    color: var(--ghost);
+    margin-bottom: 20px;
+    text-wrap: balance;
+  }
+  .hero h1 .ac{ color: var(--indigo-lt); }
+  .hero p.lede{
+    font-family: var(--dm); font-size: 19px; line-height: 1.6;
+    color: var(--lavender); max-width: 70ch;
+    margin-bottom: 28px;
+  }
+  .hero p.lede b{ color: var(--ghost); font-weight: 500; }
+  .hero-meta{
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  }
+  .hm{
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(28,28,46,0.5);
+  }
+  .hm .lbl{
+    font-family: var(--mono); font-size: 9.5px;
+    color: var(--lavender); letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .hm .val{
+    font-family: var(--syne); font-weight: 700; font-size: 15px;
+    color: var(--ghost); letter-spacing: -0.005em;
+  }
+  .hm .val .ac{ color: var(--indigo-lt); }
+
+  /* TYPE */
+  h2.sec{
+    font-family: var(--syne); font-weight: 800;
+    font-size: 34px; line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--ghost);
+    margin: 56px 0 8px;
+    text-wrap: balance;
+  }
+  h2.sec .ac{ color: var(--indigo-lt); }
+  .sec-sub{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  h3.sub{
+    font-family: var(--syne); font-weight: 700;
+    font-size: 21px; line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--ghost);
+    margin: 28px 0 10px;
+  }
+  h3.sub .num{
+    font-family: var(--mono); font-weight: 600; font-size: 13px;
+    color: var(--indigo-lt); margin-right: 10px;
+    letter-spacing: 0.06em;
+  }
+
+  p{
+    font-family: var(--dm); font-size: 15px; line-height: 1.65;
+    color: var(--ghost);
+    margin-bottom: 14px;
+    max-width: 70ch;
+    text-wrap: pretty;
+  }
+  p.muted{ color: var(--lavender); }
+  p b{ color: var(--ghost); font-weight: 600; }
+  p code, span.code{
+    font-family: var(--mono); font-size: 0.92em;
+    padding: 1px 6px; border-radius: 4px;
+    background: rgba(91,76,255,0.10);
+    border: 1px solid rgba(91,76,255,0.20);
+    color: var(--indigo-lt);
+  }
+  ul.list, ol.list{
+    padding-left: 22px;
+    margin-bottom: 18px;
+    max-width: 70ch;
+  }
+  ul.list li, ol.list li{
+    font-family: var(--dm); font-size: 15px; line-height: 1.6;
+    color: var(--ghost);
+    margin-bottom: 8px;
+  }
+  ul.list li::marker{ color: var(--indigo-lt); }
+  ol.list li::marker{ color: var(--indigo-lt); font-family: var(--mono); font-size: 12px; }
+
+  /* CARDS */
+  .card{
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 18px 0 26px;
+  }
+  .card-head{
+    display:flex; align-items:center; justify-content:space-between;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .card-title{
+    font-family: var(--syne); font-weight: 700; font-size: 15px;
+    color: var(--ghost); letter-spacing: -0.005em;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .card-title .glyph{
+    width: 26px; height: 26px; border-radius: 7px;
+    background: rgba(91,76,255,0.14); color: var(--indigo-lt);
+    display:inline-flex; align-items:center; justify-content:center;
+    font-family: var(--syne); font-weight: 800; font-size: 12px;
+  }
+
+  /* STATUS PILLS */
+  .pill{
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 5px;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-weight: 500;
+  }
+  .pill.done{ color: var(--success); background: rgba(34,212,122,0.10); border: 1px solid rgba(34,212,122,0.30); }
+  .pill.todo{ color: var(--warning); background: rgba(245,166,35,0.10); border: 1px solid rgba(245,166,35,0.30); }
+  .pill.partial{ color: var(--indigo-lt); background: rgba(91,76,255,0.10); border: 1px solid rgba(91,76,255,0.30); }
+  .pill.miss{ color: var(--error); background: rgba(255,76,76,0.10); border: 1px solid rgba(255,76,76,0.30); }
+  .pill.ghost{ color: var(--lavender); background: rgba(244,244,255,0.04); border: 1px solid var(--border); }
+
+  /* TABLES */
+  .tbl{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 22px;
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .tbl thead th{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.16em; text-transform: uppercase;
+    text-align: left;
+    padding: 12px 16px;
+    background: rgba(244,244,255,0.03);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+  .tbl td{
+    padding: 14px 16px;
+    font-family: var(--dm); font-size: 13.5px;
+    color: var(--ghost);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .tbl tr:last-child td{ border-bottom: none; }
+  .tbl td b{ font-weight: 600; }
+  .tbl td .mono{
+    font-family: var(--mono); font-size: 12.5px;
+    color: var(--indigo-lt);
+  }
+  .tbl td .muted{ color: var(--lavender); display: block; margin-top: 2px; font-size: 12.5px; }
+  .tbl tr:hover td{ background: rgba(91,76,255,0.04); }
+  .tbl td.method{
+    font-family: var(--mono); font-size: 11px;
+    font-weight: 600; letter-spacing: 0.08em;
+    width: 76px;
+  }
+  .tbl td.method .m{
+    padding: 3px 7px; border-radius: 4px;
+    display: inline-block;
+  }
+  .tbl td.method .m.GET{ background: rgba(34,212,122,0.10); color: var(--success); border: 1px solid rgba(34,212,122,0.30); }
+  .tbl td.method .m.POST{ background: rgba(91,76,255,0.10); color: var(--indigo-lt); border: 1px solid rgba(91,76,255,0.30); }
+  .tbl td.method .m.PUT,
+  .tbl td.method .m.PATCH{ background: rgba(245,166,35,0.10); color: var(--warning); border: 1px solid rgba(245,166,35,0.30); }
+  .tbl td.method .m.DEL{ background: rgba(255,76,76,0.10); color: var(--error); border: 1px solid rgba(255,76,76,0.30); }
+
+  /* CODE BLOCKS */
+  pre.code{
+    background: #06070C;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 14px 0 22px;
+    font-family: var(--mono); font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ghost);
+    overflow: auto;
+  }
+  pre.code .cm{ color: var(--lavender); }
+  pre.code .kw{ color: #FF6B6B; }
+  pre.code .st{ color: var(--lime); }
+  pre.code .ky{ color: var(--indigo-lt); }
+  pre.code .nm{ color: #FCD34D; }
+  pre.code .ty{ color: #38BDF8; }
+  pre.code .dim{ color: var(--lavender); }
+
+  pre.code .code-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    margin: -18px -22px 14px;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--lavender);
+    background: rgba(244,244,255,0.02);
+  }
+  pre.code .code-bar b{ color: var(--ghost); font-weight: 500; }
+  pre.code .code-bar .traffic{ display:flex; gap: 5px; }
+  pre.code .code-bar .traffic span{ width: 8px; height: 8px; border-radius: 50%; background: rgba(244,244,255,0.18); }
+
+  /* CALLOUTS */
+  .callout{
+    border: 1px solid;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0 22px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .callout .icon{
+    width: 26px; height: 26px; border-radius: 7px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink: 0;
+    font-family: var(--syne); font-weight: 800; font-size: 14px;
+  }
+  .callout-body{ flex: 1; }
+  .callout-title{
+    font-family: var(--syne); font-weight: 700; font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .callout p{ font-size: 13.5px; line-height: 1.55; margin-bottom: 0; max-width: none; }
+  .callout.indigo{ background: rgba(91,76,255,0.06); border-color: rgba(91,76,255,0.30); }
+  .callout.indigo .icon{ background: var(--indigo); color: #fff; }
+  .callout.indigo .callout-title{ color: var(--indigo-lt); }
+  .callout.lime{ background: rgba(200,255,0,0.04); border-color: rgba(200,255,0,0.30); }
+  .callout.lime .icon{ background: var(--lime); color: var(--void); }
+  .callout.lime .callout-title{ color: var(--lime); }
+  .callout.warn{ background: rgba(245,166,35,0.06); border-color: rgba(245,166,35,0.30); }
+  .callout.warn .icon{ background: var(--warning); color: var(--void); }
+  .callout.warn .callout-title{ color: var(--warning); }
+  .callout.err{ background: rgba(255,76,76,0.06); border-color: rgba(255,76,76,0.30); }
+  .callout.err .icon{ background: var(--error); color: #fff; }
+  .callout.err .callout-title{ color: var(--error); }
+
+  /* DEFINITION LISTS */
+  .deflist{
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 10px 22px;
+    margin: 14px 0 22px;
+  }
+  .deflist dt{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+    padding-top: 2px;
+  }
+  .deflist dd{
+    font-family: var(--dm); font-size: 14.5px;
+    color: var(--ghost); line-height: 1.6;
+  }
+  .deflist dd b{ font-weight: 600; }
+
+  /* STACK GRID */
+  .stack-grid{
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+    margin: 18px 0 26px;
+  }
+  .stack-card{
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .stack-card .head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 12px;
+  }
+  .stack-card .head .label{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .stack-card h4{
+    font-family: var(--syne); font-weight: 700; font-size: 17px;
+    color: var(--ghost); margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .stack-card h4 .ac{ color: var(--indigo-lt); }
+  .stack-card p.why{
+    font-family: var(--dm); font-size: 13px; color: var(--lavender);
+    line-height: 1.55; margin: 0;
+  }
+  .stack-card .alts{
+    margin-top: 10px;
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--lavender); letter-spacing: 0.04em;
+  }
+  .stack-card .alts b{ color: var(--ghost); font-weight: 500; }
+
+  /* STAGE TIMELINE */
+  .timeline{
+    display: flex; flex-direction: column; gap: 0;
+    margin: 16px 0 26px;
+    border-left: 2px solid var(--border);
+    padding-left: 22px;
+    position: relative;
+  }
+  .timeline .tl-item{
+    position: relative;
+    padding: 12px 0;
+  }
+  .timeline .tl-item::before{
+    content: ''; position: absolute;
+    left: -29px; top: 18px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--success); border: 2px solid var(--void-2);
+  }
+  .timeline .tl-item.current::before{ background: var(--indigo); box-shadow: 0 0 0 4px rgba(91,76,255,0.25); }
+  .timeline .tl-item.todo::before{ background: var(--slate-lt); border-color: var(--lavender); }
+  .timeline .tl-head{
+    display:flex; align-items:center; gap: 12px;
+    margin-bottom: 4px;
+  }
+  .timeline .tl-num{
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--lavender); letter-spacing: 0.14em;
+  }
+  .timeline .tl-title{
+    font-family: var(--syne); font-weight: 700; font-size: 16px;
+    color: var(--ghost); letter-spacing: -0.005em;
+  }
+  .timeline .tl-desc{
+    font-family: var(--dm); font-size: 13.5px;
+    color: var(--lavender); line-height: 1.55;
+    max-width: 64ch;
+  }
+
+  /* CHECKLIST */
+  .checklist{
+    display: flex; flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 16px 0 22px;
+    background: var(--slate);
+  }
+  .check{
+    display:flex; align-items:flex-start; gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .check:last-child{ border-bottom: none; }
+  .check .box{
+    width: 18px; height: 18px; border-radius: 5px;
+    border: 1.5px solid var(--lavender);
+    flex-shrink: 0; margin-top: 1px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .check.done .box{
+    border-color: var(--success); background: var(--success); color: var(--void);
+  }
+  .check.done .box svg{ width: 12px; height: 12px; }
+  .check .txt{
+    font-family: var(--dm); font-size: 14px;
+    color: var(--ghost); line-height: 1.5;
+  }
+  .check .txt .who{
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+    margin-left: 8px;
+    padding: 2px 7px; border-radius: 4px;
+    background: rgba(244,244,255,0.06);
+  }
+  .check.done .txt{ color: var(--lavender); }
+  .check.done .txt s{ text-decoration: line-through; }
+
+  /* COMPACT SECTION DIVIDERS */
+  hr.sep{
+    border: none; height: 1px;
+    background: var(--border);
+    margin: 36px 0;
+  }
+
+  /* FOOTER */
+  .doc-foot{
+    margin-top: 60px;
+    padding-top: 36px;
+    border-top: 1px solid var(--border);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  }
+  .doc-foot .ff h5{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .doc-foot p{ font-size: 13.5px; }
+
+  /* PRINT */
+  @media print{
+    .topbar, aside.toc, .doc-foot{ display: none; }
+    body, .page-bg, .dot-grid{ background: #fff !important; color: #14141F !important; }
+    .shell{ display: block; }
+    main.doc{ padding: 24px; max-width: none; color: #14141F; }
+    *{ color: #14141F !important; background-image: none !important; }
+    .card, .callout, pre.code, .tbl, .stack-card, .hm{
+      background: #fff !important; border-color: #d9d9e0 !important;
+      box-shadow: none !important;
+    }
+    .pill, .callout .icon{ border: 1px solid #14141F !important; }
+    pre.code{ font-size: 11px; }
+    h2.sec{ page-break-after: avoid; }
+    .tbl, pre.code, .card, .callout{ page-break-inside: avoid; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 1100px){
+    .shell{ grid-template-columns: 1fr; }
+    aside.toc{
+      position: static; height: auto;
+      border-right: none; border-bottom: 1px solid var(--border);
+      padding: 18px 36px;
+    }
+    aside.toc .toc-list{
+      flex-direction: row; flex-wrap: wrap; gap: 4px;
+      border-left: none;
+    }
+    aside.toc .toc-list a{
+      padding: 6px 10px;
+      border: 1px solid var(--border); border-radius: 6px;
+      margin-left: 0;
+    }
+    aside.toc .toc-list a.active{ border-color: var(--indigo); }
+    main.doc{ padding: 28px 36px 60px; max-width: none; }
+    .hero-meta{ grid-template-columns: repeat(2, 1fr); }
+    .stack-grid{ grid-template-columns: 1fr; }
+    .deflist{ grid-template-columns: 130px 1fr; gap: 8px 16px; }
+  }
+  @media (max-width: 720px){
+    main.doc{ padding: 22px; }
+    .topbar{ padding: 14px 18px; }
+    aside.toc{ padding: 16px 18px; }
+    .crumb{ display: none; }
+    .meta{ display: none; }
+    h1{ font-size: 36px !important; }
+    h2.sec{ font-size: 26px; }
+    .deflist{ grid-template-columns: 1fr; }
+    .tbl{ font-size: 12px; }
+    .tbl thead{ display: none; }
+    .tbl tr{ display: block; border-bottom: 1px solid var(--border); padding: 10px; }
+    .tbl td{ display: block; border: none; padding: 4px 0; }
+  }
+</style>
+</head>
+<body data-screen-label="Stage 8 · Dev Handoff">
+
+<div class="page-bg"></div>
+<div class="dot-grid"></div>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+      <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+    </div>
+    <div class="crumb">
+      <span class="pill">Stage 8</span>
+      <span>Developer Handoff</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="meta">
+      <span>Doc · <b>v1.0</b></span>
+      <span>Date · <b>19 May 2026</b></span>
+      <span>Owner · <b>Camluk</b></span>
+    </div>
+    <button class="ghostbtn" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
+      Print / PDF
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- ─────────── SIDEBAR ─────────── -->
+  <aside class="toc">
+    <div class="toc-eyebrow">Stage 8</div>
+    <div class="toc-title">Developer Handoff</div>
+    <nav class="toc-list" id="tocNav">
+      <a href="#status"><span class="num">01</span>Project status</a>
+      <a href="#what-built"><span class="num">02</span>What's built · what's not</a>
+      <a href="#screens"><span class="num">03</span>Screen-by-screen</a>
+      <a href="#models"><span class="num">04</span>Data models</a>
+      <a href="#api"><span class="num">05</span>API surface</a>
+      <a href="#engine"><span class="num">06</span>The transform engine</a>
+      <a href="#third-party"><span class="num">07</span>Third-party services</a>
+      <a href="#mock-real"><span class="num">08</span>Mock → real swap table</a>
+      <a href="#stack"><span class="num">09</span>Stack recommendation</a>
+      <a href="#repo"><span class="num">10</span>Repository structure</a>
+      <a href="#launch"><span class="num">11</span>Launch-day checklist</a>
+      <a href="#open"><span class="num">12</span>Open questions</a>
+    </nav>
+  </aside>
+
+  <!-- ─────────── MAIN ─────────── -->
+  <main class="doc">
+
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="hero-eyebrow"><span class="dot"></span>Stage 8 of 7 + 1 · Developer Handoff</div>
+      <h1>Take the prototypes <span class="ac">and ship them.</span></h1>
+      <p class="lede">
+        Seven stages of design are done. Brand, landing, onboarding, app, engine, billing, launch assets — all exist as hi-fi clickable HTML in this project. <b>None of it is wired to a real backend.</b> This document is the bridge: what each prototype mocks, what needs to be real, the API and data model to build to, and a launch-day checklist.
+      </p>
+      <div class="hero-meta">
+        <div class="hm"><div class="lbl">Design status</div><div class="val">7 / 7 · <span class="ac">complete</span></div></div>
+        <div class="hm"><div class="lbl">Build status</div><div class="val">0 / 7 · <span class="ac">to do</span></div></div>
+        <div class="hm"><div class="lbl">Launch target</div><div class="val">~<span class="ac">4–6 weeks</span></div></div>
+        <div class="hm"><div class="lbl">Audience</div><div class="val">Engineers · <span class="ac">contractors</span></div></div>
+      </div>
+    </section>
+
+    <!-- ═════════════════════════ 01 STATUS ═════════════════════════ -->
+    <h2 class="sec" id="status">01 · Project status</h2>
+    <div class="sec-sub">Where each stage stands today</div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-head"><span class="tl-num">STAGE 01</span><span class="tl-title">Brand</span><span class="pill done">Design done · ✓ Build done</span></div>
+        <p class="tl-desc">Tokens, type, logo, wordmark, voice. Lives in <code>uploads/nusite-brand-board.html</code>. No build work needed beyond porting tokens into the codebase as CSS custom properties.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-head"><span class="tl-num">STAGE 02</span><span class="tl-title">Landing page</span><span class="pill done">Design done</span> <span class="pill partial">Build partial</span></div>
+        <p class="tl-desc">Single self-contained HTML. The page is already deployable as a static file. <b>Two waitlist forms (<code>waitlistForm</code>, <code>footForm</code>) fake their submit</b> — replace each with a real POST.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-head"><span class="tl-num">STAGE 03</span><span class="tl-title">Onboarding</span><span class="pill done">Design done</span> <span class="pill todo">Build to do</span></div>
+        <p class="tl-desc">Signup, magic-link sign-in, host-picker, first-transform walkthrough. Mocked in <code>app/onboarding.jsx</code>. Auth flow needs a real provider.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-head"><span class="tl-num">STAGE 04</span><span class="tl-title">App / dashboard</span><span class="pill done">Design done</span> <span class="pill todo">Build to do</span></div>
+        <p class="tl-desc">Project list, recent transforms, usage meter, account settings. Mocked in <code>NuSite App.html</code>. Data is currently hard-coded React state.</p>
+      </div>
+      <div class="tl-item current">
+        <div class="tl-head"><span class="tl-num">STAGE 05</span><span class="tl-title">Engine</span><span class="pill done">Design done</span> <span class="pill miss">Build is the work</span></div>
+        <p class="tl-desc">The transform pipeline. Input → choose transform → planner → file-by-file generator → diff → deploy guide. <b>This is the core product</b> and the largest engineering surface area.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-head"><span class="tl-num">STAGE 06</span><span class="tl-title">Billing</span><span class="pill done">Design done</span> <span class="pill todo">Build to do</span></div>
+        <p class="tl-desc">Pricing, subscription management, invoices, plan changes, dunning. Needs a payment processor wired up.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-head"><span class="tl-num">STAGE 07</span><span class="tl-title">Launch assets</span><span class="pill done">Design done · ✓ Ready</span></div>
+        <p class="tl-desc">PH gallery, OG card, six emails, two posts. All in <code>launch/</code>. Ready to ship to PH, Mailchimp/Resend, LinkedIn, dev.to.</p>
+      </div>
+      <div class="tl-item current">
+        <div class="tl-head"><span class="tl-num">STAGE 08</span><span class="tl-title">Build &amp; ship</span><span class="pill partial">In progress · this doc</span></div>
+        <p class="tl-desc">This document. Hand to engineering (in-house, freelancer, or AI agent), and use the checklist at the bottom to track progress to launch.</p>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════ 02 WHAT'S BUILT ═════════════════════════ -->
+    <h2 class="sec" id="what-built">02 · What's built<br/><span class="ac">vs.</span> what's not</h2>
+    <div class="sec-sub">A clean line between design comp and real product</div>
+
+    <div class="callout indigo">
+      <div class="icon">!</div>
+      <div class="callout-body">
+        <div class="callout-title">Read this paragraph before anything else</div>
+        <p>Every <code>.html</code> file in this project is a <b>design comp</b>. The pages render real HTML/CSS/JS, but every form submit, button, transform and payment is local-state theatre. The product behaves like the prototype <i>looks</i> — that's the design contract. Engineering's job is to make the wires real without changing the shape of any screen.</p>
+      </div>
+    </div>
+
+    <h3 class="sub"><span class="num">2.1</span>What you can do today (design fidelity)</h3>
+    <ul class="list">
+      <li>Open the landing page in any browser — fully responsive, dark/light toggle works, animations work.</li>
+      <li>Click through onboarding, the app shell and the engine — all transitions are real, all states are accessible.</li>
+      <li>Use the launch-assets hub to copy email HTML, post text, and view the PH gallery at real size.</li>
+      <li>Show clients/investors — the comps are demo-able.</li>
+    </ul>
+
+    <h3 class="sub"><span class="num">2.2</span>What does <em>not</em> work yet</h3>
+    <ul class="list">
+      <li><b>Auth.</b> Sign-in/up are scripted state changes. No session, no user.</li>
+      <li><b>Persistence.</b> Nothing survives a refresh except where <code>localStorage</code> is used for UI prefs (theme, etc).</li>
+      <li><b>The actual transform.</b> The engine prototype shows a canned before/after — the model isn't being called.</li>
+      <li><b>Payments.</b> Pricing buttons don't take money. The billing page reads invoice rows from a hard-coded array.</li>
+      <li><b>File I/O.</b> ZIP upload UI works visually; no parsing or storage.</li>
+      <li><b>Deployment.</b> The deploy-guide screen prints a tailored guide but doesn't actually call any host's API.</li>
+    </ul>
+
+    <!-- ═════════════════════════ 03 SCREEN BY SCREEN ═════════════════════════ -->
+    <h2 class="sec" id="screens">03 · Screen-by-screen<br/><span class="ac">build map</span></h2>
+    <div class="sec-sub">Every prototype, what it mocks, what needs to be real</div>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th style="width:30%">Screen</th>
+          <th style="width:45%">Mocks today</th>
+          <th>Make real</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Landing</b><span class="muted">NuSite Landing Page.html</span></td>
+          <td>Waitlist form fakes <code>.success</code> swap after a 400ms timeout. Footer mini-form same.</td>
+          <td><span class="mono">POST /v1/waitlist</span> → email-provider list add. Confirm email (Stage 7 template) sent on 200.</td>
+        </tr>
+        <tr>
+          <td><b>Signup / Sign-in</b><span class="muted">app/auth.jsx</span></td>
+          <td>Sets a fake user object in React state, routes to <code>/app</code>.</td>
+          <td>Magic-link via Stage 7 template. Session cookie / JWT issued on link click.</td>
+        </tr>
+        <tr>
+          <td><b>Onboarding</b><span class="muted">app/onboarding.jsx</span></td>
+          <td>3-step wizard (name → host pick → first transform). State held in memory.</td>
+          <td>Persist host preference on <code>User</code>. Skip if already complete.</td>
+        </tr>
+        <tr>
+          <td><b>Dashboard</b><span class="muted">NuSite App.html</span></td>
+          <td>Project list and usage meter from hard-coded array.</td>
+          <td><span class="mono">GET /v1/projects</span>, <span class="mono">GET /v1/usage/current</span>.</td>
+        </tr>
+        <tr>
+          <td><b>Engine · input</b><span class="muted">NuSite Engine.html</span></td>
+          <td>Paste / URL / ZIP / GitHub tabs. ZIP file is read in-browser but never sent.</td>
+          <td><span class="mono">POST /v1/projects</span> creates a project with input source. Persist files in object storage.</td>
+        </tr>
+        <tr>
+          <td><b>Engine · transform pick</b><span class="muted">NuSite Engine.html</span></td>
+          <td>Selecting transforms toggles local state.</td>
+          <td><span class="mono">POST /v1/transforms</span> with <code>projectId</code> + <code>types[]</code>. Returns a job ID.</td>
+        </tr>
+        <tr>
+          <td><b>Engine · running</b><span class="muted">NuSite Engine.html</span></td>
+          <td>Scripted progress bar with canned log lines.</td>
+          <td>Server-sent events or WS stream of progress lines from the worker. See §06.</td>
+        </tr>
+        <tr>
+          <td><b>Engine · diff</b><span class="muted">NuSite Engine.html</span></td>
+          <td>Pre-baked before/after panes.</td>
+          <td><span class="mono">GET /v1/transforms/:id/diff</span> returns per-file diffs + summaries.</td>
+        </tr>
+        <tr>
+          <td><b>Engine · deploy guide</b><span class="muted">NuSite Engine.html</span></td>
+          <td>Renders a host-specific guide from the host the user picked.</td>
+          <td><span class="mono">GET /v1/transforms/:id/deploy?host=vercel</span> → markdown or rendered HTML. Initially static-templated; later, host-aware.</td>
+        </tr>
+        <tr>
+          <td><b>Pricing</b><span class="muted">NuSite Landing Page.html</span></td>
+          <td>Plan cards, monthly/annual toggle, all client-side.</td>
+          <td>Buttons → <span class="mono">POST /v1/checkout</span> → Stripe/Paystack hosted checkout.</td>
+        </tr>
+        <tr>
+          <td><b>Billing</b><span class="muted">NuSite Billing.html</span></td>
+          <td>Invoice list, payment method, plan info — all hard-coded.</td>
+          <td><span class="mono">GET /v1/subscription</span>, <span class="mono">GET /v1/invoices</span>. PDF on <span class="mono">/invoices/:id.pdf</span>.</td>
+        </tr>
+        <tr>
+          <td><b>Account / settings</b><span class="muted">NuSite App.html</span></td>
+          <td>Form values are state.</td>
+          <td><span class="mono">PATCH /v1/me</span>. <span class="mono">POST /v1/api-keys</span> for Premium API access.</td>
+        </tr>
+        <tr>
+          <td><b>Magic-link / receipt / nudge emails</b><span class="muted">launch/Email Templates.html</span></td>
+          <td>Rendered HTML.</td>
+          <td>Triggered by Resend (or Mailchimp Transactional / Postmark). Use the source-view export.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ═════════════════════════ 04 DATA MODELS ═════════════════════════ -->
+    <h2 class="sec" id="models">04 · Data models</h2>
+    <div class="sec-sub">Minimum viable schema — extend as needed</div>
+
+    <p class="muted">A small, sane core. Use Postgres or your ORM of choice. JSON columns are fine for transform options and deploy metadata.</p>
+
+    <pre class="code"><div class="code-bar"><span><span class="traffic"><span></span><span></span><span></span></span> <b>schema.sql</b> · core tables</span><span>Postgres · v1</span></div><span class="kw">create table</span> <span class="ty">users</span> (
+  <span class="ky">id</span>             uuid <span class="kw">primary key default</span> gen_random_uuid(),
+  <span class="ky">email</span>          <span class="ty">text</span> <span class="kw">unique not null</span>,
+  <span class="ky">name</span>           <span class="ty">text</span>,
+  <span class="ky">host_pref</span>      <span class="ty">text</span>,                    <span class="cm">-- 'vercel' | 'netlify' | …</span>
+  <span class="ky">plan</span>           <span class="ty">text</span> <span class="kw">not null default</span> <span class="st">'starter'</span>,  <span class="cm">-- starter|pro|premium</span>
+  <span class="ky">stripe_customer_id</span> <span class="ty">text</span>,
+  <span class="ky">founding</span>       <span class="ty">boolean</span> <span class="kw">default</span> <span class="st">false</span>,
+  <span class="ky">created_at</span>     <span class="ty">timestamptz</span> <span class="kw">default</span> now()
+);
+
+<span class="kw">create table</span> <span class="ty">projects</span> (
+  <span class="ky">id</span>             uuid <span class="kw">primary key default</span> gen_random_uuid(),
+  <span class="ky">user_id</span>        uuid <span class="kw">references</span> users(id) <span class="kw">on delete cascade</span>,
+  <span class="ky">name</span>           <span class="ty">text</span> <span class="kw">not null</span>,
+  <span class="ky">source_kind</span>    <span class="ty">text</span> <span class="kw">not null</span>,        <span class="cm">-- paste | zip | url | github</span>
+  <span class="ky">source_meta</span>    <span class="ty">jsonb</span> <span class="kw">default</span> <span class="st">'{}'</span>,    <span class="cm">-- repo url, file count, etc.</span>
+  <span class="ky">storage_prefix</span> <span class="ty">text</span>,                    <span class="cm">-- s3://nusite/projects/&lt;id&gt;/in/</span>
+  <span class="ky">created_at</span>     <span class="ty">timestamptz</span> <span class="kw">default</span> now()
+);
+
+<span class="kw">create table</span> <span class="ty">transforms</span> (
+  <span class="ky">id</span>             uuid <span class="kw">primary key default</span> gen_random_uuid(),
+  <span class="ky">project_id</span>     uuid <span class="kw">references</span> projects(id) <span class="kw">on delete cascade</span>,
+  <span class="ky">user_id</span>        uuid <span class="kw">references</span> users(id),
+  <span class="ky">types</span>          <span class="ty">text</span>[] <span class="kw">not null</span>,         <span class="cm">-- ['responsive','dark-mode',…]</span>
+  <span class="ky">options</span>        <span class="ty">jsonb</span> <span class="kw">default</span> <span class="st">'{}'</span>,
+  <span class="ky">status</span>         <span class="ty">text</span> <span class="kw">not null default</span> <span class="st">'queued'</span>,  <span class="cm">-- queued|running|done|failed</span>
+  <span class="ky">progress</span>       <span class="ty">int</span>  <span class="kw">default</span> 0,
+  <span class="ky">output_prefix</span>  <span class="ty">text</span>,                    <span class="cm">-- s3://…/out/</span>
+  <span class="ky">diff_summary</span>   <span class="ty">jsonb</span>,                   <span class="cm">-- per-file change counts</span>
+  <span class="ky">tokens_used</span>    <span class="ty">int</span>,
+  <span class="ky">cost_cents</span>     <span class="ty">int</span>,
+  <span class="ky">created_at</span>     <span class="ty">timestamptz</span> <span class="kw">default</span> now(),
+  <span class="ky">finished_at</span>    <span class="ty">timestamptz</span>
+);
+
+<span class="kw">create table</span> <span class="ty">usage_events</span> (        <span class="cm">-- one row per billable transform</span>
+  <span class="ky">id</span>             uuid <span class="kw">primary key default</span> gen_random_uuid(),
+  <span class="ky">user_id</span>        uuid <span class="kw">references</span> users(id),
+  <span class="ky">transform_id</span>   uuid <span class="kw">references</span> transforms(id),
+  <span class="ky">period</span>         <span class="ty">date</span> <span class="kw">not null</span>,         <span class="cm">-- first of month</span>
+  <span class="ky">created_at</span>     <span class="ty">timestamptz</span> <span class="kw">default</span> now()
+);
+
+<span class="kw">create table</span> <span class="ty">waitlist</span> (
+  <span class="ky">id</span>             uuid <span class="kw">primary key default</span> gen_random_uuid(),
+  <span class="ky">email</span>          <span class="ty">text</span> <span class="kw">unique not null</span>,
+  <span class="ky">source</span>         <span class="ty">text</span>,                    <span class="cm">-- 'landing' | 'footer' | 'ph'</span>
+  <span class="ky">utm</span>            <span class="ty">jsonb</span>,
+  <span class="ky">converted</span>      <span class="ty">boolean</span> <span class="kw">default</span> <span class="st">false</span>,
+  <span class="ky">created_at</span>     <span class="ty">timestamptz</span> <span class="kw">default</span> now()
+);</pre>
+
+    <div class="callout warn">
+      <div class="icon">⚡</div>
+      <div class="callout-body">
+        <div class="callout-title">Storage rule</div>
+        <p>User-uploaded source files and transform outputs go to <b>object storage</b> (S3 / R2), <b>not</b> Postgres. Database stores only IDs, metadata, and diff summaries. The README promises code is "processed securely and not stored permanently" — implement that with TTL'd S3 prefixes for free-tier users.</p>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════ 05 API SURFACE ═════════════════════════ -->
+    <h2 class="sec" id="api">05 · API surface</h2>
+    <div class="sec-sub">Minimum endpoints to ship the prototypes for real · REST · JSON · cookie auth</div>
+
+    <h3 class="sub"><span class="num">5.1</span>Auth</h3>
+    <table class="tbl">
+      <thead><tr><th style="width:80px">Method</th><th>Path</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="method"><span class="m POST">POST</span></td><td><span class="mono">/v1/auth/link</span></td><td>Send magic-link to email. Body: <code>{email}</code>. Triggers Stage 7 magic-link template.</td></tr>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/auth/callback?token=…</span></td><td>Verify token, set session cookie, redirect to <code>/app</code>.</td></tr>
+        <tr><td class="method"><span class="m POST">POST</span></td><td><span class="mono">/v1/auth/logout</span></td><td>Clear session.</td></tr>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/me</span></td><td>Current user — plan, usage, host pref. Returns 401 when not signed in.</td></tr>
+        <tr><td class="method"><span class="m PATCH">PATCH</span></td><td><span class="mono">/v1/me</span></td><td>Update profile (name, host pref).</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub"><span class="num">5.2</span>Waitlist</h3>
+    <table class="tbl">
+      <thead><tr><th style="width:80px">Method</th><th>Path</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="method"><span class="m POST">POST</span></td><td><span class="mono">/v1/waitlist</span></td><td>Body: <code>{email, source, utm}</code>. Sends Stage 7 waitlist-confirmation email. Idempotent.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub"><span class="num">5.3</span>Projects &amp; transforms</h3>
+    <table class="tbl">
+      <thead><tr><th style="width:80px">Method</th><th>Path</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/projects</span></td><td>List projects with their latest transform status.</td></tr>
+        <tr><td class="method"><span class="m POST">POST</span></td><td><span class="mono">/v1/projects</span></td><td>Create. Accepts multipart/form-data (ZIP), <code>{paste:string}</code>, <code>{url:string}</code>, or <code>{githubRepo:"owner/repo"}</code>.</td></tr>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/projects/:id</span></td><td>Project details + file tree.</td></tr>
+        <tr><td class="method"><span class="m DEL">DEL</span></td><td><span class="mono">/v1/projects/:id</span></td><td>Delete project and all its storage.</td></tr>
+        <tr><td class="method"><span class="m POST">POST</span></td><td><span class="mono">/v1/transforms</span></td><td>Body: <code>{projectId, types[], options}</code>. Returns 202 + <code>{id, status:'queued'}</code>.</td></tr>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/transforms/:id</span></td><td>Job state. Poll fallback.</td></tr>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/transforms/:id/stream</span></td><td>Server-sent events: <code>progress</code>, <code>log</code>, <code>file_done</code>, <code>complete</code>, <code>error</code>.</td></tr>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/transforms/:id/diff</span></td><td>Per-file diff for the engine's diff screen.</td></tr>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/transforms/:id/download</span></td><td>Streams a ZIP of the output tree.</td></tr>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/transforms/:id/deploy?host=vercel</span></td><td>Generated deployment guide for the chosen host.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub"><span class="num">5.4</span>Billing</h3>
+    <table class="tbl">
+      <thead><tr><th style="width:80px">Method</th><th>Path</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="method"><span class="m POST">POST</span></td><td><span class="mono">/v1/checkout</span></td><td>Body: <code>{plan:'pro'|'premium', interval:'month'|'year'}</code>. Returns hosted checkout URL.</td></tr>
+        <tr><td class="method"><span class="m POST">POST</span></td><td><span class="mono">/v1/billing/portal</span></td><td>Returns customer portal URL.</td></tr>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/subscription</span></td><td>Plan, status, next renewal, payment method.</td></tr>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/invoices</span></td><td>List invoices (matches billing screen).</td></tr>
+        <tr><td class="method"><span class="m GET">GET</span></td><td><span class="mono">/v1/usage/current</span></td><td>Current period usage for the dashboard meter.</td></tr>
+        <tr><td class="method"><span class="m POST">POST</span></td><td><span class="mono">/v1/webhooks/stripe</span></td><td>Stripe webhook handler. Updates <code>users.plan</code>, sends Stage 7 receipt.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub"><span class="num">5.5</span>Example payloads</h3>
+
+    <pre class="code"><div class="code-bar"><span><span class="traffic"><span></span><span></span><span></span></span> <b>POST</b> /v1/transforms · request</span><span>auth required</span></div>{
+  <span class="ky">"projectId"</span>: <span class="st">"prj_8a7e3b…"</span>,
+  <span class="ky">"types"</span>: [<span class="st">"responsive"</span>, <span class="st">"dark-mode"</span>, <span class="st">"a11y"</span>],
+  <span class="ky">"options"</span>: {
+    <span class="ky">"react"</span>: <span class="nm">false</span>,
+    <span class="ky">"tailwind"</span>: <span class="nm">false</span>,
+    <span class="ky">"prompt"</span>: <span class="nm">null</span>
+  }
+}
+
+<span class="cm">// 202 Accepted</span>
+{
+  <span class="ky">"id"</span>: <span class="st">"trf_4f12a9…"</span>,
+  <span class="ky">"status"</span>: <span class="st">"queued"</span>,
+  <span class="ky">"streamUrl"</span>: <span class="st">"/v1/transforms/trf_4f12a9…/stream"</span>
+}</pre>
+
+    <pre class="code"><div class="code-bar"><span><span class="traffic"><span></span><span></span><span></span></span> <b>GET</b> /v1/transforms/:id/stream · SSE</span><span>text/event-stream</span></div><span class="cm">event: progress</span>
+<span class="cm">data:</span> {<span class="ky">"pct"</span>:14, <span class="ky">"phase"</span>:<span class="st">"plan"</span>}
+
+<span class="cm">event: log</span>
+<span class="cm">data:</span> {<span class="ky">"line"</span>:<span class="st">"Reading 24 files · 18kb total"</span>}
+
+<span class="cm">event: file_done</span>
+<span class="cm">data:</span> {<span class="ky">"path"</span>:<span class="st">"src/Hero.tsx"</span>, <span class="ky">"added"</span>:42, <span class="ky">"removed"</span>:78}
+
+<span class="cm">event: complete</span>
+<span class="cm">data:</span> {<span class="ky">"status"</span>:<span class="st">"done"</span>, <span class="ky">"tokens"</span>:184302, <span class="ky">"costCents"</span>:34}</pre>
+
+    <!-- ═════════════════════════ 06 ENGINE ═════════════════════════ -->
+    <h2 class="sec" id="engine">06 · The transform engine</h2>
+    <div class="sec-sub">The pipeline behind Stage 5 — the heart of the product</div>
+
+    <p>The engine prototype shows the journey; this is what the journey actually requires.</p>
+
+    <h3 class="sub"><span class="num">6.1</span>Pipeline</h3>
+    <ol class="list">
+      <li><b>Ingest.</b> Normalize the source — paste, ZIP, URL fetch, or git clone — into a flat <code>{path → content}</code> map in object storage. Reject anything outside an allow-list (<code>.html .css .js .ts .tsx .jsx .json .md .svg</code>) and binary assets &gt; threshold.</li>
+      <li><b>Plan.</b> One LLM call. Given the file tree + selected transforms, emit a structured plan: per-file <code>{action: keep|rewrite|delete, why}</code>, plus any new files to create. <b>This is the bit that prevents the model from rewriting everything.</b></li>
+      <li><b>Generate.</b> Per-file LLM calls, in parallel where independent. Pass the file content + plan entry + relevant siblings (e.g. when porting CSS to Tailwind, pass the styles file alongside).</li>
+      <li><b>Reconcile.</b> Detect broken refs (an <code>img src</code> that no longer exists), missing imports, type errors. One repair pass.</li>
+      <li><b>Diff.</b> Compute per-file diffs and a one-line summary per file. Persist as <code>diff_summary</code> on the transform.</li>
+      <li><b>Deploy guide.</b> Templated markdown per host, parameterised with the project's framework guess (Vite, Next, plain static).</li>
+    </ol>
+
+    <h3 class="sub"><span class="num">6.2</span>Run-time shape</h3>
+    <div class="deflist">
+      <dt>Queue</dt>
+      <dd>Background worker (BullMQ on Redis, or Cloudflare Queues). The API enqueues; the worker runs the pipeline. <b>Never run an LLM call in an HTTP request handler</b> — they time out and the user re-submits.</dd>
+      <dt>Streaming</dt>
+      <dd>SSE from API to client. Worker publishes progress events to Redis; API subscribes and forwards. Fall back to polling.</dd>
+      <dt>Concurrency</dt>
+      <dd>One transform per user at a time on Starter / Pro. Up to 3 in flight on Premium. Avoids accidental DOS via the paste box.</dd>
+      <dt>Cost ceiling</dt>
+      <dd>Hard cap per transform (tokens × price). Bail with a friendly error if a transform projects to exceed it — usually a sign of an oversized input.</dd>
+    </div>
+
+    <h3 class="sub"><span class="num">6.3</span>Model choice</h3>
+    <p>Start with one model (Anthropic <code>claude-sonnet-X</code> or equivalent). Build the prompt-cache to keep the file-tree context cheap across the per-file calls. Don't over-engineer model routing in v1 — pick one and tune the prompt.</p>
+
+    <div class="callout indigo">
+      <div class="icon">★</div>
+      <div class="callout-body">
+        <div class="callout-title">Diff trust is product-critical</div>
+        <p>The engine prototype's diff screen is doing the heavy lifting of "would I actually ship this output?" In production, never show a green-light "done" until the per-file diffs render and at least the headline files have a summary the user can scan. If they can't see what changed and why, they won't deploy it, and you lose the conversion.</p>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════ 07 THIRD PARTY ═════════════════════════ -->
+    <h2 class="sec" id="third-party">07 · Third-party services</h2>
+    <div class="sec-sub">What to plug in · and what each one does for us</div>
+
+    <table class="tbl">
+      <thead><tr><th style="width:24%">Service</th><th style="width:24%">Recommended</th><th>Why · scope</th></tr></thead>
+      <tbody>
+        <tr><td><b>LLM provider</b></td><td>Anthropic (Claude Sonnet)</td><td>Code-quality output, large context, prompt caching for the plan→per-file fan-out. Fallback: OpenAI.</td></tr>
+        <tr><td><b>Auth</b></td><td>Clerk <span class="muted">or roll-your-own magic-link</span></td><td>Magic-link sign-in is what the prototypes show. Clerk gets you there in a day; roll-your-own is fine if you want zero SaaS dependency.</td></tr>
+        <tr><td><b>Database</b></td><td>Neon / Supabase Postgres</td><td>Serverless Postgres. Branching for previews. Generous free tier for launch.</td></tr>
+        <tr><td><b>Object storage</b></td><td>Cloudflare R2 <span class="muted">or AWS S3</span></td><td>Project sources + transform outputs. R2 = no egress fees, which matters when users download ZIPs.</td></tr>
+        <tr><td><b>Queue / cache</b></td><td>Upstash Redis</td><td>BullMQ-style job queue + SSE pub/sub. Cheap.</td></tr>
+        <tr><td><b>Payments</b></td><td>Stripe <span class="muted">(Paystack as ZA fallback)</span></td><td>Subscription, customer portal, webhooks, founding-discount promo codes. ZA-based; if Stripe-in-ZA is a hassle for the company entity, Paystack does the same job in-region.</td></tr>
+        <tr><td><b>Transactional email</b></td><td>Resend</td><td>The Stage 7 templates drop in directly. Good DX for HTML emails.</td></tr>
+        <tr><td><b>Marketing email</b></td><td>Loops <span class="muted">or Mailchimp</span></td><td>For the waitlist list + launch-day broadcast. Loops integrates well with Resend.</td></tr>
+        <tr><td><b>Hosting · marketing</b></td><td>Vercel / Cloudflare Pages</td><td>Landing page is static — push the file as <code>index.html</code>.</td></tr>
+        <tr><td><b>Hosting · app + API</b></td><td>Vercel <span class="muted">or Fly.io for the worker</span></td><td>Worker is long-running — Vercel functions won't cut it. Run the queue worker on Fly / Railway / a tiny VPS.</td></tr>
+        <tr><td><b>Monitoring</b></td><td>Sentry + Axiom</td><td>Errors + structured logs for the worker. Cheap, fast.</td></tr>
+        <tr><td><b>Analytics</b></td><td>Plausible</td><td>Privacy-friendly. No cookie banner needed.</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ═════════════════════════ 08 MOCK -> REAL ═════════════════════════ -->
+    <h2 class="sec" id="mock-real">08 · Mock → real swap table</h2>
+    <div class="sec-sub">For every fake interaction in the prototypes — the real wire-up</div>
+
+    <table class="tbl">
+      <thead><tr><th style="width:30%">Where</th><th>Today (mock)</th><th>Tomorrow (real)</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>Landing waitlist</b><span class="muted">NuSite Landing Page.html → <code>waitlistForm</code></span></td>
+          <td>Email validated client-side, <code>.success</code> class swap after 400ms.</td>
+          <td><code>fetch('/v1/waitlist', { method:'POST', body: JSON.stringify({email}) })</code>. Show success on 200, error on 4xx. Trigger Stage 7 confirm email server-side.</td>
+        </tr>
+        <tr>
+          <td><b>Footer mini-form</b></td>
+          <td>Same as above.</td>
+          <td>Same endpoint, <code>source:'footer'</code> param.</td>
+        </tr>
+        <tr>
+          <td><b>Theme toggle</b></td>
+          <td>localStorage + <code>data-theme</code> attr on <code>&lt;html&gt;</code>.</td>
+          <td>Keep as-is. No backend involvement.</td>
+        </tr>
+        <tr>
+          <td><b>Sign-in</b></td>
+          <td>Sets local React state to <code>{user:{...}}</code>.</td>
+          <td>Submit email → magic-link → cookie. Then <code>GET /v1/me</code> on app load.</td>
+        </tr>
+        <tr>
+          <td><b>Onboarding host pick</b></td>
+          <td>State only.</td>
+          <td><code>PATCH /v1/me {host_pref}</code>.</td>
+        </tr>
+        <tr>
+          <td><b>Dashboard project list</b></td>
+          <td>Hard-coded array in <code>dashboard.jsx</code>.</td>
+          <td><code>GET /v1/projects</code> with empty + skeleton + loaded states.</td>
+        </tr>
+        <tr>
+          <td><b>Usage meter</b></td>
+          <td>Fixed at 45/50 in markup.</td>
+          <td><code>GET /v1/usage/current</code>. At 90% trigger Stage 7 upgrade-nudge email (server side, throttled).</td>
+        </tr>
+        <tr>
+          <td><b>Engine ZIP drop</b></td>
+          <td>FileReader for visual feedback only.</td>
+          <td>Multipart POST to <code>/v1/projects</code>. Cap at 10MB free / 50MB pro / 200MB premium.</td>
+        </tr>
+        <tr>
+          <td><b>Engine URL fetch</b></td>
+          <td>Inert.</td>
+          <td>Server-side fetch with SSRF protection — block private IPs, set a small timeout, cap body size.</td>
+        </tr>
+        <tr>
+          <td><b>Engine GitHub input</b></td>
+          <td>Inert.</td>
+          <td>OAuth GitHub app. Read-only on the chosen repo. Pull a default-branch shallow clone server-side.</td>
+        </tr>
+        <tr>
+          <td><b>Engine "running" screen</b></td>
+          <td>Scripted progress + log lines.</td>
+          <td>SSE subscription. Same UI; the lines are real.</td>
+        </tr>
+        <tr>
+          <td><b>Engine diff</b></td>
+          <td>Pre-baked HTML.</td>
+          <td>Render from <code>GET /v1/transforms/:id/diff</code>. Reuse the diff-viewer markup.</td>
+        </tr>
+        <tr>
+          <td><b>Engine deploy guide</b></td>
+          <td>Conditional markdown based on the picked host.</td>
+          <td>Initial: server-rendered markdown templates per host. v2: detect framework, parameterise.</td>
+        </tr>
+        <tr>
+          <td><b>Pricing buttons</b></td>
+          <td>Anchor links.</td>
+          <td><code>POST /v1/checkout</code> → 303 to Stripe Checkout.</td>
+        </tr>
+        <tr>
+          <td><b>Billing invoices</b></td>
+          <td>Hard-coded rows.</td>
+          <td><code>GET /v1/invoices</code>. PDFs from Stripe customer portal — easier than DIY.</td>
+        </tr>
+        <tr>
+          <td><b>Magic-link / receipt / nudge emails</b></td>
+          <td>Static HTML in <code>launch/Email Templates.html</code>.</td>
+          <td>Resend templates. Use the "HTML source" copy from each template card.</td>
+        </tr>
+        <tr>
+          <td><b>Launch-day email broadcast</b></td>
+          <td>Designed only.</td>
+          <td>Loops campaign, scheduled for PH go-live. Use the Stage 7 launch-day template.</td>
+        </tr>
+        <tr>
+          <td><b>PH gallery + OG card</b></td>
+          <td>Final HTML at real spec.</td>
+          <td>Screenshot each frame at 1270×760 / 1200×630 (Cmd-Shift-4 + DPR=1, or Playwright). Upload to PH and as <code>og:image</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ═════════════════════════ 09 STACK ═════════════════════════ -->
+    <h2 class="sec" id="stack">09 · Stack recommendation</h2>
+    <div class="sec-sub">One sensible default per layer · swap as you like</div>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <div class="head"><span class="label">Frontend</span><span class="pill ghost">SSR optional</span></div>
+        <h4>Next.js · <span class="ac">14+ App Router</span></h4>
+        <p class="why">The landing page can stay as a static HTML file, hosted as-is. The app + engine + billing pages get rebuilt in Next so we can stream from server actions and protect routes per plan.</p>
+        <div class="alts">Alts: <b>Remix</b>, <b>Astro</b> (landing only), <b>Vite + React Router</b> (pure SPA)</div>
+      </div>
+      <div class="stack-card">
+        <div class="head"><span class="label">API</span><span class="pill ghost">Same repo</span></div>
+        <h4>Next API routes <span class="ac">+</span> tRPC</h4>
+        <p class="why">Co-locate handlers with the frontend, get end-to-end typing for free. The long-running transform jobs aren't in API routes — they're in the worker.</p>
+        <div class="alts">Alts: <b>Hono</b> on Cloudflare Workers, <b>Fastify</b> in a separate package</div>
+      </div>
+      <div class="stack-card">
+        <div class="head"><span class="label">Worker</span><span class="pill ghost">Long-running</span></div>
+        <h4>Node + <span class="ac">BullMQ</span> on Fly.io</h4>
+        <p class="why">A tiny always-on service that consumes the transform queue. One small VM is enough for launch.</p>
+        <div class="alts">Alts: <b>Railway</b>, <b>Render</b>, <b>Hetzner CX22</b> if you want the cheapest possible</div>
+      </div>
+      <div class="stack-card">
+        <div class="head"><span class="label">Database</span><span class="pill ghost">Postgres</span></div>
+        <h4>Neon <span class="ac">+ Drizzle ORM</span></h4>
+        <p class="why">Serverless Postgres with branching. Drizzle gives you typed queries with no ORM-as-DSL weirdness.</p>
+        <div class="alts">Alts: <b>Supabase</b> (also gives auth + storage), <b>Prisma</b> if your team prefers it</div>
+      </div>
+      <div class="stack-card">
+        <div class="head"><span class="label">Object storage</span><span class="pill ghost">Source + output</span></div>
+        <h4>Cloudflare <span class="ac">R2</span></h4>
+        <p class="why">S3-compatible, no egress fees. Critical when users download transform-output ZIPs.</p>
+        <div class="alts">Alts: <b>AWS S3</b>, <b>Backblaze B2</b></div>
+      </div>
+      <div class="stack-card">
+        <div class="head"><span class="label">Auth</span><span class="pill ghost">Magic link</span></div>
+        <h4>Clerk · <span class="ac">passwordless</span></h4>
+        <p class="why">Magic-link in 30 minutes. Roll your own only if "no SaaS for auth" is a value, not a constraint.</p>
+        <div class="alts">Alts: <b>Auth.js</b> (NextAuth), <b>Supabase Auth</b>, <b>WorkOS</b></div>
+      </div>
+      <div class="stack-card">
+        <div class="head"><span class="label">Payments</span><span class="pill ghost">Subs + invoices</span></div>
+        <h4>Stripe <span class="ac">Subscriptions</span></h4>
+        <p class="why">Hosted checkout + customer portal. The portal gives you billing UI for free — you only build the "current plan" summary, which is already designed in <code>NuSite Billing.html</code>.</p>
+        <div class="alts">Alts: <b>Paystack</b> (ZA-friendly), <b>Lemon Squeezy</b> (MoR — handles VAT)</div>
+      </div>
+      <div class="stack-card">
+        <div class="head"><span class="label">Email</span><span class="pill ghost">Transactional</span></div>
+        <h4>Resend · <span class="ac">+ Loops</span></h4>
+        <p class="why">Resend for the lifecycle emails (the Stage 7 templates), Loops for the marketing list. Set DKIM/DMARC on <code>nusite.app</code> before launch day.</p>
+        <div class="alts">Alts: <b>Postmark</b>, <b>Mailgun</b>, <b>Mailchimp Transactional</b></div>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════ 10 REPO ═════════════════════════ -->
+    <h2 class="sec" id="repo">10 · Repository structure</h2>
+    <div class="sec-sub">One monorepo · two deployables · shared types</div>
+
+    <pre class="code"><div class="code-bar"><span><span class="traffic"><span></span><span></span><span></span></span> <b>nusite/</b> · suggested structure</span><span>pnpm workspaces · turborepo</span></div>nusite/
+├── apps/
+│   ├── <span class="ky">web/</span>                    <span class="cm">// Next.js — app + api + landing</span>
+│   │   ├── app/
+│   │   │   ├── (marketing)/      <span class="cm">// landing (port from NuSite Landing Page.html)</span>
+│   │   │   ├── (auth)/           <span class="cm">// signin · magic-link callback</span>
+│   │   │   ├── (app)/            <span class="cm">// dashboard · engine · billing · settings</span>
+│   │   │   └── api/              <span class="cm">// /v1/* routes</span>
+│   │   ├── components/           <span class="cm">// shared React</span>
+│   │   └── lib/
+│   │
+│   └── <span class="ky">worker/</span>                 <span class="cm">// long-running transform consumer</span>
+│       ├── src/
+│       │   ├── pipeline/         <span class="cm">// ingest · plan · generate · reconcile · diff</span>
+│       │   ├── hosts/            <span class="cm">// vercel.md · netlify.md · cpanel.md · …</span>
+│       │   └── index.ts
+│       └── Dockerfile
+│
+├── packages/
+│   ├── <span class="ky">db/</span>                     <span class="cm">// drizzle schema + migrations</span>
+│   ├── <span class="ky">shared/</span>                 <span class="cm">// types · zod schemas · API contracts</span>
+│   ├── <span class="ky">prompts/</span>                <span class="cm">// the plan + per-transform prompts (versioned)</span>
+│   └── <span class="ky">emails/</span>                 <span class="cm">// the Stage 7 templates as React Email components</span>
+│
+├── design/                      <span class="cm">// keep this project's HTML for reference</span>
+│   ├── landing.html
+│   ├── app.html
+│   ├── engine.html
+│   ├── billing.html
+│   └── launch/                  <span class="cm">// PH · OG · emails · posts</span>
+│
+├── docs/
+│   ├── handoff.html             <span class="cm">// this document</span>
+│   └── prompts/                 <span class="cm">// prompt eval logs</span>
+│
+├── pnpm-workspace.yaml
+└── turbo.json</pre>
+
+    <!-- ═════════════════════════ 11 CHECKLIST ═════════════════════════ -->
+    <h2 class="sec" id="launch">11 · Launch-day checklist</h2>
+    <div class="sec-sub">In rough order — top is "must" · bottom is "nice"</div>
+
+    <h3 class="sub"><span class="num">11.1</span>Before launch (T − 2 weeks)</h3>
+    <div class="checklist">
+      <div class="check"><div class="box"></div><div class="txt">Set up Stripe products + prices (Pro monthly, Pro annual, Premium monthly, Premium annual). Founding-discount promo code with 20% off forever. <span class="who">Eng</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Wire up Resend + DKIM/DMARC on <code>nusite.app</code>. Send a test of each Stage 7 lifecycle email to the team. <span class="who">Eng</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Stand up the worker behind a single transform end-to-end (paste → responsive → diff → download ZIP). <span class="who">Eng</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Wire the landing page's two waitlist forms to <code>/v1/waitlist</code>. <span class="who">Eng</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Take screenshots of the 6 PH gallery frames (1270×760) and the OG card (1200×630). Save as PNG. <span class="who">Design</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Submit PH listing as a "Coming Soon" page — book the launch slot. <span class="who">Marketing</span></div></div>
+    </div>
+
+    <h3 class="sub"><span class="num">11.2</span>Launch week (T − 1 week)</h3>
+    <div class="checklist">
+      <div class="check"><div class="box"></div><div class="txt">Soft-launch to the waitlist's top 50 most-engaged signups. Watch the funnel. <span class="who">Eng + Founders</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Send a "we're launching next Tuesday" email to the waitlist (~24h before PH go-live). <span class="who">Marketing</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Stage the launch-day broadcast in Loops. Schedule for 06:00 SAST on launch day (PH time 21:00 PT the night before). <span class="who">Marketing</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Schedule the LinkedIn post + dev.to article to publish at PH go-live + 1h. <span class="who">Marketing</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Swap the site's OG image to the "We're on Product Hunt" card. <span class="who">Eng</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Have a Discord/Slack open for the team during the launch window. Triage support emails in real time. <span class="who">All</span></div></div>
+    </div>
+
+    <h3 class="sub"><span class="num">11.3</span>Launch day</h3>
+    <div class="checklist">
+      <div class="check"><div class="box"></div><div class="txt">Confirm PH listing is live before sending the launch broadcast. <span class="who">Marketing</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Send the launch-day email broadcast. <span class="who">Marketing</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Publish LinkedIn + dev.to posts. Cross-post to Hashnode mirror. <span class="who">Marketing</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Reply to every PH comment within the first 8 hours. <span class="who">Founders</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Monitor Sentry + worker queue depth. Have a "we're swamped, try again in 5 min" toast ready if needed. <span class="who">Eng</span></div></div>
+    </div>
+
+    <h3 class="sub"><span class="num">11.4</span>Day +1 to +7</h3>
+    <div class="checklist">
+      <div class="check"><div class="box"></div><div class="txt">Write a "what we learned launching on PH" post-mortem post. <span class="who">Founders</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Switch site OG back to the default card. <span class="who">Eng</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Send the welcome / first-transform email to all new signups (delayed by 24h after signup). <span class="who">Eng</span></div></div>
+      <div class="check"><div class="box"></div><div class="txt">Audit waitlist→active conversion. If &lt; 30%, A/B the launch-day subject line for stragglers. <span class="who">Marketing</span></div></div>
+    </div>
+
+    <!-- ═════════════════════════ 12 OPEN QUESTIONS ═════════════════════════ -->
+    <h2 class="sec" id="open">12 · Open questions</h2>
+    <div class="sec-sub">Decisions still owed before build can finish</div>
+
+    <ol class="list">
+      <li><b>Entity for Stripe.</b> Camluk Technologies (Pty) Ltd is a ZA entity — will Stripe work for our jurisdiction, or do we route global cards through Paystack? Decision affects pricing copy on the landing page.</li>
+      <li><b>Free-tier abuse.</b> 5 transforms/month/account is gameable with throwaway emails. Do we require email verification before the first transform? Captcha on signup?</li>
+      <li><b>Storage TTL.</b> The README promises "not stored permanently." Concretely: delete project source after 24h on Starter, 7 days on Pro, 30 days on Premium? Audit before launch.</li>
+      <li><b>GitHub app scope.</b> Read-only on selected repos vs. install-wide. We've designed for selected — confirm before submitting the GitHub App listing.</li>
+      <li><b>Per-transform pricing for Premium custom prompts.</b> "Unlimited" with custom prompts can run up serious LLM bills. Soft cap at $X/month with a friendly "you've used a lot, here's why" email at 80%?</li>
+      <li><b>Region.</b> Single region (eu-west / us-east) or multi? Single is simpler; latency is fine for a batch product. Pick one.</li>
+    </ol>
+
+    <!-- DOC FOOTER -->
+    <footer class="doc-foot">
+      <div class="ff">
+        <h5>Document</h5>
+        <p class="muted">Stage 8 · Developer Handoff · v1.0<br/>Generated 19 May 2026 for Camluk Technologies (Pty) Ltd.</p>
+      </div>
+      <div class="ff">
+        <h5>Companion files</h5>
+        <p class="muted">
+          <a href="../NuSite Landing Page.html" style="text-decoration:underline">Landing</a> ·
+          <a href="../NuSite App.html" style="text-decoration:underline">App</a> ·
+          <a href="../NuSite Engine.html" style="text-decoration:underline">Engine</a> ·
+          <a href="../NuSite Billing.html" style="text-decoration:underline">Billing</a> ·
+          <a href="../launch/Launch Assets.html" style="text-decoration:underline">Launch assets hub</a>
+        </p>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // Scroll-spy for TOC
+  const tocLinks = document.querySelectorAll('#tocNav a');
+  const sections = Array.from(tocLinks).map(a => {
+    const id = a.getAttribute('href').slice(1);
+    return { a, el: document.getElementById(id) };
+  }).filter(s => s.el);
+
+  function onScroll(){
+    const y = window.scrollY + 120;
+    let cur = sections[0];
+    for(const s of sections){
+      if(s.el.offsetTop <= y) cur = s;
+    }
+    tocLinks.forEach(a => a.classList.remove('active'));
+    if(cur && cur.a) cur.a.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+</body>
+</html>

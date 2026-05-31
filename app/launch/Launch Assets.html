@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NuSite — Launch Assets · Stage 7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root{
+    --indigo:#5B4CFF;
+    --indigo-lt:#7B6FFF;
+    --indigo-dk:#3D33B8;
+    --lime:#C8FF00;
+    --void:#0A0A0F;
+    --void-2:#06060A;
+    --ghost:#F4F4FF;
+    --slate:#1C1C2E;
+    --slate-lt:#252538;
+    --slate-hi:#2F2F45;
+    --lavender:#8B85C1;
+    --success:#22D47A;
+    --warning:#F5A623;
+    --border:rgba(244,244,255,0.08);
+    --border-strong:rgba(244,244,255,0.16);
+    --ph-orange:#DA552F;
+    --linkedin:#0a66c2;
+    --syne:'Syne',sans-serif;
+    --dm:'DM Sans',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+
+  html,body{ height:100%; background: var(--void-2); color:var(--ghost); font-family:var(--dm); -webkit-font-smoothing:antialiased; }
+  body{ overflow-x: hidden; }
+  a{ color:inherit; text-decoration:none; }
+
+  .page-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(900px 600px at 85% -10%, rgba(91,76,255,0.20), transparent 60%),
+      radial-gradient(700px 500px at 0% 100%, rgba(200,255,0,0.05), transparent 60%);
+  }
+  .dot-grid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image: radial-gradient(rgba(244,244,255,0.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 75%);
+  }
+
+  /* TOPBAR */
+  .topbar{
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px 36px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    background: rgba(10,10,15,0.6);
+  }
+  .topbar-left{ display:flex; align-items:center; gap:18px; }
+  .logo{ display:flex; align-items:center; gap:11px; }
+  .logo-mark{
+    width:34px; height:34px; background:var(--indigo);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 6px 18px rgba(91,76,255,0.35);
+  }
+  .logo-mark svg{ width:20px; height:20px; }
+  .wordmark{
+    font-family:var(--syne); font-weight:800; font-size:20px;
+    letter-spacing:-0.03em; line-height:1;
+  }
+  .wordmark .nu{ color:var(--indigo); }
+  .wordmark .site{ color:var(--ghost); }
+  .crumb{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.16em; text-transform:uppercase;
+    padding-left:18px; border-left:1px solid var(--border);
+    display:flex; align-items:center; gap:10px;
+  }
+  .crumb .pill{
+    background:rgba(91,76,255,0.12); color:var(--indigo-lt);
+    padding:4px 10px; border-radius:100px;
+    border:1px solid rgba(91,76,255,0.25);
+  }
+  .topbar-right{ display:flex; align-items:center; gap:14px; }
+  .meta{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.12em; text-transform:uppercase;
+    display:flex; gap:18px;
+  }
+  .meta b{ color:var(--ghost); font-weight:500; }
+  .iconbtn{
+    width:36px; height:36px; border-radius:9px;
+    border:1px solid var(--border); background:var(--slate);
+    display:flex; align-items:center; justify-content:center;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .iconbtn:hover{ border-color: var(--border-strong); background:var(--slate-lt); }
+  .iconbtn svg{ width:16px; height:16px; }
+
+  /* HERO */
+  .hero{
+    position: relative; z-index: 2;
+    padding: 70px 36px 36px;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .hero-eyebrow{
+    display:inline-flex; align-items:center; gap: 10px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 8px 14px; border-radius: 100px;
+    background: rgba(91,76,255,0.10);
+    border: 1px solid rgba(91,76,255,0.25);
+    margin-bottom: 22px;
+  }
+  .hero-eyebrow .dot{
+    width:6px; height:6px; border-radius:50%; background:var(--lime);
+    box-shadow:0 0 10px var(--lime);
+  }
+  .hero h1{
+    font-family: var(--syne); font-weight: 800;
+    font-size: clamp(46px, 6.2vw, 84px);
+    line-height: 0.96; letter-spacing: -0.035em;
+    color: var(--ghost);
+    margin-bottom: 22px;
+    max-width: 14ch;
+    text-wrap: balance;
+  }
+  .hero h1 .ac{ color: var(--indigo-lt); }
+  .hero h1 .un{ position: relative; display: inline-block; }
+  .hero h1 .un::after{
+    content:''; position:absolute; left:2%; right:6%;
+    bottom: 0.06em; height: 0.10em;
+    background: linear-gradient(90deg, var(--lime), transparent);
+  }
+  .hero p{
+    font-family: var(--dm); font-size: 19px; line-height: 1.55;
+    color: var(--lavender); max-width: 640px;
+  }
+  .hero p b{ color: var(--ghost); font-weight: 500; }
+
+  .hero-stats{
+    margin-top: 36px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+    max-width: 900px;
+  }
+  .hero-stat{
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    background: rgba(28,28,46,0.5);
+  }
+  .hero-stat .lbl{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .hero-stat .val{
+    font-family: var(--syne); font-weight: 700; font-size: 22px;
+    color: var(--ghost); letter-spacing: -0.01em;
+  }
+  .hero-stat .val .ac{ color: var(--indigo-lt); }
+
+  /* SECTION */
+  .section{
+    position: relative; z-index: 2;
+    padding: 22px 36px 50px;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .section-head{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    margin-bottom: 24px; gap: 18px;
+  }
+  .section-title{
+    font-family: var(--syne); font-weight: 700; font-size: 22px;
+    color: var(--ghost); letter-spacing: -0.01em;
+  }
+  .section-sub{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .section-counter{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .section-counter b{ color: var(--ghost); font-weight: 500; font-family: var(--syne); font-size: 16px; }
+
+  /* ASSET GRID */
+  .grid{
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 22px;
+  }
+  .acard{
+    position: relative;
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .25s ease;
+    cursor: pointer;
+    display: flex; flex-direction: column;
+  }
+  .acard:hover{
+    transform: translateY(-3px);
+    border-color: var(--border-strong);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+  }
+  .acard-head{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    padding: 22px 24px 18px;
+    gap: 16px;
+  }
+  .acard-num{
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--indigo);
+    color: #fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--syne); font-weight: 800; font-size: 14px;
+    flex-shrink: 0;
+    box-shadow: 0 8px 22px rgba(91,76,255,0.35);
+  }
+  .acard-titles{ flex: 1; min-width: 0; }
+  .acard-eyebrow{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .acard-title{
+    font-family: var(--syne); font-weight: 700; font-size: 22px;
+    color: var(--ghost); letter-spacing: -0.012em; line-height: 1.15;
+    margin-bottom: 4px;
+    text-wrap: pretty;
+  }
+  .acard-sub{
+    font-family: var(--dm); font-size: 13.5px;
+    color: var(--lavender); line-height: 1.5;
+  }
+  .acard-arrow{
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(244,244,255,0.04);
+    border: 1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink: 0;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease;
+    color: var(--ghost);
+  }
+  .acard:hover .acard-arrow{ background: var(--indigo); border-color: var(--indigo); transform: translate(2px, -2px); }
+  .acard-arrow svg{ width: 14px; height: 14px; }
+
+  .acard-preview{
+    margin: 0 24px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--void);
+    border: 1px solid var(--border);
+    position: relative;
+    flex: 1;
+    min-height: 200px;
+  }
+
+  .acard-foot{
+    padding: 16px 24px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+    gap: 14px;
+    border-top: 1px solid var(--border);
+    margin-top: 18px;
+  }
+  .acard-specs{
+    display: flex; gap: 14px;
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--lavender); letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .acard-specs b{ color: var(--ghost); font-weight: 500; }
+  .acard-action{
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--ghost); letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 7px 12px; border-radius: 7px;
+    background: rgba(91,76,255,0.10);
+    border: 1px solid rgba(91,76,255,0.30);
+  }
+
+  /* size variants */
+  .acard.tall{ grid-row: span 2; }
+  .acard.wide{ grid-column: span 1; }
+
+  /* ─────── PREVIEW: PH GALLERY (filmstrip) ─────── */
+  .prev-ph{
+    height: 100%;
+    background: var(--void);
+    position: relative;
+    overflow: hidden;
+    padding: 24px 24px 16px;
+    display:flex; flex-direction:column; gap: 14px;
+  }
+  .prev-ph::before{
+    content:''; position:absolute;
+    top:-100px; right:-100px; width:300px; height:300px;
+    background: radial-gradient(circle, rgba(91,76,255,0.30) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .prev-ph-strip{
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  }
+  .prev-frame{
+    aspect-ratio: 1270 / 760;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    position: relative;
+    overflow: hidden;
+    background: var(--void-2);
+  }
+  .prev-frame .pf-body{
+    position: absolute; inset: 0;
+    padding: 14% 12%;
+    display: flex; flex-direction: column; justify-content: center;
+    overflow: hidden;
+  }
+  .pf-body .pf-title{
+    font-family: var(--syne); font-weight: 800;
+    font-size: 30px; line-height: 0.95; letter-spacing: -0.04em;
+    color: var(--ghost);
+  }
+  .pf-body .pf-title .ac{ color: var(--indigo-lt); }
+  .pf-body .pf-sub{
+    font-family: var(--mono); font-size: 7px;
+    color: var(--lavender); letter-spacing: 0.16em; text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .prev-frame .pf-no{
+    position: absolute; bottom: 4px; right: 6px;
+    font-family: var(--mono); font-size: 8px;
+    color: var(--lavender); letter-spacing: 0.14em;
+  }
+  /* per-frame variations */
+  .prev-frame.f2 .pf-body{ background: linear-gradient(180deg, rgba(91,76,255,0.05), transparent); }
+  .prev-frame.f2 .pf-title{ font-size: 22px; }
+  .prev-frame.f3{
+    background: var(--void-2);
+  }
+  .prev-frame.f3 .pf-body{
+    display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr);
+    gap: 3px; padding: 6%;
+  }
+  .prev-frame.f3 .tile{
+    background: var(--slate-lt);
+    border-radius: 2px;
+    border-top: 2px solid var(--c);
+  }
+  .prev-frame.f4 .pf-body{
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8%;
+  }
+  .prev-frame.f4 .pf-card{
+    background: var(--slate-lt); border-radius: 3px; padding: 4px; font-size: 6px;
+    color: var(--lavender); font-family: var(--mono);
+  }
+  .prev-frame.f5 .pf-body{
+    display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 5px; padding: 9%;
+  }
+  .prev-frame.f5 .pcol{ background: var(--slate-lt); border-radius: 3px; }
+  .prev-frame.f5 .pcol.pro{ background: var(--indigo); }
+  .prev-frame.f5 .pcol.prem{ background: #15172A; border: 1px solid rgba(200,255,0,0.3); }
+  .prev-frame.f6{
+    background: linear-gradient(160deg, #5B4CFF 0%, #4030BB 100%);
+  }
+  .prev-frame.f6 .pf-title{ color: #fff; font-size: 22px; }
+  .prev-frame.f6 .pf-title .ac{ color: var(--lime); }
+  .prev-ph-foot{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top: auto;
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .prev-ph-foot b{ color: var(--ghost); font-weight: 500; }
+  .prev-ph-foot .dots{ display:flex; gap: 4px; }
+  .prev-ph-foot .dots span{
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--lavender); opacity: 0.4;
+  }
+  .prev-ph-foot .dots span:first-child{ background: var(--indigo-lt); opacity: 1; }
+
+  /* ─────── PREVIEW: OG ─────── */
+  .prev-og{
+    height: 100%;
+    background: var(--void-2);
+    padding: 22px 22px 18px;
+    display: flex; flex-direction: column; gap: 12px;
+    position: relative; overflow: hidden;
+  }
+  .prev-og-canvas{
+    flex: 1;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    overflow: hidden;
+    background: var(--void);
+    position: relative;
+    aspect-ratio: 1200 / 630;
+    display: flex;
+  }
+  .prev-og-canvas::before{
+    content:''; position:absolute;
+    top:-80px; right:-80px; width:240px; height:240px;
+    background: radial-gradient(circle, rgba(91,76,255,0.40) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .prev-og-main{
+    flex: 1.15;
+    padding: 18px 20px;
+    display:flex; flex-direction: column; justify-content: space-between;
+    position: relative; z-index: 1;
+  }
+  .prev-og-main .pill{
+    font-family: var(--mono); font-size: 7px;
+    color: var(--ph-orange); letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 100px;
+    background: rgba(218,85,47,0.12); border: 1px solid rgba(218,85,47,0.35);
+    align-self: flex-start; margin-bottom: 10px;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .prev-og-main .pill .cat{
+    width: 8px; height: 8px; border-radius: 50%; background: var(--ph-orange); color: #fff;
+    font-family: var(--syne); font-weight: 800; font-size: 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .prev-og-main h3{
+    font-family: var(--syne); font-weight: 800; font-size: 22px; line-height: 0.94;
+    letter-spacing: -0.035em; color: var(--ghost);
+  }
+  .prev-og-main h3 .ac{ color: var(--ph-orange); }
+  .prev-og-main .sub{
+    font-family: var(--dm); font-size: 8px; color: var(--lavender); line-height: 1.45;
+    margin-top: 6px;
+  }
+  .prev-og-cta{
+    display:inline-flex; align-items: center; gap: 6px;
+    background: var(--ph-orange); color: #fff;
+    font-family: var(--syne); font-weight: 700; font-size: 9px;
+    padding: 5px 9px; border-radius: 5px;
+    align-self: flex-start;
+  }
+  .prev-og-side{
+    flex: 1;
+    border-left: 1px solid var(--border);
+    padding: 18px 16px;
+    background: rgba(10,10,15,0.4);
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .prev-og-side .phbox{
+    background: linear-gradient(180deg, #14141F 0%, #0C0C16 100%);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .prev-og-side .phbox .top{
+    display:flex; align-items:center; gap: 5px; margin-bottom: 6px;
+    font-family: var(--mono); font-size: 6px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .prev-og-side .phbox .top .m{
+    width: 10px; height: 10px; border-radius: 50%; background: var(--ph-orange);
+    color: #fff; display:flex; align-items:center; justify-content:center;
+    font-family: var(--syne); font-weight: 800; font-size: 7px;
+  }
+  .prev-og-side .phbox .body{
+    display: flex; gap: 6px; align-items: center;
+  }
+  .prev-og-side .phbox .icon{
+    width: 20px; height: 20px; background: var(--indigo); border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .prev-og-side .phbox .text{ font-family: var(--dm); font-size: 8px; color: var(--ghost); font-weight: 600; }
+  .prev-og-side .phbox .upvote{
+    margin-top: 7px;
+    background: var(--ph-orange); color: #fff;
+    font-family: var(--syne); font-weight: 700; font-size: 7px;
+    padding: 3px 6px; border-radius: 3px;
+    display: inline-flex; align-items: center; gap: 3px;
+    align-self: flex-start;
+  }
+
+  /* ─────── PREVIEW: Emails (phone stack) ─────── */
+  .prev-em{
+    height: 100%;
+    background: var(--void-2);
+    padding: 18px 22px 22px;
+    display: flex; align-items: flex-end; gap: 14px;
+    position: relative; overflow: hidden;
+  }
+  .em-thumb{
+    flex: 1;
+    background: #FAFAFE;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.4);
+    font-family: 'DM Sans', sans-serif;
+    color: #14141F;
+    display: flex; flex-direction: column;
+    transform: rotate(-3deg);
+  }
+  .em-thumb:nth-child(2){ transform: rotate(0deg); margin-bottom: 12px; }
+  .em-thumb:nth-child(3){ transform: rotate(3deg); }
+  .em-thumb-head{
+    background: #14141F;
+    color: #fff;
+    padding: 10px 12px;
+    display:flex; align-items: center; gap: 6px;
+  }
+  .em-thumb-head .lm{
+    width: 16px; height: 16px; background: var(--indigo); border-radius: 4px;
+  }
+  .em-thumb-head .wm{
+    font-family: var(--syne); font-weight: 800; font-size: 11px;
+  }
+  .em-thumb-head .wm .nu{ color: var(--indigo-lt); }
+  .em-thumb-body{ padding: 12px; flex:1; }
+  .em-thumb-body .eyebrow{
+    font-family: var(--mono); font-size: 7px;
+    color: var(--indigo); letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 6px;
+    padding: 2px 6px; border-radius: 100px;
+    background: rgba(91,76,255,0.10);
+    display: inline-block;
+  }
+  .em-thumb-body h4{
+    font-family: var(--syne); font-weight: 800; font-size: 13px; line-height: 1.1;
+    letter-spacing: -0.02em; color: #14141F;
+    margin-bottom: 5px;
+  }
+  .em-thumb-body h4 .ac{ color: var(--indigo); }
+  .em-thumb-body p{
+    font-family: var(--dm); font-size: 8px; color: #5F5A8A; line-height: 1.4;
+    margin-bottom: 7px;
+  }
+  .em-thumb-body .btn{
+    background: var(--indigo); color: #fff;
+    font-family: var(--syne); font-weight: 700; font-size: 8px;
+    padding: 5px 9px; border-radius: 5px; display: inline-block;
+  }
+
+  /* ─────── PREVIEW: Posts (mini LI / DEV cards) ─────── */
+  .prev-posts{
+    height: 100%;
+    background: var(--void-2);
+    padding: 18px 22px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    position: relative;
+  }
+  .post-mini{
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .post-mini.li{ background: #fff; }
+  .post-mini.dev{ background: #fff; }
+  .post-mini .pm-head{
+    padding: 10px 12px;
+    display:flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid #e5e5ea;
+  }
+  .post-mini .pm-head .glyph{
+    width: 18px; height: 18px; border-radius: 4px;
+    color: #fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--syne); font-weight: 800; font-size: 9px;
+  }
+  .post-mini.li .pm-head .glyph{ background: var(--linkedin); }
+  .post-mini.dev .pm-head .glyph{ background: #000; }
+  .post-mini .pm-host{ font-family: var(--mono); font-size: 8px; color: #5f5f70; letter-spacing: 0.12em; text-transform: uppercase; }
+  .post-mini .pm-host b{ color: #14141F; font-weight: 500; }
+  .post-mini .pm-body{
+    padding: 10px 12px;
+    flex: 1;
+  }
+  .post-mini .pm-author{
+    display:flex; align-items: center; gap: 6px; margin-bottom: 8px;
+  }
+  .post-mini .pm-author .ava{
+    width: 18px; height: 18px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--indigo), var(--indigo-lt));
+  }
+  .post-mini .pm-author .name{ font-size: 9px; color: #14141F; font-weight: 600; }
+  .post-mini .pm-text{
+    font-size: 8.5px; color: #14141F; line-height: 1.45;
+  }
+  .post-mini.dev .pm-text h5{
+    font-family: var(--dm); font-weight: 800; font-size: 12px; line-height: 1.15;
+    letter-spacing: -0.01em; margin-bottom: 4px;
+  }
+  .post-mini.dev .pm-text .tg{ color: #3B49DF; font-size: 7px; }
+  .post-mini .pm-stats{
+    padding: 6px 12px;
+    font-family: var(--mono); font-size: 7px;
+    color: #5f5f70; letter-spacing: 0.10em; text-transform: uppercase;
+    border-top: 1px solid #e5e5ea;
+    display: flex; gap: 10px;
+  }
+  .post-mini .pm-stats b{ color: #14141F; font-weight: 500; }
+
+  /* SIDEBAR (Stages) */
+  aside.stages{
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 18px 14px;
+    margin-top: 12px;
+  }
+  .stages-head{
+    display:flex; align-items:center; justify-content:space-between; gap: 14px;
+    margin-bottom: 14px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .stages-head b{ color: var(--ghost); font-weight: 500; }
+  .stages-list{ display: flex; gap: 8px; flex-wrap: wrap; }
+  .stage-pill{
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 8px 12px; border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(244,244,255,0.02);
+    color: var(--lavender);
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .stage-pill.done{
+    color: var(--success);
+    background: rgba(34,212,122,0.06);
+    border-color: rgba(34,212,122,0.30);
+  }
+  .stage-pill.done::before{
+    content: ''; width: 12px; height: 12px; border-radius: 50%;
+    background: var(--success);
+    color: var(--void);
+    display: inline-flex; align-items: center; justify-content: center;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2310221C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg>');
+    background-size: 9px; background-position: center; background-repeat: no-repeat;
+  }
+  .stage-pill.current{
+    color: var(--ghost);
+    background: rgba(91,76,255,0.10);
+    border-color: var(--indigo);
+  }
+  .stage-pill b{ color: var(--ghost); font-weight: 500; font-family: var(--syne); }
+
+  /* Footer toolbar */
+  .toolbar{
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding: 14px 36px 32px;
+    flex-wrap:wrap;
+  }
+  .tool{
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:0.12em; text-transform:uppercase;
+    padding: 9px 14px;
+    border:1px solid var(--border); border-radius:8px;
+    background:var(--slate); color:var(--lavender);
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .tool b{ color: var(--ghost); font-weight: 500; }
+
+  @media (max-width: 1100px){
+    .grid{ grid-template-columns: 1fr; }
+    .acard.tall{ grid-row: span 1; }
+    .hero-stats{ grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 720px){
+    .hero{ padding: 50px 22px 22px; }
+    .section, .toolbar, .topbar{ padding-left: 22px; padding-right: 22px; }
+    .meta{ display: none; }
+    .crumb{ display: none; }
+  }
+</style>
+</head>
+<body data-screen-label="Launch Assets · Hub">
+
+<div class="page-bg"></div>
+<div class="dot-grid"></div>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+      <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+    </div>
+    <div class="crumb">
+      <span class="pill">Stage 7</span>
+      <span>Launch Assets</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="meta">
+      <span>Assets · <b>4 families</b></span>
+      <span>Status · <b>Ready</b></span>
+      <span>Stage <b>7/7</b></span>
+    </div>
+    <a class="iconbtn" href="../NuSite Landing Page.html" title="Back to landing page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow"><span class="dot"></span>Stage 7 of 7 · Launch assets</div>
+  <h1>Everything we need to <span class="un ac">go live.</span></h1>
+  <p>A Product Hunt gallery, a "we're on PH" OG card, the six lifecycle emails that carry people through the funnel, and the launch-day posts. <b>Pick a tile to open it.</b></p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="lbl">PH gallery</div><div class="val">6 <span class="ac">frames</span></div></div>
+    <div class="hero-stat"><div class="lbl">OG card</div><div class="val">1200 × <span class="ac">630</span></div></div>
+    <div class="hero-stat"><div class="lbl">Email templates</div><div class="val">6 <span class="ac">lifecycle</span></div></div>
+    <div class="hero-stat"><div class="lbl">Community posts</div><div class="val">2 <span class="ac">drafts</span></div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Asset families</div>
+      <div class="section-sub">Click any tile · separate HTML file per family</div>
+    </div>
+    <div class="section-counter">Open · <b>4</b> families</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- ────── PH GALLERY (tall) ────── -->
+    <a class="acard tall" href="PH Gallery.html">
+      <div class="acard-head">
+        <div class="acard-num">01</div>
+        <div class="acard-titles">
+          <div class="acard-eyebrow">Product Hunt gallery · 1270 × 760</div>
+          <div class="acard-title">Six gallery frames to carry the launch page.</div>
+          <div class="acard-sub">Cover → Engine → 8 transforms → Deploy → Pricing → Try it. Mix of bold typographic frames and product-context shots.</div>
+        </div>
+        <div class="acard-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></div>
+      </div>
+      <div class="acard-preview">
+        <div class="prev-ph">
+          <div class="prev-ph-strip">
+            <div class="prev-frame">
+              <div class="pf-body">
+                <div class="pf-title">Your site.<br/><span class="ac">Reimagined.</span></div>
+                <div class="pf-sub">01 · Cover</div>
+              </div>
+              <div class="pf-no">01</div>
+            </div>
+            <div class="prev-frame f2">
+              <div class="pf-body">
+                <div class="pf-title">Paste in.<br/><span style="color:var(--lime)">Modern out.</span></div>
+                <div class="pf-sub">02 · Engine</div>
+              </div>
+              <div class="pf-no">02</div>
+            </div>
+            <div class="prev-frame f3">
+              <div class="pf-body">
+                <div class="tile" style="--c:#00E5FF"></div>
+                <div class="tile" style="--c:#FF6B6B"></div>
+                <div class="tile" style="--c:#61DAFB"></div>
+                <div class="tile" style="--c:#A78BFA"></div>
+                <div class="tile" style="--c:#FCD34D"></div>
+                <div class="tile" style="--c:#34D399"></div>
+                <div class="tile" style="--c:#F97316"></div>
+                <div class="tile" style="--c:#38BDF8"></div>
+              </div>
+              <div class="pf-no">03</div>
+            </div>
+          </div>
+          <div class="prev-ph-strip">
+            <div class="prev-frame f4">
+              <div class="pf-body">
+                <div class="pf-card">▲ Vercel</div>
+                <div class="pf-card">N Netlify</div>
+                <div class="pf-card">⌥ GitHub</div>
+                <div class="pf-card">CF Cloudflare</div>
+              </div>
+              <div class="pf-no">04</div>
+            </div>
+            <div class="prev-frame f5">
+              <div class="pf-body">
+                <div class="pcol"></div>
+                <div class="pcol pro"></div>
+                <div class="pcol prem"></div>
+              </div>
+              <div class="pf-no">05</div>
+            </div>
+            <div class="prev-frame f6">
+              <div class="pf-body">
+                <div class="pf-title">Try it<br/><span class="ac">today.</span></div>
+                <div class="pf-sub" style="color:rgba(255,255,255,0.7)">06 · CTA</div>
+              </div>
+              <div class="pf-no" style="color:rgba(255,255,255,0.7)">06</div>
+            </div>
+          </div>
+          <div class="prev-ph-foot">
+            <div class="dots"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <span>6 frames · <b>1270 × 760</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="acard-foot">
+        <div class="acard-specs">
+          <span>Spec · <b>1270×760</b></span>
+          <span>Frames · <b>6</b></span>
+          <span>Use · <b>PH gallery</b></span>
+        </div>
+        <div class="acard-action">Open gallery →</div>
+      </div>
+    </a>
+
+    <!-- ────── OG CARD ────── -->
+    <a class="acard" href="OG Card.html">
+      <div class="acard-head">
+        <div class="acard-num">02</div>
+        <div class="acard-titles">
+          <div class="acard-eyebrow">Open Graph · 1200 × 630</div>
+          <div class="acard-title">"We're on Product Hunt" social card.</div>
+          <div class="acard-sub">For og:image and twitter:image on launch day. Includes "in the wild" previews — LinkedIn + iMessage unfurl.</div>
+        </div>
+        <div class="acard-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></div>
+      </div>
+      <div class="acard-preview">
+        <div class="prev-og">
+          <div class="prev-og-canvas">
+            <div class="prev-og-main">
+              <div>
+                <div class="pill"><span class="cat">P</span>On Product Hunt today</div>
+                <h3>Old code in.<br/><span class="ac">New site out.</span></h3>
+                <div class="sub">Live on PH today. Free tier · No card.</div>
+              </div>
+              <div class="prev-og-cta">▲ Upvote NuSite</div>
+            </div>
+            <div class="prev-og-side">
+              <div class="phbox">
+                <div class="top"><span class="m">P</span><span>Product Hunt</span></div>
+                <div class="body">
+                  <div class="icon"></div>
+                  <div class="text">NuSite<br/><span style="color:var(--lavender);font-weight:400;font-size:6px">#1 of the day</span></div>
+                </div>
+                <div class="upvote">▲ Upvote</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="acard-foot">
+        <div class="acard-specs">
+          <span>Spec · <b>1200×630</b></span>
+          <span>Variant · <b>Launch</b></span>
+        </div>
+        <div class="acard-action">Open card →</div>
+      </div>
+    </a>
+
+    <!-- ────── EMAILS ────── -->
+    <a class="acard" href="Email Templates.html">
+      <div class="acard-head">
+        <div class="acard-num">03</div>
+        <div class="acard-titles">
+          <div class="acard-eyebrow">Lifecycle emails · 600px</div>
+          <div class="acard-title">Six emails to carry the funnel.</div>
+          <div class="acard-sub">Waitlist confirm · Launch day · Welcome · Upgrade nudge · Magic-link · Receipt. Dark and light, with source view.</div>
+        </div>
+        <div class="acard-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></div>
+      </div>
+      <div class="acard-preview">
+        <div class="prev-em">
+          <div class="em-thumb">
+            <div class="em-thumb-head">
+              <div class="lm"></div>
+              <div class="wm"><span class="nu">Nu</span>Site</div>
+            </div>
+            <div class="em-thumb-body">
+              <div class="eyebrow">You're in</div>
+              <h4>You're in. <span class="ac">Welcome.</span></h4>
+              <p>Thanks for joining the waitlist. We'll be in touch.</p>
+              <div class="btn">Share →</div>
+            </div>
+          </div>
+          <div class="em-thumb">
+            <div class="em-thumb-head">
+              <div class="lm"></div>
+              <div class="wm"><span class="nu">Nu</span>Site</div>
+            </div>
+            <div class="em-thumb-body">
+              <div class="eyebrow" style="background:var(--lime);color:#14141F">Live today</div>
+              <h4>Old code in.<br/><span class="ac">New site out.</span></h4>
+              <p>It's launch day. NuSite is live.</p>
+              <div class="btn" style="background:var(--lime);color:#14141F">Start →</div>
+            </div>
+          </div>
+          <div class="em-thumb">
+            <div class="em-thumb-head">
+              <div class="lm"></div>
+              <div class="wm"><span class="nu">Nu</span>Site</div>
+            </div>
+            <div class="em-thumb-body">
+              <div class="eyebrow">$ Receipt</div>
+              <h4>Receipt for <span class="ac">Pro.</span></h4>
+              <p>Thanks for the support. $9.20 charged.</p>
+              <div class="btn">Invoice</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="acard-foot">
+        <div class="acard-specs">
+          <span>Width · <b>600px</b></span>
+          <span>Templates · <b>6</b></span>
+          <span>Themes · <b>Dark · Light</b></span>
+        </div>
+        <div class="acard-action">Open templates →</div>
+      </div>
+    </a>
+
+    <!-- ────── POSTS ────── -->
+    <a class="acard" href="Dev Posts.html" style="grid-column: 1 / -1;">
+      <div class="acard-head">
+        <div class="acard-num">04</div>
+        <div class="acard-titles">
+          <div class="acard-eyebrow">Dev community · LinkedIn + dev.to</div>
+          <div class="acard-title">Two launch-day posts, polished and copy-ready.</div>
+          <div class="acard-sub">LinkedIn announcement (~180 words) and a longer dev.to narrative (~1,400 words). Platform-accurate previews, raw text on a toggle, one-click copy.</div>
+        </div>
+        <div class="acard-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></div>
+      </div>
+      <div class="acard-preview">
+        <div class="prev-posts">
+          <div class="post-mini li">
+            <div class="pm-head">
+              <div class="glyph">in</div>
+              <div class="pm-host">LinkedIn · <b>Announcement</b></div>
+            </div>
+            <div class="pm-body">
+              <div class="pm-author">
+                <div class="ava"></div>
+                <div class="name">Camluk Technologies</div>
+              </div>
+              <div class="pm-text">We're live on Product Hunt today 🚀 After two years of "we should automate this", NuSite is finally out in the world. It does one thing: takes any old website…</div>
+            </div>
+            <div class="pm-stats"><span>👍 <b>247</b></span><span>💬 <b>42</b></span><span>🔁 <b>18</b></span></div>
+          </div>
+          <div class="post-mini dev">
+            <div class="pm-head">
+              <div class="glyph">DEV</div>
+              <div class="pm-host">dev.to · <b>Launch post</b></div>
+            </div>
+            <div class="pm-body">
+              <div class="pm-text">
+                <h5>We built NuSite to fix the messy, 2015-era code we kept inheriting</h5>
+                <div><span class="tg">#showdev</span> <span class="tg">#ai</span> <span class="tg">#webdev</span></div>
+                <p style="font-size:8px;color:#717171;margin-top:6px;line-height:1.45">Every developer who has done client work has lived this loop: you inherit a site, and find a tagged shrine to 2010s web…</p>
+              </div>
+            </div>
+            <div class="pm-stats"><span>❤️ <b>847</b></span><span>🦄 <b>312</b></span><span>💬 <b>68</b></span><span>🔖 <b>1.2k</b></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="acard-foot">
+        <div class="acard-specs">
+          <span>Drafts · <b>2</b></span>
+          <span>Voice · <b>PH-polished</b></span>
+          <span>Format · <b>Text · Markdown</b></span>
+        </div>
+        <div class="acard-action">Open drafts →</div>
+      </div>
+    </a>
+
+  </div>
+
+  <aside class="stages">
+    <div class="stages-head">
+      <span>Project · NuSite</span>
+      <span>Roadmap · <b>7 stages</b></span>
+    </div>
+    <div class="stages-list">
+      <span class="stage-pill done">01 · Brand</span>
+      <span class="stage-pill done">02 · Landing</span>
+      <span class="stage-pill done">03 · Onboarding</span>
+      <span class="stage-pill done">04 · App</span>
+      <span class="stage-pill done">05 · Engine</span>
+      <span class="stage-pill done">06 · Billing</span>
+      <span class="stage-pill current"><b>07 · Launch assets</b></span>
+    </div>
+  </aside>
+</section>
+
+<footer class="toolbar">
+  <span class="tool">Project · <b>NuSite</b></span>
+  <span class="tool">Stage <b>7/7</b> · Launch assets</span>
+  <span class="tool"><b>4</b> asset families · ready for handoff</span>
+</footer>
+
+</body>
+</html>

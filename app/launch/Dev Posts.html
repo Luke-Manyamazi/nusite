@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NuSite — Dev Community Posts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root{
+    --indigo:#5B4CFF;
+    --indigo-lt:#7B6FFF;
+    --indigo-dk:#3D33B8;
+    --lime:#C8FF00;
+    --void:#0A0A0F;
+    --void-2:#06060A;
+    --ghost:#F4F4FF;
+    --slate:#1C1C2E;
+    --slate-lt:#252538;
+    --slate-hi:#2F2F45;
+    --lavender:#8B85C1;
+    --success:#22D47A;
+    --border:rgba(244,244,255,0.08);
+    --border-strong:rgba(244,244,255,0.16);
+    --linkedin:#0a66c2;
+    --devto:#000;
+    --devto-accent:#3B49DF;
+    --syne:'Syne',sans-serif;
+    --dm:'DM Sans',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+
+  html,body{ height:100%; background: var(--void-2); color:var(--ghost); font-family:var(--dm); -webkit-font-smoothing:antialiased; }
+  body{ overflow-x: hidden; }
+  button{ font:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+
+  .page-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(900px 600px at 85% -10%, rgba(91,76,255,0.16), transparent 60%),
+      radial-gradient(700px 500px at 0% 100%, rgba(200,255,0,0.04), transparent 60%);
+  }
+  .dot-grid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image: radial-gradient(rgba(244,244,255,0.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: linear-gradient(180deg, transparent 0, black 30%, black 70%, transparent 100%);
+  }
+
+  /* TOPBAR */
+  .topbar{
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px 36px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    background: rgba(10,10,15,0.6);
+  }
+  .topbar-left{ display:flex; align-items:center; gap:18px; }
+  .logo{ display:flex; align-items:center; gap:11px; }
+  .logo-mark{
+    width:34px; height:34px; background:var(--indigo);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 6px 18px rgba(91,76,255,0.35);
+  }
+  .logo-mark svg{ width:20px; height:20px; }
+  .wordmark{
+    font-family:var(--syne); font-weight:800; font-size:20px;
+    letter-spacing:-0.03em; line-height:1;
+  }
+  .wordmark .nu{ color:var(--indigo); }
+  .wordmark .site{ color:var(--ghost); }
+  .crumb{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.16em; text-transform:uppercase;
+    padding-left:18px; border-left:1px solid var(--border);
+    display:flex; align-items:center; gap:10px;
+  }
+  .crumb .pill{
+    background:rgba(91,76,255,0.12); color:var(--indigo-lt);
+    padding:4px 10px; border-radius:100px;
+    border:1px solid rgba(91,76,255,0.25);
+  }
+  .topbar-right{ display:flex; align-items:center; gap:14px; }
+  .meta{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.12em; text-transform:uppercase;
+    display:flex; gap:18px;
+  }
+  .meta b{ color:var(--ghost); font-weight:500; }
+  .iconbtn{
+    width:36px; height:36px; border-radius:9px;
+    border:1px solid var(--border); background:var(--slate);
+    display:flex; align-items:center; justify-content:center;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .iconbtn:hover{ border-color: var(--border-strong); background:var(--slate-lt); }
+  .iconbtn svg{ width:16px; height:16px; }
+
+  /* MAIN */
+  .stage{
+    position:relative; z-index:2;
+    padding: 36px 36px 32px;
+    max-width: 1280px; margin: 0 auto;
+    display:flex; flex-direction:column; gap: 22px;
+  }
+  .stage-head{
+    display:flex; align-items:flex-end; justify-content:space-between; gap: 18px;
+  }
+  .stage-title{
+    font-family: var(--syne); font-weight: 700; font-size: 26px;
+    color: var(--ghost); letter-spacing: -0.01em;
+  }
+  .stage-sub{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .stage-count{
+    font-family: var(--mono); font-size: 12px; color: var(--lavender);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .stage-count b{ color: var(--ghost); font-weight: 500; font-family: var(--syne); font-size: 16px; }
+
+  /* POST CARD shared chrome */
+  .post-card{
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+  }
+  .post-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(244,244,255,0.03), transparent);
+  }
+  .post-bar-left{ display:flex; align-items:center; gap: 14px; }
+  .plat-chip{
+    display:flex; align-items:center; gap: 10px;
+    font-family: var(--syne); font-weight: 700; font-size: 14px;
+    color: var(--ghost);
+    padding: 8px 12px 8px 8px;
+    background: rgba(244,244,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .plat-chip .glyph{
+    width: 24px; height: 24px; border-radius: 6px;
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--syne); font-weight: 800; font-size: 13px;
+    color: #fff;
+  }
+  .plat-chip.li .glyph{ background: var(--linkedin); }
+  .plat-chip.devto .glyph{ background: #000; color: #fff; border: 1px solid #2a2a2a; }
+  .plat-meta{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.12em; text-transform: uppercase;
+    display:flex; gap: 14px;
+  }
+  .plat-meta b{ color: var(--ghost); font-weight: 500; }
+  .post-bar-right{ display:flex; align-items:center; gap: 10px; }
+  .seg{
+    display:inline-flex; border:1px solid var(--border); border-radius:9px;
+    background: var(--slate-lt); padding:3px;
+  }
+  .seg button{
+    font-family:var(--mono); font-size:10.5px;
+    letter-spacing:0.12em; text-transform:uppercase;
+    padding: 6px 12px; border-radius:6px;
+    color: var(--lavender);
+    transition: color .2s ease, background .2s ease;
+  }
+  .seg button.active{ color: var(--ghost); background: var(--slate-hi); }
+  .seg button:hover{ color: var(--ghost); }
+  .copy-btn{
+    font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--lavender);
+    padding: 7px 11px; border-radius: 8px;
+    background: var(--slate-lt); border: 1px solid var(--border);
+    display:inline-flex; align-items: center; gap: 7px;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .copy-btn:hover{ color: var(--ghost); border-color: var(--border-strong); }
+  .copy-btn.ok{ color: var(--success); border-color: rgba(34,212,122,0.4); background: rgba(34,212,122,0.08); }
+  .copy-btn svg{ width: 12px; height: 12px; }
+
+  /* Stage area where the preview / raw lives */
+  .post-stage{
+    display: flex; justify-content: center;
+    padding: 26px;
+    background: var(--slate-lt);
+  }
+  body.view-raw .post-stage{ padding: 0; background: var(--void-2); }
+  body.view-raw .post-preview{ display: none; }
+  .post-raw{
+    display: none;
+    width: 100%;
+  }
+  body.view-raw .post-raw{ display: block; }
+  .raw-bar{
+    padding: 12px 22px;
+    border-bottom: 1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+    background: var(--slate);
+  }
+  .raw-bar b{ color: var(--ghost); font-weight: 500; }
+  pre.raw{
+    margin: 0;
+    padding: 24px 26px 28px;
+    font-family: var(--mono); font-size: 13px;
+    line-height: 1.7;
+    color: var(--ghost);
+    overflow: auto;
+    max-height: 720px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  pre.raw .h1{ color: var(--ghost); font-family: var(--syne); font-weight: 700; font-size: 22px; line-height: 1.2; display:block; margin: 8px 0; }
+  pre.raw .h2{ color: var(--ghost); font-family: var(--syne); font-weight: 700; font-size: 17px; line-height: 1.3; display:block; margin: 14px 0 6px; }
+  pre.raw .mute{ color: var(--lavender); }
+  pre.raw .acc{ color: var(--indigo-lt); }
+  pre.raw .lime{ color: var(--lime); }
+  pre.raw .tag{ color: #FF6B6B; }
+
+  /* Collapse / expand */
+  .post-stage{ max-height: 720px; overflow: hidden; transition: max-height .35s ease; position: relative; }
+  body.view-raw .post-stage{ max-height: none; }
+  .post-card.expanded .post-stage{ max-height: 6000px; }
+  .post-card .fade-mask{
+    position: absolute; left: 0; right: 0; bottom: 0; height: 100px;
+    background: linear-gradient(to bottom, transparent, var(--slate-lt));
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  body.view-raw .post-card .fade-mask{ display: none; }
+  .post-card.expanded .fade-mask{ opacity: 0; }
+  .expand-row{
+    display:flex; justify-content: center; padding: 12px 22px 18px;
+    background: var(--slate-lt);
+    border-top: 1px solid var(--border);
+  }
+  body.view-raw .expand-row{ display: none; }
+  .expand-btn{
+    font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ghost);
+    padding: 9px 16px; border-radius: 9px;
+    background: rgba(91,76,255,0.10); border: 1px solid rgba(91,76,255,0.30);
+    display:inline-flex; align-items: center; gap: 8px;
+  }
+  .expand-btn .chev{ transition: transform .2s ease; }
+  .post-card.expanded .expand-btn .chev{ transform: rotate(180deg); }
+
+  /* ═══════════════════════════════════════════════════════════════
+     LINKEDIN POST PREVIEW
+  ═══════════════════════════════════════════════════════════════ */
+  .li-feed{
+    width: 555px; max-width: 100%;
+    background: #f4f2ee;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+    font-family: 'Source Sans 3', 'DM Sans', sans-serif;
+  }
+  .li-post-card{
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e5e5ea;
+    overflow: hidden;
+  }
+  .li-top{
+    padding: 14px 16px 6px;
+    display:flex; align-items:flex-start; justify-content:space-between;
+  }
+  .li-author{ display:flex; align-items:flex-start; gap: 10px; }
+  .li-avatar{
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--indigo), var(--indigo-lt));
+    flex-shrink: 0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .li-avatar svg{ width: 26px; height: 26px; }
+  .li-author-meta{ font-family: 'Source Sans 3', sans-serif; line-height: 1.25; }
+  .li-author-meta .name{
+    font-weight: 700; font-size: 14px; color: #191919;
+    display:flex; align-items:center; gap: 4px;
+  }
+  .li-author-meta .name .badge{
+    color: #5f5f70; font-weight: 400; font-size: 12px;
+  }
+  .li-author-meta .sub{ color: #5f5f70; font-size: 12px; margin-top: 1px; }
+  .li-author-meta .time{ color: #5f5f70; font-size: 11px; display:flex; align-items:center; gap:4px; margin-top: 1px; }
+  .li-follow{
+    font-family: 'Source Sans 3', sans-serif; font-weight: 600;
+    color: #0a66c2; font-size: 14px;
+    display:flex; align-items:center; gap: 6px;
+    padding: 4px 10px;
+  }
+  .li-text{
+    padding: 12px 16px 8px;
+    font-family: 'Source Sans 3', sans-serif; font-size: 14px;
+    color: #191919; line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  .li-text b{ font-weight: 700; }
+  .li-text .tag{ color: #0a66c2; font-weight: 500; }
+  .li-text .more{
+    color: #5f5f70; font-weight: 600; cursor: pointer; font-size: 14px;
+  }
+  .li-media{
+    margin: 4px 0 0;
+    border-top: 1px solid #e5e5ea;
+    border-bottom: 1px solid #e5e5ea;
+    background: #14141F;
+    aspect-ratio: 1.91 / 1;
+    overflow: hidden;
+    position: relative;
+  }
+  .li-media .og-mini{
+    position:absolute; inset:0;
+  }
+  .li-media .og-mini .og-frame{
+    width: 1200px; height: 630px;
+    transform-origin: 0 0;
+  }
+  .li-stats{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 8px 16px;
+    font-family: 'Source Sans 3', sans-serif; font-size: 12px; color: #5f5f70;
+    border-bottom: 1px solid #e5e5ea;
+  }
+  .li-stats .likes{
+    display:flex; align-items:center; gap: 6px;
+  }
+  .li-stats .likes .stack{
+    display:flex; margin-right: 4px;
+  }
+  .li-stats .likes .em{
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1.5px solid #fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 11px;
+    margin-left: -4px;
+  }
+  .li-stats .likes .em:first-child{ margin-left: 0; background: #0a66c2; color:#fff; }
+  .li-stats .likes .em.fire{ background: #ff9c00; color: #fff; }
+  .li-stats .likes .em.bulb{ background: #f5b800; color: #fff; }
+  .li-actions{
+    display:flex; padding: 4px 0;
+    font-family: 'Source Sans 3', sans-serif; font-size: 13px; color: #5f5f70;
+  }
+  .li-actions button{
+    flex:1; padding: 10px 4px; border-radius: 4px; cursor: pointer;
+    display:flex; align-items:center; justify-content:center; gap: 6px;
+    font-weight: 600; color: #5f5f70;
+  }
+  .li-actions button:hover{ background: #f3f2ef; }
+  .li-actions svg{ width: 18px; height: 18px; }
+
+  /* ═══════════════════════════════════════════════════════════════
+     DEV.TO POST PREVIEW
+  ═══════════════════════════════════════════════════════════════ */
+  .devto-frame{
+    width: 760px; max-width: 100%;
+    background: #f5f5f5;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+    font-family: 'Source Sans 3', 'DM Sans', sans-serif;
+  }
+  .devto-nav{
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+    padding: 8px 16px;
+    display:flex; align-items:center; gap: 12px;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .devto-nav .brand{
+    background: #000; color: #fff;
+    width: 36px; height: 36px; border-radius: 8px;
+    display:flex; align-items:center; justify-content:center;
+    font-family: 'Source Sans 3', sans-serif; font-weight: 800; font-size: 17px;
+    letter-spacing: -0.02em;
+  }
+  .devto-nav .search{
+    flex: 1;
+    background: #fafafa; border: 1px solid #e8e8e8;
+    border-radius: 6px; padding: 7px 12px;
+    color: #717171; font-size: 13px;
+  }
+  .devto-nav .write{
+    background: #fff; color: #3B49DF; border: 1px solid #3B49DF;
+    padding: 7px 14px; border-radius: 6px; font-weight: 500; font-size: 13.5px;
+  }
+  .devto-nav .ava{
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--indigo), var(--indigo-lt));
+  }
+  .devto-article{
+    background: #fff;
+    border-radius: 6px;
+    margin: 16px;
+    overflow: hidden;
+  }
+  .devto-cover{
+    aspect-ratio: 1000 / 420;
+    background: #14141F;
+    position: relative;
+    overflow: hidden;
+  }
+  .devto-cover .og-mini{
+    position:absolute; inset:0;
+  }
+  .devto-cover .og-mini .og-frame{
+    width: 1200px; height: 630px;
+    transform-origin: 0 0;
+  }
+  .devto-body{ padding: 30px 36px 36px; }
+  .devto-meta{
+    display:flex; align-items:center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .devto-meta .ava{
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--indigo), var(--indigo-lt));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .devto-meta .ava svg{ width: 22px; height: 22px; }
+  .devto-meta-text{ font-family: 'Source Sans 3', sans-serif; font-size: 13px; }
+  .devto-meta-text .name{ color: #0a0a0a; font-weight: 600; font-size: 14px; }
+  .devto-meta-text .sub{ color: #717171; font-size: 12.5px; }
+  .devto-title{
+    font-family: 'Source Sans 3', sans-serif; font-weight: 700;
+    font-size: 38px; line-height: 1.15; color: #0a0a0a;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+  .devto-tags{ display:flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+  .devto-tag{
+    font-family: 'Source Sans 3', sans-serif; font-size: 13px;
+    color: #5e5e5e;
+    padding: 3px 6px; border-radius: 3px;
+  }
+  .devto-tag::before{ content:'#'; color: #b5b5b5; margin-right: 2px; }
+  .devto-tag:nth-child(1){ background: #f1f0fe; color:#3B49DF; }
+  .devto-tag:nth-child(2){ background: #fff3eb; color:#c47922; }
+  .devto-tag:nth-child(3){ background: #f4faff; color:#0e7ec7; }
+  .devto-tag:nth-child(4){ background: #f5fce8; color:#5f8a00; }
+
+  .devto-content{
+    font-family: 'Source Sans 3', 'DM Sans', sans-serif;
+    color: #1a1a1a; font-size: 17px; line-height: 1.7;
+  }
+  .devto-content h2{
+    font-family: 'Source Sans 3', sans-serif; font-weight: 700;
+    font-size: 26px; line-height: 1.25;
+    color: #0a0a0a; margin: 28px 0 12px;
+    letter-spacing: -0.005em;
+  }
+  .devto-content p{ margin-bottom: 18px; }
+  .devto-content p b{ font-weight: 700; color: #0a0a0a; }
+  .devto-content blockquote{
+    border-left: 4px solid #3B49DF;
+    padding: 10px 18px;
+    background: #f1f0fe;
+    color: #0a0a0a;
+    margin: 20px 0;
+    border-radius: 4px;
+    font-style: italic;
+    font-size: 16px;
+  }
+  .devto-content ul{ padding-left: 26px; margin-bottom: 18px; }
+  .devto-content li{ margin-bottom: 6px; }
+  .devto-content code{
+    font-family: 'JetBrains Mono', monospace;
+    background: #f1f1f1; color: #0a0a0a;
+    padding: 1px 6px; border-radius: 3px;
+    font-size: 14px;
+  }
+  .devto-content pre{
+    background: #1a1a1a; color: #f4f4ff;
+    border-radius: 6px; padding: 16px 18px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13.5px;
+    line-height: 1.6; overflow: auto;
+    margin: 18px 0;
+  }
+  .devto-content pre code{ background: transparent; color: inherit; padding: 0; }
+  .devto-content a{ color: #3B49DF; font-weight: 500; }
+  .devto-content hr{
+    border: none; height: 1px; background: #e8e8e8;
+    margin: 30px 0;
+  }
+  .devto-reactions{
+    padding: 18px 36px; border-top: 1px solid #f1f1f1;
+    display:flex; align-items:center; gap: 18px;
+    font-family: 'Source Sans 3', sans-serif; font-size: 14px; color: #717171;
+  }
+  .devto-reactions .r{ display:flex; align-items:center; gap: 6px; }
+  .devto-reactions b{ color: #0a0a0a; font-weight: 600; }
+
+  /* Footer toolbar */
+  .toolbar{
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding: 14px 36px 32px;
+    flex-wrap:wrap;
+  }
+  .tool{
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:0.12em; text-transform:uppercase;
+    padding: 9px 14px;
+    border:1px solid var(--border); border-radius:8px;
+    background:var(--slate); color:var(--lavender);
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .tool b{ color: var(--ghost); font-weight: 500; }
+  .tool kbd{
+    font-family:var(--mono); font-size:10px;
+    padding:1px 5px; border-radius:4px;
+    background: rgba(244,244,255,0.08); color:var(--ghost);
+    border:1px solid var(--border);
+  }
+
+  /* OG mini reused */
+  .og-mini{ background: var(--void); }
+
+  /* The actual OG card markup (shrunken) */
+  .og{
+    width: 1200px; height: 630px;
+    position: relative;
+    background: var(--void);
+    overflow: hidden;
+    font-family: var(--dm);
+    color: var(--ghost);
+    display: flex;
+  }
+  .og::before{
+    content:''; position:absolute;
+    top:-220px; right:-220px; width:760px; height:760px;
+    background: radial-gradient(circle, rgba(91,76,255,0.32) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .og-dotgrid{
+    position:absolute; inset:0; z-index:1;
+    background-image: radial-gradient(rgba(244,244,255,0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at 40% 50%, black 0%, transparent 70%);
+  }
+  .og-content{ position:relative; z-index:2; flex:1; padding: 70px 64px; display:flex; flex-direction:column; justify-content:center; }
+  .og-title{
+    font-family: var(--syne); font-weight: 800;
+    font-size: 96px; line-height: 0.94;
+    letter-spacing: -0.035em;
+    color: var(--ghost);
+  }
+  .og-title .ac{ color: var(--indigo-lt); }
+  .og-title .nl{ display:block; }
+  .og-title .un{ position: relative; display: inline-block; }
+  .og-title .un::after{
+    content:''; position:absolute; left:2%; right:6%;
+    bottom: 0.06em; height: 0.10em;
+    background: linear-gradient(90deg, var(--lime), transparent);
+  }
+  .og-sub{
+    font-family: var(--dm); font-size: 28px;
+    color: var(--lavender); line-height: 1.4;
+    margin-top: 28px; max-width: 760px;
+  }
+  .og-wm{
+    position: absolute; bottom: 48px; left: 64px;
+    display:flex; align-items:center; gap: 14px;
+  }
+  .og-wm .logo-mark{ width: 48px; height: 48px; border-radius: 11px; }
+  .og-wm .logo-mark svg{ width: 28px; height: 28px; }
+  .og-wm .wordmark{ font-size: 28px; }
+  .og-url{
+    position: absolute; bottom: 60px; right: 64px;
+    font-family: var(--mono); font-size: 18px;
+    color: var(--lavender);
+  }
+  .og-url b{ color: var(--ghost); font-weight: 500; }
+
+  /* Small screen */
+  @media (max-width: 800px){
+    .li-feed, .devto-frame{ width: 100%; }
+    .devto-body{ padding: 24px; }
+    .devto-title{ font-size: 28px; }
+    .meta{ display: none; }
+    .crumb{ display: none; }
+  }
+</style>
+</head>
+<body data-screen-label="Dev Posts">
+
+<div class="page-bg"></div>
+<div class="dot-grid"></div>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+      <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+    </div>
+    <div class="crumb">
+      <span class="pill">Launch</span>
+      <span>Dev Community Posts</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="meta">
+      <span>Posts · <b>2 drafts</b></span>
+      <span>Voice · <b>PH launch</b></span>
+      <span>Stage <b>7/7</b></span>
+    </div>
+    <a class="iconbtn" href="../NuSite Landing Page.html" title="Back to landing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+  </div>
+</header>
+
+<main class="stage">
+  <div class="stage-head">
+    <div>
+      <div class="stage-title">Launch-day posts</div>
+      <div class="stage-sub">Drafted in PH-polished voice · ready to copy and post</div>
+    </div>
+    <div class="stage-count">Drafts · <b>2 / 2</b></div>
+  </div>
+
+  <!-- ════════════ LINKEDIN POST ════════════ -->
+  <div class="post-card" id="postLI">
+    <div class="post-bar">
+      <div class="post-bar-left">
+        <div class="plat-chip li">
+          <div class="glyph">in</div>
+          <span>LinkedIn announcement</span>
+        </div>
+        <div class="plat-meta">
+          <span>Length · <b>~180 words</b></span>
+          <span>Image · <b>1.91:1 OG</b></span>
+          <span>Audience · <b>Founders &amp; agencies</b></span>
+        </div>
+      </div>
+      <div class="post-bar-right">
+        <div class="seg" data-card="postLI">
+          <button data-view="preview" class="active">Preview</button>
+          <button data-view="raw">Raw text</button>
+        </div>
+        <button class="copy-btn" data-copy="postLI">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          Copy text
+        </button>
+      </div>
+    </div>
+
+    <div class="post-stage">
+      <div class="post-preview">
+        <div class="li-feed">
+          <div class="li-post-card">
+            <div class="li-top">
+              <div class="li-author">
+                <div class="li-avatar">
+                  <svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg>
+                </div>
+                <div class="li-author-meta">
+                  <div class="name">Camluk Technologies <span class="badge">· following</span></div>
+                  <div class="sub">Modernising the web · 1,284 followers</div>
+                  <div class="time">Now · 🌐</div>
+                </div>
+              </div>
+              <div class="li-follow">+ Follow</div>
+            </div>
+            <div class="li-text"><span id="liText"></span> <span class="more">…see more</span></div>
+            <div class="li-media">
+              <div class="og-mini"><div class="og-frame"></div></div>
+            </div>
+            <div class="li-stats">
+              <div class="likes">
+                <div class="stack">
+                  <div class="em">👍</div>
+                  <div class="em fire">🔥</div>
+                  <div class="em bulb">💡</div>
+                </div>
+                Camille Sterling and <b style="color:#0a66c2">247 others</b>
+              </div>
+              <div>42 comments · 18 reposts</div>
+            </div>
+            <div class="li-actions">
+              <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88L14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H7"/></svg>Like</button>
+              <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Comment</button>
+              <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Repost</button>
+              <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="post-raw">
+        <div class="raw-bar">
+          <span>Raw text · <b>linkedin-launch-post.txt</b></span>
+          <span><b>~180</b> words · within 3000-char LI limit</span>
+        </div>
+        <pre class="raw" id="liRaw"></pre>
+      </div>
+
+      <div class="fade-mask"></div>
+    </div>
+    <div class="expand-row">
+      <button class="expand-btn" data-expand="postLI">
+        <span>Expand full post</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════ DEV.TO POST ════════════ -->
+  <div class="post-card" id="postDT">
+    <div class="post-bar">
+      <div class="post-bar-left">
+        <div class="plat-chip devto">
+          <div class="glyph">DEV</div>
+          <span>dev.to launch post (longer narrative)</span>
+        </div>
+        <div class="plat-meta">
+          <span>Length · <b>~1,400 words</b></span>
+          <span>Read · <b>~6 min</b></span>
+          <span>Tags · <b>#showdev #ai #webdev #productivity</b></span>
+        </div>
+      </div>
+      <div class="post-bar-right">
+        <div class="seg" data-card="postDT">
+          <button data-view="preview" class="active">Preview</button>
+          <button data-view="raw">Markdown</button>
+        </div>
+        <button class="copy-btn" data-copy="postDT">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          Copy markdown
+        </button>
+      </div>
+    </div>
+
+    <div class="post-stage">
+      <div class="post-preview">
+        <div class="devto-frame">
+          <div class="devto-nav">
+            <div class="brand">DEV</div>
+            <div class="search">Search · #showdev</div>
+            <div class="write">Create Post</div>
+            <div class="ava"></div>
+          </div>
+          <article class="devto-article">
+            <div class="devto-cover">
+              <div class="og-mini"><div class="og-frame"></div></div>
+            </div>
+            <div class="devto-body">
+              <div class="devto-meta">
+                <div class="ava">
+                  <svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg>
+                </div>
+                <div class="devto-meta-text">
+                  <div class="name">Camluk Technologies <span style="color:#717171">· @camluk</span></div>
+                  <div class="sub">Posted on May 13, 2026 · 6 min read</div>
+                </div>
+              </div>
+              <h1 class="devto-title">We built NuSite to fix the messy, 2015-era code we kept inheriting</h1>
+              <div class="devto-tags">
+                <div class="devto-tag">showdev</div>
+                <div class="devto-tag">ai</div>
+                <div class="devto-tag">webdev</div>
+                <div class="devto-tag">productivity</div>
+              </div>
+
+              <div class="devto-content" id="devtoContent">
+                <p><b>TL;DR —</b> We just launched <a href="#">NuSite</a>, an AI engine that takes any old website and hands you a modern, deployable one back. Paste raw HTML, upload a ZIP, drop a URL, or connect a GitHub repo — pick one of 8 transforms, and ship the output to Vercel, Netlify, Cloudflare, GitHub Pages or cPanel with a deployment guide tailored to your host. There's a free tier. Today is launch day on Product Hunt.</p>
+
+                <h2>The problem we kept hitting</h2>
+                <p>Every developer who has done client work has lived this loop: you inherit a site, you open the repo, and you find a <code>&lt;table border="1"&gt;</code> tagged shrine to early-2010s web. The owner just wants it to <b>not look broken on a phone</b>. You quote them three weeks because rewriting it cleanly is three weeks. They go quiet. You feel slightly responsible. Nothing ships.</p>
+                <p>We had this experience enough times that it stopped feeling like a quirky anecdote and started feeling like a market.</p>
+                <blockquote>"Stop spending days cleaning up client sites." — every freelancer we've ever talked to, paraphrased.</blockquote>
+
+                <h2>What NuSite actually does</h2>
+                <p>You give it the source — paste, ZIP, URL, or GitHub repo. You pick a transform:</p>
+                <ul>
+                  <li><b>Static → Responsive</b> — fluid grids, breakpoints, sane touch targets</li>
+                  <li><b>HTML → React</b> — clean component tree with props and routing</li>
+                  <li><b>Modernise Design</b> — type system, spacing, colour brought into this decade</li>
+                  <li><b>Add Dark Mode</b> — token-driven, respects <code>prefers-color-scheme</code></li>
+                  <li><b>Performance Fix</b> — image/font/JS/CSS surgery for Lighthouse 90+</li>
+                  <li><b>Accessibility Audit</b> — focus rings, ARIA, contrast, the boring stuff that matters</li>
+                  <li><b>Convert to Tailwind</b> — strip stale styles, port to utility classes</li>
+                  <li><b>Add CSS Motion</b> — tasteful entrance and scroll-reveal animations</li>
+                </ul>
+                <p>The model reads the whole site as context — it isn't a per-file find-and-replace. It outputs a clean tree of files, a side-by-side diff, and a deployment guide for the host you tell it you're using.</p>
+
+                <h2>Why we didn't just write a Chrome extension</h2>
+                <p>Two reasons. First, the interesting work happens across files — restructuring a layout, lifting state into components, replacing a CSS file rather than monkey-patching a page. Second, the deployment guide is half the value. Most "modernise my site" tools end the moment they show you new code. We didn't want to end there. The post-transform screen asks where you're hosting and writes you the exact set of commands.</p>
+
+                <pre><code>$ git init &amp;&amp; git add -A
+$ git commit -m "nusite: modernised"
+$ vercel --prod
+
+✓  Building project
+✓  Deployed to acme.vercel.app
+✓  Linked custom domain</code></pre>
+
+                <h2>What's hard about this</h2>
+                <p>Three things took longer than we expected:</p>
+                <ul>
+                  <li><b>Holding the whole tree in context</b> without losing track of which file you're editing. We ended up with a planning pass that reads structure first, then a transformation pass per file with the plan as anchor.</li>
+                  <li><b>Knowing when to stop.</b> Models love to rewrite everything. We had to build heuristics for "this file is fine, leave it alone."</li>
+                  <li><b>Diffs people can actually trust.</b> If you can't see what changed and why, you won't ship the output. We landed on file-level summaries plus an inline diff you can step through.</li>
+                </ul>
+
+                <h2>Pricing, in case you're wondering</h2>
+                <p>There's a free <b>Starter</b> tier (5 transforms/month, paste input only). <b>Pro</b> is $10/month with 50 transforms, all 8 transform types, ZIP/URL inputs, and the deployment guide. <b>Premium</b> is $20/month with unlimited transforms, GitHub repo input, custom prompts, and priority support.</p>
+                <p>No card to try Starter. 7-day trial on the paid tiers.</p>
+
+                <hr/>
+
+                <h2>One favour</h2>
+                <p>We're on Product Hunt today. If NuSite looks useful, an upvote helps us reach the people most likely to actually need it. If you have feedback — especially the "this would be great if it…" kind — drop it in the comments, or reply on the PH thread. We're reading everything.</p>
+                <p>👉 <a href="#">Try NuSite (free, no card)</a><br/>
+                ▲ <a href="#">Upvote us on Product Hunt</a></p>
+                <p><i>Built in Cape Town by Camluk Technologies.</i></p>
+              </div>
+            </div>
+            <div class="devto-reactions">
+              <span class="r">❤️ <b>847</b> reactions</span>
+              <span class="r">🦄 <b>312</b></span>
+              <span class="r">🤯 <b>94</b></span>
+              <span class="r">💬 <b>68</b> comments</span>
+              <span class="r">🔖 <b>1.2k</b> bookmarks</span>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="post-raw">
+        <div class="raw-bar">
+          <span>Markdown · <b>nusite-launch.md</b></span>
+          <span><b>~1,400</b> words · canonical: dev.to · mirror: Hashnode</span>
+        </div>
+        <pre class="raw" id="dtRaw"></pre>
+      </div>
+
+      <div class="fade-mask"></div>
+    </div>
+    <div class="expand-row">
+      <button class="expand-btn" data-expand="postDT">
+        <span>Expand full article</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<footer class="toolbar">
+  <span class="tool"><kbd>E</kbd> Expand all</span>
+  <span class="tool"><kbd>R</kbd> Toggle raw</span>
+  <span class="tool">Copy is one click on each post</span>
+  <span class="tool">Voice · <b>Confident, PH-polished</b></span>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     OG CARD (cloned into media slots)
+═══════════════════════════════════════════════════════════════ -->
+<template id="tpl-og">
+<div class="og">
+  <div class="og-dotgrid"></div>
+  <div class="og-content">
+    <h1 class="og-title">
+      <span class="nl">Old code in.</span>
+      <span class="nl"><span class="un ac">New site out.</span></span>
+    </h1>
+    <p class="og-sub">AI-powered website transformation. Now live on Product Hunt.</p>
+  </div>
+  <div class="og-wm">
+    <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+    <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+  </div>
+  <div class="og-url"><b>nusite.app</b></div>
+</div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     RAW CONTENT
+═══════════════════════════════════════════════════════════════ -->
+<script id="liTextSrc" type="text/plain">We're live on Product Hunt today 🚀
+
+After two years of "we should automate this", NuSite is finally out in the world.
+
+It does one thing: takes any old website — paste, ZIP, URL or GitHub repo — and hands you back a modern, responsive, deployable version. Eight transforms: responsive, dark mode, React port, accessibility, performance, Tailwind, motion, full redesign. Stack them as you like.
+
+We built it because every developer we know has inherited a 2015-era client site that "just needs to not look broken on mobile" — and quoted three weeks, and watched the project die.
+
+If that's a problem you've had, NuSite is for you.
+
+There's a free tier. No card. The Pro tier is $10/month with a 30-day trial for waitlist members.
+
+🔗 Try it: nusite.app
+▲ Upvote us on Product Hunt — every one helps us reach more builders.
+
+Thank you to the 1,200+ people who joined the waitlist and kept us honest. This one's for you.
+
+#ProductHunt #AI #WebDev #IndieDev #BuildInPublic</script>
+
+<script id="dtMarkdownSrc" type="text/plain">---
+title: We built NuSite to fix the messy, 2015-era code we kept inheriting
+published: true
+tags: showdev, ai, webdev, productivity
+cover_image: https://nusite.app/og/launch.png
+canonical_url: https://nusite.app/blog/launch
+---
+
+**TL;DR —** We just launched [NuSite](https://nusite.app), an AI engine that takes any old website and hands you a modern, deployable one back. Paste raw HTML, upload a ZIP, drop a URL, or connect a GitHub repo — pick one of 8 transforms, and ship the output to Vercel, Netlify, Cloudflare, GitHub Pages or cPanel with a deployment guide tailored to your host. There's a free tier. Today is launch day on Product Hunt.
+
+## The problem we kept hitting
+
+Every developer who has done client work has lived this loop: you inherit a site, you open the repo, and you find a `<table border="1">` tagged shrine to early-2010s web. The owner just wants it to **not look broken on a phone**. You quote them three weeks because rewriting it cleanly is three weeks. They go quiet. You feel slightly responsible. Nothing ships.
+
+We had this experience enough times that it stopped feeling like a quirky anecdote and started feeling like a market.
+
+> "Stop spending days cleaning up client sites." — every freelancer we've ever talked to, paraphrased.
+
+## What NuSite actually does
+
+You give it the source — paste, ZIP, URL, or GitHub repo. You pick a transform:
+
+- **Static → Responsive** — fluid grids, breakpoints, sane touch targets
+- **HTML → React** — clean component tree with props and routing
+- **Modernise Design** — type system, spacing, colour brought into this decade
+- **Add Dark Mode** — token-driven, respects `prefers-color-scheme`
+- **Performance Fix** — image/font/JS/CSS surgery for Lighthouse 90+
+- **Accessibility Audit** — focus rings, ARIA, contrast, the boring stuff that matters
+- **Convert to Tailwind** — strip stale styles, port to utility classes
+- **Add CSS Motion** — tasteful entrance and scroll-reveal animations
+
+The model reads the whole site as context — it isn't a per-file find-and-replace. It outputs a clean tree of files, a side-by-side diff, and a deployment guide for the host you tell it you're using.
+
+## Why we didn't just write a Chrome extension
+
+Two reasons. First, the interesting work happens across files — restructuring a layout, lifting state into components, replacing a CSS file rather than monkey-patching a page. Second, the deployment guide is half the value. Most "modernise my site" tools end the moment they show you new code. We didn't want to end there. The post-transform screen asks where you're hosting and writes you the exact set of commands.
+
+```bash
+$ git init && git add -A
+$ git commit -m "nusite: modernised"
+$ vercel --prod
+
+✓  Building project
+✓  Deployed to acme.vercel.app
+✓  Linked custom domain
+```
+
+## What's hard about this
+
+Three things took longer than we expected:
+
+- **Holding the whole tree in context** without losing track of which file you're editing. We ended up with a planning pass that reads structure first, then a transformation pass per file with the plan as anchor.
+- **Knowing when to stop.** Models love to rewrite everything. We had to build heuristics for "this file is fine, leave it alone."
+- **Diffs people can actually trust.** If you can't see what changed and why, you won't ship the output. We landed on file-level summaries plus an inline diff you can step through.
+
+## Pricing, in case you're wondering
+
+There's a free **Starter** tier (5 transforms/month, paste input only). **Pro** is $10/month with 50 transforms, all 8 transform types, ZIP/URL inputs, and the deployment guide. **Premium** is $20/month with unlimited transforms, GitHub repo input, custom prompts, and priority support.
+
+No card to try Starter. 7-day trial on the paid tiers.
+
+---
+
+## One favour
+
+We're on Product Hunt today. If NuSite looks useful, an upvote helps us reach the people most likely to actually need it. If you have feedback — especially the "this would be great if it…" kind — drop it in the comments, or reply on the PH thread. We're reading everything.
+
+👉 [Try NuSite (free, no card)](https://nusite.app)
+▲ [Upvote us on Product Hunt](https://producthunt.com/posts/nusite)
+
+*Built in Cape Town by Camluk Technologies.*</script>
+
+<script>
+  // ───────── Inject OG into media slots ─────────
+  const ogTpl = document.getElementById('tpl-og');
+  document.querySelectorAll('.og-mini .og-frame').forEach(slot => {
+    slot.appendChild(ogTpl.content.cloneNode(true));
+  });
+  function rescaleMinis(){
+    document.querySelectorAll('.og-mini').forEach(mini => {
+      const w = mini.clientWidth;
+      const s = w / 1200;
+      const fr = mini.querySelector('.og-frame');
+      if(fr){ fr.style.transform = `scale(${s})`; fr.style.transformOrigin = '0 0'; }
+    });
+  }
+  window.addEventListener('resize', rescaleMinis);
+  setTimeout(rescaleMinis, 30);
+  rescaleMinis();
+
+  // ───────── Populate text content ─────────
+  const liText = document.getElementById('liTextSrc').textContent.trim();
+  const dtMd = document.getElementById('dtMarkdownSrc').textContent.trim();
+  // LI preview shows just first paragraph; full text in raw
+  document.getElementById('liText').textContent = liText.split('\n\n').slice(0,3).join('\n\n');
+  document.getElementById('liRaw').textContent = liText;
+  document.getElementById('dtRaw').textContent = dtMd;
+
+  // ───────── View toggle (per card) ─────────
+  document.querySelectorAll('.seg').forEach(seg => {
+    seg.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-view]'); if(!btn) return;
+      seg.querySelectorAll('button').forEach(b => b.classList.toggle('active', b===btn));
+      const card = document.getElementById(seg.dataset.card);
+      card.classList.toggle('raw-view', btn.dataset.view === 'raw');
+      // Use body class for css simplicity per card
+      // (we'll instead style each card's view-state by class on card)
+      const stage = card.querySelector('.post-stage');
+      if(btn.dataset.view === 'raw'){
+        card.querySelector('.post-preview').style.display = 'none';
+        card.querySelector('.post-raw').style.display = 'block';
+        card.querySelector('.fade-mask').style.display = 'none';
+        card.querySelector('.expand-row').style.display = 'none';
+        stage.style.maxHeight = 'none';
+        stage.style.padding = '0';
+        stage.style.background = 'var(--void-2)';
+      } else {
+        card.querySelector('.post-preview').style.display = '';
+        card.querySelector('.post-raw').style.display = 'none';
+        card.querySelector('.fade-mask').style.display = '';
+        card.querySelector('.expand-row').style.display = '';
+        stage.style.maxHeight = card.classList.contains('expanded') ? '6000px' : '720px';
+        stage.style.padding = '26px';
+        stage.style.background = 'var(--slate-lt)';
+        setTimeout(rescaleMinis, 50);
+      }
+    });
+  });
+
+  // ───────── Expand toggle ─────────
+  document.querySelectorAll('.expand-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = document.getElementById(btn.dataset.expand);
+      card.classList.toggle('expanded');
+      btn.querySelector('span').textContent = card.classList.contains('expanded') ? 'Collapse' : (card.id === 'postDT' ? 'Expand full article' : 'Expand full post');
+      setTimeout(rescaleMinis, 360);
+    });
+  });
+
+  // ───────── Copy ─────────
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const cardId = btn.dataset.copy;
+      const text = cardId === 'postLI' ? liText : dtMd;
+      try{
+        await navigator.clipboard.writeText(text);
+        const orig = btn.innerHTML;
+        btn.classList.add('ok');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg> Copied';
+        setTimeout(()=>{ btn.classList.remove('ok'); btn.innerHTML = orig; }, 1600);
+      }catch{}
+    });
+  });
+
+  // ───────── Keys ─────────
+  document.addEventListener('keydown', (e) => {
+    if(e.target.matches('input,textarea')) return;
+    if(e.key.toLowerCase() === 'e'){
+      const allExp = document.querySelectorAll('.post-card.expanded').length === document.querySelectorAll('.post-card').length;
+      document.querySelectorAll('.post-card').forEach(c => c.classList.toggle('expanded', !allExp));
+      document.querySelectorAll('.expand-btn').forEach(b => {
+        const card = document.getElementById(b.dataset.expand);
+        b.querySelector('span').textContent = card.classList.contains('expanded') ? 'Collapse' : (card.id === 'postDT' ? 'Expand full article' : 'Expand full post');
+      });
+      setTimeout(rescaleMinis, 360);
+    }
+    if(e.key.toLowerCase() === 'r'){
+      document.querySelectorAll('.seg').forEach(seg => {
+        const btns = seg.querySelectorAll('button');
+        const curIdx = Array.from(btns).findIndex(b => b.classList.contains('active'));
+        const next = btns[(curIdx + 1) % btns.length];
+        next.click();
+      });
+    }
+  });
+</script>
+</body>
+</html>

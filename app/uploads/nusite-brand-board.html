@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NuSite — Brand Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void:      #0A0A0F;
+    --indigo:    #5B4CFF;
+    --indigo-lt: #7B6FFF;
+    --ghost:     #F4F4FF;
+    --lime:      #C8FF00;
+    --slate:     #1C1C2E;
+    --slate-lt:  #252538;
+    --lavender:  #8B85C1;
+    --success:   #22D47A;
+    --warning:   #F5A623;
+    --error:     #FF4C4C;
+    --border:    rgba(244,244,255,0.08);
+
+    --syne: 'Syne', sans-serif;
+    --dm:   'DM Sans', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    background: var(--void);
+    color: var(--ghost);
+    font-family: var(--dm);
+    font-weight: 400;
+    line-height: 1.6;
+    padding: 0;
+    min-width: 1200px;
+  }
+
+  /* ── PAGE WRAPPER ── */
+  .page {
+    width: 1400px;
+    margin: 0 auto;
+    padding: 64px 48px 80px;
+  }
+
+  /* ── GRID UTILITIES ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .col-span-2 { grid-column: span 2; }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 64px; }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-sm { padding: 20px 24px; border-radius: 12px; }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(91,76,255,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* ══════════════════════════════════════════
+     HERO HEADER
+  ══════════════════════════════════════════ */
+  .brand-hero {
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 64px 56px;
+    margin-bottom: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .brand-hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(91,76,255,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .brand-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 20%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(200,255,0,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 48px;
+  }
+  .hero-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--lavender);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: right;
+    line-height: 2;
+  }
+
+  /* ── LOGO MARK ── */
+  .logo-lockup { display: flex; align-items: center; gap: 16px; }
+  .logo-icon {
+    width: 64px; height: 64px;
+    background: var(--indigo);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .logo-icon svg { width: 38px; height: 38px; }
+  .logo-wordmark {
+    font-family: var(--syne);
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--ghost);
+  }
+  .logo-wordmark span { color: var(--indigo); }
+
+  .tagline {
+    font-family: var(--syne);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--lavender);
+    margin-top: 8px;
+    letter-spacing: 0.01em;
+  }
+
+  .hero-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 32px;
+    margin-top: 48px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+  }
+  .hero-stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    margin-bottom: 8px;
+  }
+  .hero-stat-value {
+    font-family: var(--syne);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ghost);
+  }
+  .hero-stat-sub {
+    font-size: 13px;
+    color: var(--lavender);
+    margin-top: 4px;
+  }
+
+  /* ══════════════════════════════════════════
+     COLOUR SYSTEM
+  ══════════════════════════════════════════ */
+  .colour-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 12px;
+  }
+  .swatch {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .swatch-block {
+    height: 80px;
+    position: relative;
+  }
+  .swatch-block.primary-swatch { height: 100px; }
+  .swatch-info {
+    background: var(--slate-lt);
+    padding: 10px 12px;
+  }
+  .swatch-name {
+    font-family: var(--syne);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ghost);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .swatch-hex {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--lavender);
+  }
+  .swatch-role {
+    font-size: 10px;
+    color: var(--lavender);
+    margin-top: 2px;
+    display: block;
+    opacity: 0.7;
+  }
+
+  .colour-group-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--lavender);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+  .colour-group-label:first-child { margin-top: 0; }
+
+  .colour-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .colour-row {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* ══════════════════════════════════════════
+     TYPOGRAPHY
+  ══════════════════════════════════════════ */
+  .type-showcase {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+  .type-card { }
+  .type-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--lime);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .type-display {
+    font-family: var(--syne);
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--ghost);
+    margin-bottom: 16px;
+    letter-spacing: -0.03em;
+  }
+  .type-display-sub {
+    font-family: var(--syne);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ghost);
+    margin-bottom: 12px;
+  }
+  .type-body-sample {
+    font-family: var(--dm);
+    font-size: 14px;
+    color: var(--lavender);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .type-mono-sample {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--lime);
+    background: rgba(200,255,0,0.05);
+    padding: 12px 16px;
+    border-radius: 8px;
+    border-left: 2px solid var(--lime);
+    line-height: 1.8;
+  }
+  .type-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--lavender);
+    opacity: 0.6;
+    margin-top: 12px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .type-scale {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .type-scale-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .type-scale-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--lavender);
+    width: 36px;
+    flex-shrink: 0;
+  }
+  .type-scale-sample {
+    font-family: var(--dm);
+    color: var(--ghost);
+    white-space: nowrap;
+  }
+
+  /* ══════════════════════════════════════════
+     LOGO VARIANTS
+  ══════════════════════════════════════════ */
+  .logo-variants {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .logo-variant-card {
+    border-radius: 12px;
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .logo-variant-card.dark-bg { background: var(--void); }
+  .logo-variant-card.mid-bg  { background: var(--slate); }
+  .logo-variant-card.light-bg { background: var(--ghost); }
+  .logo-variant-card.indigo-bg { background: var(--indigo); }
+  .logo-variant-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--lavender);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    position: absolute;
+    bottom: 12px;
+  }
+
+  /* logo on light */
+  .logo-light .logo-wordmark { color: var(--void); }
+  .logo-light .logo-wordmark span { color: var(--indigo); }
+  .logo-light .logo-icon { background: var(--indigo); }
+
+  /* logo on indigo */
+  .logo-indigo .logo-wordmark { color: #fff; }
+  .logo-indigo .logo-wordmark span { color: var(--lime); }
+  .logo-indigo .logo-icon { background: rgba(255,255,255,0.2); }
+
+  .logo-wordmark-sm {
+    font-family: var(--syne);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .logo-icon-sm {
+    width: 40px; height: 40px;
+    background: var(--indigo);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-icon-sm svg { width: 24px; height: 24px; }
+
+  /* icon-only large */
+  .logo-icon-lg {
+    width: 80px; height: 80px;
+    background: var(--indigo);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-icon-lg svg { width: 48px; height: 48px; }
+
+  /* ══════════════════════════════════════════
+     PRICING
+  ══════════════════════════════════════════ */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .pricing-card {
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .pricing-card.starter { background: var(--slate); }
+  .pricing-card.pro {
+    background: var(--indigo);
+    border-color: var(--indigo);
+  }
+  .pricing-card.premium {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-color: rgba(200,255,0,0.3);
+  }
+  .pricing-card.pro::before {
+    content: 'MOST POPULAR';
+    position: absolute;
+    top: 16px; right: 16px;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    background: var(--lime);
+    color: var(--void);
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+  .pricing-tier {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--lavender);
+    margin-bottom: 12px;
+  }
+  .pricing-card.pro .pricing-tier { color: rgba(255,255,255,0.7); }
+  .pricing-card.premium .pricing-tier { color: var(--lime); }
+  .pricing-price {
+    font-family: var(--syne);
+    font-size: 44px;
+    font-weight: 800;
+    color: var(--ghost);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .pricing-price sup {
+    font-size: 22px;
+    font-weight: 700;
+    vertical-align: top;
+    margin-top: 8px;
+  }
+  .pricing-period {
+    font-size: 13px;
+    color: var(--lavender);
+    margin-bottom: 24px;
+  }
+  .pricing-card.pro .pricing-period { color: rgba(255,255,255,0.6); }
+  .pricing-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+  .pricing-card.pro .pricing-divider { background: rgba(255,255,255,0.15); }
+  .pricing-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--ghost);
+    margin-bottom: 10px;
+  }
+  .pricing-card.pro .pricing-feature { color: rgba(255,255,255,0.9); }
+  .pricing-feature-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--success);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .pricing-feature-icon.off {
+    background: rgba(255,255,255,0.1);
+    color: var(--lavender);
+  }
+  .pricing-card.pro .pricing-feature-icon { background: var(--lime); color: var(--void); }
+  .pricing-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-family: var(--syne);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 24px;
+    border: 2px solid;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-ghost-white {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--ghost);
+  }
+  .btn-solid-lime {
+    background: var(--lime);
+    border-color: var(--lime);
+    color: var(--void);
+  }
+  .btn-solid-indigo {
+    background: var(--indigo);
+    border-color: var(--indigo);
+    color: #fff;
+  }
+
+  /* ══════════════════════════════════════════
+     VOICE & PERSONALITY
+  ══════════════════════════════════════════ */
+  .voice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .voice-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .voice-item {
+    padding: 16px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: var(--dm);
+    line-height: 1.5;
+    position: relative;
+  }
+  .voice-item.bad {
+    background: rgba(255,76,76,0.08);
+    border: 1px solid rgba(255,76,76,0.2);
+    color: var(--lavender);
+    text-decoration: line-through;
+    text-decoration-color: rgba(255,76,76,0.4);
+  }
+  .voice-item.good {
+    background: rgba(34,212,122,0.06);
+    border: 1px solid rgba(34,212,122,0.2);
+    color: var(--ghost);
+  }
+  .voice-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+  .badge-bad { background: rgba(255,76,76,0.15); color: #FF4C4C; }
+  .badge-good { background: rgba(34,212,122,0.15); color: #22D47A; }
+
+  .personality-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .pill {
+    font-family: var(--syne);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--ghost);
+    background: var(--slate-lt);
+  }
+  .pill.active { background: var(--indigo); border-color: var(--indigo); }
+  .pill.lime { background: rgba(200,255,0,0.1); border-color: rgba(200,255,0,0.3); color: var(--lime); }
+
+  /* ══════════════════════════════════════════
+     UI COMPONENTS PREVIEW
+  ══════════════════════════════════════════ */
+  .components-showcase {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .comp-group-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--lavender);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    font-family: var(--syne);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+  .btn-primary { background: var(--indigo); color: #fff; border-color: var(--indigo); }
+  .btn-secondary { background: transparent; color: var(--ghost); border-color: var(--border); }
+  .btn-lime { background: var(--lime); color: var(--void); }
+  .btn-ghost { background: transparent; color: var(--lavender); border-color: transparent; }
+  .btn-danger { background: rgba(255,76,76,0.1); color: var(--error); border-color: rgba(255,76,76,0.3); }
+
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .tier-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+  .badge-starter { background: rgba(139,133,193,0.15); color: var(--lavender); border: 1px solid rgba(139,133,193,0.3); }
+  .badge-pro     { background: rgba(91,76,255,0.2);    color: var(--indigo-lt); border: 1px solid rgba(91,76,255,0.4); }
+  .badge-premium { background: rgba(200,255,0,0.1);   color: var(--lime);     border: 1px solid rgba(200,255,0,0.3); }
+
+  .status-row { display: flex; flex-direction: column; gap: 8px; }
+  .status-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px;
+    font-family: var(--dm);
+    color: var(--ghost);
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .input-demo {
+    background: var(--slate-lt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: var(--dm);
+    font-size: 14px;
+    color: var(--ghost);
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  .input-demo::placeholder { color: var(--lavender); }
+
+  /* ══════════════════════════════════════════
+     TRANSFORMATION TYPES
+  ══════════════════════════════════════════ */
+  .transform-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .transform-card {
+    background: var(--slate-lt);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .transform-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .t-responsive::before { background: #00E5FF; }
+  .t-motion::before     { background: #FF6B6B; }
+  .t-react::before      { background: #61DAFB; }
+  .t-modernise::before  { background: #A78BFA; }
+  .t-darkmode::before   { background: #FCD34D; }
+  .t-perf::before       { background: #34D399; }
+  .t-a11y::before       { background: #F97316; }
+  .t-tailwind::before   { background: #38BDF8; }
+  .transform-icon {
+    font-size: 22px;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .transform-name {
+    font-family: var(--syne);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ghost);
+    margin-bottom: 6px;
+  }
+  .transform-desc {
+    font-size: 11px;
+    color: var(--lavender);
+    line-height: 1.5;
+  }
+
+  /* ══════════════════════════════════════════
+     AUDIENCE SEGMENTS
+  ══════════════════════════════════════════ */
+  .audience-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .audience-card {
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+  }
+  .audience-icon {
+    font-size: 28px;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .audience-type {
+    font-family: var(--syne);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ghost);
+    margin-bottom: 8px;
+  }
+  .audience-hook {
+    font-size: 13px;
+    color: var(--indigo-lt);
+    font-family: var(--syne);
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .audience-desc {
+    font-size: 13px;
+    color: var(--lavender);
+    line-height: 1.6;
+  }
+
+  /* ══════════════════════════════════════════
+     GO-TO-MARKET
+  ══════════════════════════════════════════ */
+  .gtm-phases {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .gtm-phase {
+    padding: 24px 16px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .gtm-phase:last-child { border-right: none; }
+  .gtm-phase.current {
+    background: rgba(91,76,255,0.1);
+  }
+  .gtm-num {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--indigo);
+    opacity: 0.3;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .gtm-phase.current .gtm-num { opacity: 1; }
+  .gtm-title {
+    font-family: var(--syne);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ghost);
+    margin-bottom: 6px;
+  }
+  .gtm-detail {
+    font-size: 10px;
+    color: var(--lavender);
+    line-height: 1.5;
+  }
+  .gtm-current-badge {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    background: var(--indigo);
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+
+  /* ══════════════════════════════════════════
+     FOOTER
+  ══════════════════════════════════════════ */
+  .brand-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 40px;
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-top: 48px;
+  }
+  .footer-logo {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .footer-logo-icon {
+    width: 32px; height: 32px;
+    background: var(--indigo);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .footer-wordmark {
+    font-family: var(--syne);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ghost);
+    letter-spacing: -0.03em;
+  }
+  .footer-wordmark span { color: var(--indigo); }
+  .footer-camluk {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--lavender);
+    letter-spacing: 0.08em;
+  }
+  .footer-doc-info {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--lavender);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  /* ── HIGHLIGHT ── */
+  .hl-indigo { color: var(--indigo-lt); }
+  .hl-lime { color: var(--lime); }
+  .hl-lavender { color: var(--lavender); }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ═══════════════════════════════════════
+       HERO HEADER
+  ═══════════════════════════════════════ -->
+  <div class="brand-hero">
+    <div class="hero-top">
+      <div>
+        <div class="logo-lockup">
+          <div class="logo-icon">
+            <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Nu ligature mark -->
+              <rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/>
+              <path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+              <rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/>
+              <!-- spark -->
+              <circle cx="32" cy="8" r="3" fill="#C8FF00"/>
+            </svg>
+          </div>
+          <div>
+            <div class="logo-wordmark"><span>Nu</span>Site</div>
+            <div class="tagline">Your site. Reimagined.</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-meta">
+        BRAND IDENTITY DOCUMENT<br>
+        VERSION 1.0 — 2025<br>
+        CONFIDENTIAL<br>
+        <span style="color: var(--lime)">A CAMLUK TECHNOLOGIES PRODUCT</span>
+      </div>
+    </div>
+
+    <div class="hero-body">
+      <div>
+        <div class="hero-stat-label">Product Category</div>
+        <div class="hero-stat-value">AI Website Transformer</div>
+        <div class="hero-stat-sub">Developer tooling × Design automation</div>
+      </div>
+      <div>
+        <div class="hero-stat-label">Brand Personality</div>
+        <div class="hero-stat-value">Creative Transformer</div>
+        <div class="hero-stat-sub">Bold · Intelligent · Energetic · Modern</div>
+      </div>
+      <div>
+        <div class="hero-stat-label">Market Position</div>
+        <div class="hero-stat-value">Accessible Power Tool</div>
+        <div class="hero-stat-sub">Dev-sharp. Founder-friendly.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       LOGO VARIANTS
+  ═══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">01 — Logo System</div>
+    <div class="logo-variants">
+
+      <!-- Dark (primary) -->
+      <div class="logo-variant-card dark-bg">
+        <div class="logo-lockup">
+          <div class="logo-icon-sm">
+            <svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg>
+          </div>
+          <div class="logo-wordmark-sm"><span style="color:var(--indigo)">Nu</span>Site</div>
+        </div>
+        <div class="logo-variant-label">Primary / Dark</div>
+      </div>
+
+      <!-- Mid (slate) -->
+      <div class="logo-variant-card mid-bg">
+        <div class="logo-lockup">
+          <div class="logo-icon-sm">
+            <svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg>
+          </div>
+          <div class="logo-wordmark-sm"><span style="color:var(--indigo-lt)">Nu</span>Site</div>
+        </div>
+        <div class="logo-variant-label">On Panel</div>
+      </div>
+
+      <!-- Light -->
+      <div class="logo-variant-card light-bg">
+        <div class="logo-lockup logo-light">
+          <div class="logo-icon-sm">
+            <svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg>
+          </div>
+          <div class="logo-wordmark-sm" style="color:var(--void)"><span style="color:var(--indigo)">Nu</span>Site</div>
+        </div>
+        <div class="logo-variant-label" style="color:#666">On Light</div>
+      </div>
+
+      <!-- Icon only -->
+      <div class="logo-variant-card dark-bg" style="align-items:center; justify-content:center;">
+        <div class="logo-icon-lg">
+          <svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg>
+        </div>
+        <div class="logo-variant-label">Icon / Favicon</div>
+      </div>
+
+    </div>
+
+    <!-- Logo construction notes -->
+    <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div class="card card-sm">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--lavender); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px;">Logo Mark Anatomy</div>
+        <div style="font-size:13px; color:var(--lavender); line-height:1.8;">
+          <span style="color:var(--indigo-lt)">■</span> Two vertical bars = the letter N<br>
+          <span style="color:var(--ghost)">╲</span> Diagonal stroke = the letter U / transformation arrow<br>
+          <span style="color:var(--lime)">●</span> Lime spark = AI intelligence / the "new" moment<br>
+          Combined = Nu ligature suggesting forward motion
+        </div>
+      </div>
+      <div class="card card-sm">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--lavender); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px;">Usage Rules</div>
+        <div style="font-size:13px; color:var(--lavender); line-height:1.8;">
+          Minimum size: 24px icon height<br>
+          Clear space: ½× icon width on all sides<br>
+          Never recolour the lime spark dot<br>
+          Never stretch or skew the wordmark<br>
+          "by Camluk" set in DM Sans 300, 60% opacity
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       COLOUR SYSTEM
+  ═══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">02 — Colour System</div>
+
+    <div class="colour-groups">
+      <div class="colour-group-label">Primary Palette</div>
+      <div class="colour-row">
+        <div class="swatch" style="grid-column: span 2;">
+          <div class="swatch-block primary-swatch" style="background:#0A0A0F; display:flex; align-items:flex-end; padding:10px;">
+            <span style="font-family:var(--mono); font-size:9px; color:rgba(244,244,255,0.3); letter-spacing:0.1em;">PRIMARY BG</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Void Black</span>
+            <span class="swatch-hex">#0A0A0F</span>
+            <span class="swatch-role">Background, hero</span>
+          </div>
+        </div>
+        <div class="swatch" style="grid-column: span 3;">
+          <div class="swatch-block primary-swatch" style="background:#5B4CFF; display:flex; align-items:flex-end; padding:10px;">
+            <span style="font-family:var(--mono); font-size:9px; color:rgba(255,255,255,0.5); letter-spacing:0.1em;">BRAND COLOUR</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Electric Indigo</span>
+            <span class="swatch-hex">#5B4CFF</span>
+            <span class="swatch-role">CTAs, links, primary UI</span>
+          </div>
+        </div>
+        <div class="swatch" style="grid-column: span 2;">
+          <div class="swatch-block primary-swatch" style="background:#F4F4FF; display:flex; align-items:flex-end; padding:10px;">
+            <span style="font-family:var(--mono); font-size:9px; color:rgba(10,10,15,0.4); letter-spacing:0.1em;">TEXT</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Ghost White</span>
+            <span class="swatch-hex">#F4F4FF</span>
+            <span class="swatch-role">Primary text, headings</span>
+          </div>
+        </div>
+        <div class="swatch" style="grid-column: span 2;">
+          <div class="swatch-block primary-swatch" style="background:#C8FF00; display:flex; align-items:flex-end; padding:10px;">
+            <span style="font-family:var(--mono); font-size:9px; color:rgba(10,10,15,0.6); letter-spacing:0.1em;">ACCENT</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Neon Lime</span>
+            <span class="swatch-hex">#C8FF00</span>
+            <span class="swatch-role">Transform moments, Premium</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="colour-group-label" style="margin-top: 8px;">Secondary & Functional</div>
+      <div class="colour-row">
+        <div class="swatch">
+          <div class="swatch-block" style="background:#1C1C2E;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Soft Slate</span>
+            <span class="swatch-hex">#1C1C2E</span>
+            <span class="swatch-role">Cards, panels</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:#252538;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Slate Lt</span>
+            <span class="swatch-hex">#252538</span>
+            <span class="swatch-role">Elevated surfaces</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:#8B85C1;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Lavender</span>
+            <span class="swatch-hex">#8B85C1</span>
+            <span class="swatch-role">Secondary text</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:#7B6FFF;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Indigo Lt</span>
+            <span class="swatch-hex">#7B6FFF</span>
+            <span class="swatch-role">Hover states</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:#22D47A;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Success</span>
+            <span class="swatch-hex">#22D47A</span>
+            <span class="swatch-role">Complete, done</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:#F5A623;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Warning</span>
+            <span class="swatch-hex">#F5A623</span>
+            <span class="swatch-role">Limits, caution</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:#FF4C4C;"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Error</span>
+            <span class="swatch-hex">#FF4C4C</span>
+            <span class="swatch-role">Errors, destructive</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:rgba(91,76,255,0.12); border: 1px dashed rgba(91,76,255,0.3);"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Indigo Tint</span>
+            <span class="swatch-hex">rgba(91,76,255,.12)</span>
+            <span class="swatch-role">Highlight bg</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:rgba(244,244,255,0.06); border: 1px dashed rgba(244,244,255,0.1);"></div>
+          <div class="swatch-info">
+            <span class="swatch-name">Border</span>
+            <span class="swatch-hex">rgba(F4F4FF,.08)</span>
+            <span class="swatch-role">All borders</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       TYPOGRAPHY
+  ═══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">03 — Typography</div>
+    <div class="type-showcase">
+
+      <!-- Syne -->
+      <div class="card">
+        <span class="type-tag">Display — Syne 800</span>
+        <div class="type-display">NuSite</div>
+        <div class="type-display-sub">Transform any website with AI</div>
+        <div style="font-family:var(--syne); font-size:16px; font-weight:600; color:var(--lavender); margin-bottom:12px;">
+          ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+          abcdefghijklmnopqrstuvwxyz<br>
+          0123456789 !@#$%^&*()
+        </div>
+        <div class="type-meta">
+          Syne · Google Fonts · Free<br>
+          Use for: H1, H2, wordmark, hero, pricing, CTAs
+        </div>
+      </div>
+
+      <!-- DM Sans -->
+      <div class="card">
+        <span class="type-tag">Body — DM Sans 400</span>
+        <div class="type-scale">
+          <div class="type-scale-row">
+            <span class="type-scale-label">72px</span>
+            <span class="type-scale-sample" style="font-size:40px; font-family:var(--dm); font-weight:700;">Hero</span>
+          </div>
+          <div class="type-scale-row">
+            <span class="type-scale-label">40px</span>
+            <span class="type-scale-sample" style="font-size:26px; font-family:var(--dm); font-weight:500;">Section Heading</span>
+          </div>
+          <div class="type-scale-row">
+            <span class="type-scale-label">20px</span>
+            <span class="type-scale-sample" style="font-size:18px; font-family:var(--dm);">Lead paragraph text</span>
+          </div>
+          <div class="type-scale-row">
+            <span class="type-scale-label">16px</span>
+            <span class="type-scale-sample" style="font-size:14px; font-family:var(--dm); color:var(--lavender);">Body copy, descriptions, UI labels</span>
+          </div>
+          <div class="type-scale-row">
+            <span class="type-scale-label">14px</span>
+            <span class="type-scale-sample" style="font-size:12px; font-family:var(--dm); color:var(--lavender);">Secondary text, captions, hints</span>
+          </div>
+          <div class="type-scale-row">
+            <span class="type-scale-label">12px</span>
+            <span class="type-scale-sample" style="font-size:11px; font-family:var(--dm); color:var(--lavender);">Badges, micro labels</span>
+          </div>
+        </div>
+        <div class="type-meta" style="margin-top:16px;">
+          DM Sans · Google Fonts · Free<br>
+          Use for: body, UI, descriptions, pricing copy
+        </div>
+      </div>
+
+      <!-- JetBrains Mono -->
+      <div class="card">
+        <span class="type-tag">Monospace — JetBrains Mono</span>
+        <div class="type-mono-sample">
+          // Transform complete ✦<br>
+          const result = await<br>
+          &nbsp;&nbsp;nusite.transform({<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;input: "legacy.html",<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;mode: "react",<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;responsive: true<br>
+          &nbsp;&nbsp;});<br>
+          <br>
+          // 847 lines generated
+        </div>
+        <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+          <span style="font-family:var(--mono); font-size:11px; padding:4px 10px; background:rgba(200,255,0,0.08); border:1px solid rgba(200,255,0,0.2); border-radius:6px; color:var(--lime);">v1.0.0</span>
+          <span style="font-family:var(--mono); font-size:11px; padding:4px 10px; background:rgba(91,76,255,0.1); border:1px solid rgba(91,76,255,0.2); border-radius:6px; color:var(--indigo-lt);">/dashboard</span>
+          <span style="font-family:var(--mono); font-size:11px; padding:4px 10px; background:rgba(34,212,122,0.08); border:1px solid rgba(34,212,122,0.2); border-radius:6px; color:var(--success);">200 OK</span>
+        </div>
+        <div class="type-meta" style="margin-top:16px;">
+          JetBrains Mono · Free<br>
+          Use for: code blocks, file paths, API tokens, badges
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       TRANSFORMATIONS
+  ═══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">04 — Transformation Types</div>
+    <div class="transform-grid">
+      <div class="transform-card t-responsive">
+        <span class="transform-icon">⬛</span>
+        <div class="transform-name">Static → Responsive</div>
+        <div class="transform-desc">Fluid layouts, breakpoints & mobile-first CSS</div>
+      </div>
+      <div class="transform-card t-motion">
+        <span class="transform-icon">✦</span>
+        <div class="transform-name">Add CSS Motion</div>
+        <div class="transform-desc">Animations, transitions & scroll effects</div>
+      </div>
+      <div class="transform-card t-react">
+        <span class="transform-icon">⚛</span>
+        <div class="transform-name">HTML → React</div>
+        <div class="transform-desc">Convert static HTML into clean React components</div>
+      </div>
+      <div class="transform-card t-modernise">
+        <span class="transform-icon">◈</span>
+        <div class="transform-name">Modernise Design</div>
+        <div class="transform-desc">Contemporary CSS, typography & colour palette</div>
+      </div>
+      <div class="transform-card t-darkmode">
+        <span class="transform-icon">◑</span>
+        <div class="transform-name">Add Dark Mode</div>
+        <div class="transform-desc">Dark-mode toggle with CSS custom properties</div>
+      </div>
+      <div class="transform-card t-perf">
+        <span class="transform-icon">⚡</span>
+        <div class="transform-name">Performance Fix</div>
+        <div class="transform-desc">Optimise images, defer scripts, lazy-load</div>
+      </div>
+      <div class="transform-card t-a11y">
+        <span class="transform-icon">♿</span>
+        <div class="transform-name">Accessibility</div>
+        <div class="transform-desc">ARIA labels, semantic HTML & keyboard nav</div>
+      </div>
+      <div class="transform-card t-tailwind">
+        <span class="transform-icon">🌬</span>
+        <div class="transform-name">→ Tailwind CSS</div>
+        <div class="transform-desc">Replace CSS with Tailwind utility classes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PRICING
+  ═══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">05 — Pricing Tiers</div>
+    <div class="pricing-grid">
+
+      <!-- Starter -->
+      <div class="pricing-card starter">
+        <div class="pricing-tier">Starter</div>
+        <div class="pricing-price">Free</div>
+        <div class="pricing-period">No card required</div>
+        <div class="pricing-divider"></div>
+        <div class="pricing-feature"><span class="pricing-feature-icon">✓</span>5 transforms / month</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon">✓</span>Paste input only</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon">✓</span>3 basic transformations</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span>No deployment guide</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span>NuSite watermark applied</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon off">✗</span>No project history</div>
+        <div class="pricing-btn btn-ghost-white">Get Started Free</div>
+      </div>
+
+      <!-- Pro -->
+      <div class="pricing-card pro">
+        <div class="pricing-tier">Pro</div>
+        <div class="pricing-price"><sup>$</sup>10</div>
+        <div class="pricing-period">per month, billed monthly</div>
+        <div class="pricing-divider"></div>
+        <div class="pricing-feature"><span class="pricing-feature-icon">✓</span>50 transforms / month</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon">✓</span>Paste + ZIP + URL input</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon">✓</span>All 8 transformation types</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon">✓</span>Deployment guide included</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon">✓</span>No watermark</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon">✓</span>10 saved projects</div>
+        <div class="pricing-btn btn-solid-lime">Start Pro Trial</div>
+      </div>
+
+      <!-- Premium -->
+      <div class="pricing-card premium">
+        <div class="pricing-tier">Premium</div>
+        <div class="pricing-price"><sup>$</sup>20</div>
+        <div class="pricing-period">per month, billed monthly</div>
+        <div class="pricing-divider"></div>
+        <div class="pricing-feature"><span class="pricing-feature-icon" style="background:var(--lime);color:var(--void)">✓</span>Unlimited transforms</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon" style="background:var(--lime);color:var(--void)">✓</span>All inputs + GitHub repo</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon" style="background:var(--lime);color:var(--void)">✓</span>All types + custom prompt</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon" style="background:var(--lime);color:var(--void)">✓</span>Deployment guide + sandbox</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon" style="background:var(--lime);color:var(--void)">✓</span>Unlimited project history</div>
+        <div class="pricing-feature"><span class="pricing-feature-icon" style="background:var(--lime);color:var(--void)">✓</span>Priority support</div>
+        <div class="pricing-btn btn-solid-indigo">Go Premium</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       UI COMPONENTS + VOICE SPLIT
+  ═══════════════════════════════════════ -->
+  <div class="grid-2" style="margin-bottom:64px;">
+
+    <!-- UI Components -->
+    <div class="card">
+      <div class="section-label" style="margin-bottom:24px;">06 — UI Components</div>
+
+      <div class="comp-group-label">Buttons</div>
+      <div class="btn-row" style="margin-bottom:24px;">
+        <button class="btn btn-primary">Transform ✦</button>
+        <button class="btn btn-secondary">Preview</button>
+        <button class="btn btn-lime">Download</button>
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-danger">Delete</button>
+      </div>
+
+      <div class="comp-group-label">Tier Badges</div>
+      <div class="badge-row" style="margin-bottom:24px;">
+        <span class="tier-badge badge-starter">Starter</span>
+        <span class="tier-badge badge-pro">Pro</span>
+        <span class="tier-badge badge-premium">Premium</span>
+      </div>
+
+      <div class="comp-group-label">Status Indicators</div>
+      <div class="status-row" style="margin-bottom:24px;">
+        <div class="status-item"><div class="status-dot" style="background:var(--success); box-shadow:0 0 6px var(--success)"></div>Transform complete</div>
+        <div class="status-item"><div class="status-dot" style="background:var(--indigo); box-shadow:0 0 6px var(--indigo); animation: pulse 1.5s infinite;"></div>Processing…</div>
+        <div class="status-item"><div class="status-dot" style="background:var(--warning)"></div>3 transforms remaining</div>
+        <div class="status-item"><div class="status-dot" style="background:var(--error)"></div>Limit reached — upgrade to Pro</div>
+      </div>
+
+      <div class="comp-group-label">Input Fields</div>
+      <input class="input-demo" placeholder="Paste your HTML, CSS or JS here…" readonly>
+      <input class="input-demo" placeholder="https://yoursite.com (Pro)" readonly>
+    </div>
+
+    <!-- Brand Voice -->
+    <div class="card">
+      <div class="section-label" style="margin-bottom:24px;">07 — Brand Voice</div>
+
+      <div class="comp-group-label" style="margin-bottom:12px;">Personality</div>
+      <div class="personality-pills" style="margin-bottom:24px;">
+        <span class="pill active">Bold</span>
+        <span class="pill active">Direct</span>
+        <span class="pill lime">Intelligent</span>
+        <span class="pill active">Energetic</span>
+        <span class="pill">Playful</span>
+        <span class="pill active">Modern</span>
+        <span class="pill">Approachable</span>
+        <span class="pill lime">Transformative</span>
+      </div>
+
+      <div class="comp-group-label" style="margin-bottom:12px;">Tone Examples</div>
+      <div class="voice-pair">
+        <div class="voice-item bad">
+          <span class="voice-badge badge-bad">✗ AVOID</span><br>
+          "Leverage AI-powered transformation pipelines to modernise legacy codebases at scale."
+        </div>
+        <div class="voice-item good">
+          <span class="voice-badge badge-good">✓ USE</span><br>
+          "Drop in your old site. Get back something that actually looks good."
+        </div>
+        <div class="voice-item bad">
+          <span class="voice-badge badge-bad">✗ AVOID</span><br>
+          "Our proprietary system utilises advanced machine learning to facilitate website enhancement."
+        </div>
+        <div class="voice-item good">
+          <span class="voice-badge badge-good">✓ USE</span><br>
+          "Paste. Transform. Ship. That's it."
+        </div>
+        <div class="voice-item good">
+          <span class="voice-badge badge-good">✓ USE</span><br>
+          "Your MVP looks like 2015. Fix it without hiring a designer."
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       AUDIENCE SEGMENTS
+  ═══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">08 — Target Audience</div>
+    <div class="audience-grid">
+      <div class="audience-card">
+        <span class="audience-icon">🧑‍💻</span>
+        <div class="audience-type">Freelancers</div>
+        <div class="audience-hook">"Stop spending days cleaning up client sites."</div>
+        <div class="audience-desc">Takes on client work with legacy codebases. Needs fast, reliable output they can hand off. Values time saved above anything else.</div>
+      </div>
+      <div class="audience-card">
+        <span class="audience-icon">🚀</span>
+        <div class="audience-type">Startup Founders</div>
+        <div class="audience-hook">"Your MVP looks like 2015. Fix it without a designer."</div>
+        <div class="audience-desc">Shipped fast, looks rough. Wants it modernised without budget for a full redesign. Values affordability and speed.</div>
+      </div>
+      <div class="audience-card">
+        <span class="audience-icon">🏢</span>
+        <div class="audience-type">Small Agencies</div>
+        <div class="audience-hook">"Modernise 10 client sites in the time it used to take for one."</div>
+        <div class="audience-desc">Manages multiple client projects simultaneously. Needs batch capability, clean output and deployment instructions to hand off. Values repeatability.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       GO-TO-MARKET PHASES
+  ═══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">09 — Build & Launch Roadmap</div>
+    <div class="gtm-phases">
+      <div class="gtm-phase current">
+        <div class="gtm-current-badge">YOU ARE HERE</div>
+        <div class="gtm-num">01</div>
+        <div class="gtm-title">Brand</div>
+        <div class="gtm-detail">Name, identity, colours, fonts, positioning</div>
+      </div>
+      <div class="gtm-phase">
+        <div class="gtm-num">02</div>
+        <div class="gtm-title">Landing Page</div>
+        <div class="gtm-detail">Marketing site, waitlist, hero, pricing</div>
+      </div>
+      <div class="gtm-phase">
+        <div class="gtm-num">03</div>
+        <div class="gtm-title">App Shell</div>
+        <div class="gtm-detail">Auth, dashboard, tier gating, onboarding</div>
+      </div>
+      <div class="gtm-phase">
+        <div class="gtm-num">04</div>
+        <div class="gtm-title">Core Engine</div>
+        <div class="gtm-detail">Transform pipeline, paste input, AI integration</div>
+      </div>
+      <div class="gtm-phase">
+        <div class="gtm-num">05</div>
+        <div class="gtm-title">Payments</div>
+        <div class="gtm-detail">Stripe, Pro/Premium gates, usage limits</div>
+      </div>
+      <div class="gtm-phase">
+        <div class="gtm-num">06</div>
+        <div class="gtm-title">More Inputs</div>
+        <div class="gtm-detail">ZIP, URL scraping, GitHub repo (Pro/Premium)</div>
+      </div>
+      <div class="gtm-phase">
+        <div class="gtm-num">07</div>
+        <div class="gtm-title">Launch</div>
+        <div class="gtm-detail">Product Hunt, dev communities, social</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       TECH STACK
+  ═══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-label">10 — Tech Stack</div>
+    <div class="grid-4">
+      <div class="card card-sm">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--lime); letter-spacing:0.15em; margin-bottom:8px;">FRONTEND</div>
+        <div style="font-family:var(--syne); font-size:15px; font-weight:700; color:var(--ghost); margin-bottom:4px;">Next.js + React</div>
+        <div style="font-size:12px; color:var(--lavender);">Hosted on Vercel. Auto-deploy from GitHub.</div>
+      </div>
+      <div class="card card-sm">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--lime); letter-spacing:0.15em; margin-bottom:8px;">AUTH + DB</div>
+        <div style="font-family:var(--syne); font-size:15px; font-weight:700; color:var(--ghost); margin-bottom:4px;">Clerk + Supabase</div>
+        <div style="font-size:12px; color:var(--lavender);">Auth with OAuth. Postgres for users, usage, projects.</div>
+      </div>
+      <div class="card card-sm">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--lime); letter-spacing:0.15em; margin-bottom:8px;">PAYMENTS</div>
+        <div style="font-family:var(--syne); font-size:15px; font-weight:700; color:var(--ghost); margin-bottom:4px;">Stripe</div>
+        <div style="font-size:12px; color:var(--lavender);">Subscriptions, customer portal, webhook sync.</div>
+      </div>
+      <div class="card card-sm">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--lime); letter-spacing:0.15em; margin-bottom:8px;">AI ENGINE</div>
+        <div style="font-family:var(--syne); font-size:15px; font-weight:700; color:var(--ghost); margin-bottom:4px;">Anthropic API</div>
+        <div style="font-size:12px; color:var(--lavender);">Claude Sonnet for transforms. Large context window.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER / BRAND SIGN-OFF
+  ═══════════════════════════════════════ -->
+  <div class="brand-footer">
+    <div>
+      <div class="footer-logo" style="margin-bottom:8px;">
+        <div class="footer-logo-icon">
+          <svg viewBox="0 0 38 38" fill="none" width="18" height="18"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg>
+        </div>
+        <div class="footer-wordmark"><span>Nu</span>Site</div>
+      </div>
+      <div class="footer-camluk">A product by Camluk Technologies (Pty) Ltd · Cape Town, South Africa</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-family:var(--syne); font-size:18px; font-weight:700; color:var(--ghost); margin-bottom:4px;">"Your site. Reimagined."</div>
+      <div style="font-size:13px; color:var(--lavender);">nusite.app</div>
+    </div>
+    <div class="footer-doc-info">
+      Brand Identity Document v1.0<br>
+      Confidential · Internal Use Only<br>
+      © 2025 Camluk Technologies (Pty) Ltd<br>
+      <span style="color:var(--lime)">All rights reserved</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NuSite — Email Templates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root{
+    --indigo:#5B4CFF;
+    --indigo-lt:#7B6FFF;
+    --indigo-dk:#3D33B8;
+    --lime:#C8FF00;
+    --void:#0A0A0F;
+    --void-2:#06060A;
+    --ghost:#F4F4FF;
+    --slate:#1C1C2E;
+    --slate-lt:#252538;
+    --slate-hi:#2F2F45;
+    --lavender:#8B85C1;
+    --success:#22D47A;
+    --warning:#F5A623;
+    --error:#FF4C4C;
+    --border:rgba(244,244,255,0.08);
+    --border-strong:rgba(244,244,255,0.16);
+    --syne:'Syne',sans-serif;
+    --dm:'DM Sans',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+
+  html,body{ height:100%; background: var(--void-2); color:var(--ghost); font-family:var(--dm); -webkit-font-smoothing:antialiased; }
+  body{ overflow-x: hidden; }
+  button{ font:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+
+  .page-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(900px 600px at 85% -10%, rgba(91,76,255,0.16), transparent 60%),
+      radial-gradient(700px 500px at 0% 100%, rgba(200,255,0,0.04), transparent 60%);
+  }
+  .dot-grid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image: radial-gradient(rgba(244,244,255,0.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: linear-gradient(180deg, transparent 0, black 30%, black 70%, transparent 100%);
+  }
+
+  /* TOPBAR shared */
+  .topbar{
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px 36px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    background: rgba(10,10,15,0.6);
+  }
+  .topbar-left{ display:flex; align-items:center; gap:18px; }
+  .logo{ display:flex; align-items:center; gap:11px; }
+  .logo-mark{
+    width:34px; height:34px; background:var(--indigo);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 6px 18px rgba(91,76,255,0.35);
+  }
+  .logo-mark svg{ width:20px; height:20px; }
+  .wordmark{
+    font-family:var(--syne); font-weight:800; font-size:20px;
+    letter-spacing:-0.03em; line-height:1;
+  }
+  .wordmark .nu{ color:var(--indigo); }
+  .wordmark .site{ color:var(--ghost); }
+  .crumb{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.16em; text-transform:uppercase;
+    padding-left:18px; border-left:1px solid var(--border);
+    display:flex; align-items:center; gap:10px;
+  }
+  .crumb .pill{
+    background:rgba(91,76,255,0.12); color:var(--indigo-lt);
+    padding:4px 10px; border-radius:100px;
+    border:1px solid rgba(91,76,255,0.25);
+  }
+  .topbar-right{ display:flex; align-items:center; gap:14px; }
+  .meta{
+    font-family:var(--mono); font-size:11px; color:var(--lavender);
+    letter-spacing:0.12em; text-transform:uppercase;
+    display:flex; gap:18px;
+  }
+  .meta b{ color:var(--ghost); font-weight:500; }
+  .iconbtn{
+    width:36px; height:36px; border-radius:9px;
+    border:1px solid var(--border); background:var(--slate);
+    display:flex; align-items:center; justify-content:center;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .iconbtn:hover{ border-color: var(--border-strong); background:var(--slate-lt); }
+  .iconbtn svg{ width:16px; height:16px; }
+
+  /* LAYOUT */
+  .app{
+    position:relative; z-index:2;
+    display:grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    padding: 28px 36px 36px;
+    max-width: 1500px; margin: 0 auto;
+    align-items: start;
+  }
+
+  /* SIDEBAR — email list */
+  .side{
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    position: sticky; top: 100px;
+  }
+  .side-head{
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .side-title{
+    font-family: var(--syne); font-weight: 700; font-size: 15px;
+    color: var(--ghost); letter-spacing: -0.005em;
+    margin-bottom: 4px;
+  }
+  .side-sub{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .mail-row{
+    display:flex; align-items:flex-start; gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .15s ease;
+    position: relative;
+  }
+  .mail-row:last-child{ border-bottom: none; }
+  .mail-row:hover{ background: rgba(91,76,255,0.05); }
+  .mail-row.active{ background: rgba(91,76,255,0.10); }
+  .mail-row.active::before{
+    content:''; position:absolute; left:0; top: 12px; bottom: 12px; width: 3px;
+    background: var(--indigo); border-radius: 0 3px 3px 0;
+  }
+  .mail-row .num{
+    width: 26px; height: 26px; border-radius: 7px;
+    background: var(--slate-lt);
+    color: var(--lavender);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--mono); font-weight: 600; font-size: 11px;
+    flex-shrink: 0;
+  }
+  .mail-row.active .num{
+    background: var(--indigo); color: #fff;
+  }
+  .mail-row-text{ flex:1; min-width: 0; }
+  .mail-row-from{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.10em; text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .mail-row-sub{
+    font-family: var(--syne); font-weight: 600; font-size: 13.5px;
+    color: var(--ghost); line-height: 1.3;
+    margin-bottom: 4px;
+    text-wrap: pretty;
+  }
+  .mail-row-pre{
+    font-family: var(--dm); font-size: 12px;
+    color: var(--lavender); line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* MAIN — viewer */
+  .main{
+    display:flex; flex-direction: column; gap: 18px;
+    min-width: 0;
+  }
+  .main-head{
+    display:flex; align-items:flex-end; justify-content:space-between; gap: 18px;
+  }
+  .main-title{
+    font-family: var(--syne); font-weight: 700; font-size: 22px;
+    color: var(--ghost); letter-spacing: -0.01em;
+  }
+  .main-sub{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .main-tools{ display:flex; align-items:center; gap: 10px; }
+  .seg{
+    display:inline-flex; border:1px solid var(--border); border-radius:10px;
+    background: var(--slate); padding:3px;
+  }
+  .seg button{
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:0.12em; text-transform:uppercase;
+    padding: 7px 14px; border-radius:7px;
+    color: var(--lavender);
+    transition: color .2s ease, background .2s ease;
+  }
+  .seg button.active{ color: var(--ghost); background: var(--slate-hi); }
+  .seg button:hover{ color: var(--ghost); }
+  .copy-btn{
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--lavender);
+    padding: 9px 14px; border-radius: 9px;
+    background: var(--slate); border: 1px solid var(--border);
+    display:inline-flex; align-items: center; gap: 8px;
+    transition: color .2s ease, border-color .2s ease, background .2s ease;
+  }
+  .copy-btn:hover{ color: var(--ghost); border-color: var(--border-strong); }
+  .copy-btn.ok{ color: var(--success); border-color: rgba(34,212,122,0.4); background: rgba(34,212,122,0.08); }
+  .copy-btn svg{ width: 13px; height: 13px; }
+
+  /* CLIENT FRAME (mac-mail style) */
+  .client{
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+  }
+  .client-top{
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    background: linear-gradient(180deg, rgba(244,244,255,0.03), transparent);
+  }
+  .traffic{ display:flex; gap: 6px; }
+  .traffic span{ width:11px; height:11px; border-radius:50%; }
+  .traffic span:nth-child(1){ background:#FF5F57; }
+  .traffic span:nth-child(2){ background:#FEBC2E; }
+  .traffic span:nth-child(3){ background:#28C840; }
+  .client-title{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .client-title b{ color: var(--ghost); font-weight: 500; }
+  .client-headers{
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display:grid; grid-template-columns: auto 1fr auto; gap: 8px 16px;
+    font-family: var(--dm); font-size: 13px;
+    align-items: center;
+  }
+  .client-headers .row{ display: contents; }
+  .client-headers .k{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .client-headers .v{ color: var(--ghost); }
+  .client-headers .v.from{ display:flex; align-items:center; gap: 10px; }
+  .client-headers .v.from .ava{
+    width: 28px; height: 28px; border-radius: 50%; background: var(--indigo);
+    color: #fff; display:flex; align-items:center; justify-content:center;
+    font-family: var(--syne); font-weight:800; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .client-headers .v.subject{
+    font-family: var(--syne); font-weight: 700; font-size: 15px;
+    letter-spacing: -0.005em;
+  }
+  .client-headers .v.right{ color: var(--lavender); font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+  .client-body{
+    padding: 28px;
+    background: var(--slate-lt);
+    display:flex; justify-content:center;
+    overflow: hidden;
+  }
+
+  /* ─────── EMAIL BODY (the actual designed email) ─────── */
+  .email{
+    width: 600px; max-width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    font-family: var(--dm);
+    color: var(--ghost);
+    background: var(--void);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+    transition: background .2s ease, color .2s ease;
+  }
+  .email[data-theme="light"]{
+    background: #FAFAFE;
+    color: #14141F;
+  }
+
+  .e-header{
+    padding: 28px 36px 24px;
+    background: var(--void);
+    border-bottom: 1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .e-header::before{
+    content:''; position: absolute;
+    top: -120px; right: -120px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(91,76,255,0.30) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .email[data-theme="light"] .e-header{
+    background: #14141F;
+    border-bottom-color: rgba(255,255,255,0.06);
+  }
+  .e-header .logo{ position: relative; z-index: 1; }
+  .e-header .logo .wordmark{ color: #fff; font-size: 22px; }
+  .e-header .logo .wordmark .nu{ color: var(--indigo-lt); }
+  .e-header .meta-time{
+    position: relative; z-index: 1;
+    font-family: var(--mono); font-size: 10px;
+    color: rgba(244,244,255,0.6);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+
+  .e-body{ padding: 36px 36px 32px; }
+  .email[data-theme="light"] .e-body{ color: #14141F; }
+
+  .e-eyebrow{
+    display:inline-flex; align-items:center; gap: 8px;
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--indigo-lt);
+    background: rgba(91,76,255,0.10);
+    border: 1px solid rgba(91,76,255,0.30);
+    padding: 6px 12px; border-radius: 100px;
+    margin-bottom: 18px;
+  }
+  .e-eyebrow .dot{ width:6px; height:6px; border-radius:50%; background: var(--lime); box-shadow: 0 0 10px var(--lime); }
+  .e-eyebrow.lime{
+    color: var(--void);
+    background: var(--lime);
+    border-color: var(--lime);
+  }
+  .email[data-theme="light"] .e-eyebrow{
+    background: rgba(91,76,255,0.10);
+    color: var(--indigo);
+    border-color: rgba(91,76,255,0.30);
+  }
+  .email[data-theme="light"] .e-eyebrow.lime{
+    color: #14141F; background: var(--lime); border-color: var(--lime);
+  }
+
+  .e-h1{
+    font-family: var(--syne); font-weight: 800;
+    font-size: 38px; line-height: 1.05;
+    letter-spacing: -0.025em;
+    color: var(--ghost);
+    margin-bottom: 14px;
+    text-wrap: pretty;
+  }
+  .email[data-theme="light"] .e-h1{ color: #14141F; }
+  .e-h1 .ac{ color: var(--indigo-lt); }
+  .email[data-theme="light"] .e-h1 .ac{ color: var(--indigo); }
+
+  .e-lead{
+    font-family: var(--dm); font-size: 16px; line-height: 1.55;
+    color: var(--lavender);
+    margin-bottom: 22px;
+  }
+  .email[data-theme="light"] .e-lead{ color: #5F5A8A; }
+  .e-lead b{ color: var(--ghost); font-weight: 500; }
+  .email[data-theme="light"] .e-lead b{ color: #14141F; }
+
+  .e-p{
+    font-family: var(--dm); font-size: 15px; line-height: 1.6;
+    color: var(--ghost);
+    margin-bottom: 18px;
+  }
+  .email[data-theme="light"] .e-p{ color: #14141F; }
+  .e-p .muted{ color: var(--lavender); }
+  .email[data-theme="light"] .e-p .muted{ color: #5F5A8A; }
+
+  .e-cta{
+    display:inline-flex; align-items:center; gap: 10px;
+    background: var(--indigo); color: #fff;
+    font-family: var(--syne); font-weight: 700; font-size: 14px;
+    padding: 14px 24px; border-radius: 12px;
+    text-decoration: none;
+    letter-spacing: 0.005em;
+    box-shadow: 0 12px 32px rgba(91,76,255,0.30);
+  }
+  .e-cta.lime{
+    background: var(--lime); color: var(--void);
+    box-shadow: 0 12px 32px rgba(200,255,0,0.22);
+  }
+  .e-cta-row{ margin: 8px 0 22px; display:flex; flex-wrap: wrap; gap: 10px; }
+  .e-cta-ghost{
+    background: transparent; color: var(--ghost);
+    border: 1px solid var(--border-strong);
+    padding: 14px 22px; border-radius: 12px;
+    font-family: var(--syne); font-weight: 600; font-size: 14px;
+  }
+  .email[data-theme="light"] .e-cta-ghost{ color: #14141F; border-color: rgba(14,14,26,0.16); }
+
+  .e-divider{
+    border: none; height: 1px;
+    background: var(--border);
+    margin: 26px 0;
+  }
+  .email[data-theme="light"] .e-divider{ background: rgba(14,14,26,0.08); }
+
+  /* Feature cards inside email */
+  .e-grid{
+    display:grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-bottom: 22px;
+  }
+  .e-card{
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    background: rgba(244,244,255,0.025);
+  }
+  .email[data-theme="light"] .e-card{
+    background: #fff; border-color: rgba(14,14,26,0.08);
+  }
+  .e-card .icon{
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(91,76,255,0.14); color: var(--indigo-lt);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--syne); font-weight: 700; font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .e-card .name{
+    font-family: var(--syne); font-weight: 700; font-size: 13.5px;
+    color: var(--ghost); margin-bottom: 4px;
+  }
+  .email[data-theme="light"] .e-card .name{ color: #14141F; }
+  .e-card .desc{
+    font-family: var(--dm); font-size: 12px;
+    color: var(--lavender); line-height: 1.45;
+  }
+  .email[data-theme="light"] .e-card .desc{ color: #5F5A8A; }
+
+  /* Steps list */
+  .e-steps{ list-style: none; padding: 0; margin: 10px 0 22px; }
+  .e-step{
+    display:flex; align-items:flex-start; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .email[data-theme="light"] .e-step{ border-bottom-color: rgba(14,14,26,0.06); }
+  .e-step:last-child{ border-bottom: none; }
+  .e-step .n{
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--indigo); color: #fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--syne); font-weight: 800; font-size: 12px;
+    flex-shrink: 0;
+  }
+  .e-step .t{ font-family: var(--dm); font-size: 14px; line-height: 1.5; }
+  .e-step .t b{ font-family: var(--syne); font-weight: 700; }
+
+  /* Magic-link callout box */
+  .e-magic{
+    border: 1px dashed rgba(91,76,255,0.4);
+    background: rgba(91,76,255,0.06);
+    border-radius: 12px;
+    padding: 22px 24px;
+    text-align: center;
+    margin: 18px 0 22px;
+  }
+  .e-magic .label{
+    font-family: var(--mono); font-size: 11px;
+    color: var(--indigo-lt); letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .e-magic .code{
+    font-family: var(--mono); font-weight: 600; font-size: 28px;
+    color: var(--ghost); letter-spacing: 0.18em;
+    margin-bottom: 14px;
+  }
+  .email[data-theme="light"] .e-magic .code{ color: #14141F; }
+  .e-magic .hint{
+    font-family: var(--dm); font-size: 12px;
+    color: var(--lavender);
+  }
+
+  /* Usage bar (upgrade nudge) */
+  .e-meter{
+    background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 22px;
+  }
+  .email[data-theme="light"] .e-meter{
+    background: #fff; border-color: rgba(14,14,26,0.08);
+  }
+  .e-meter-top{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 12px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .e-meter-top b{ color: var(--ghost); font-weight: 500; font-family: var(--syne); font-size: 14px; }
+  .email[data-theme="light"] .e-meter-top b{ color: #14141F; }
+  .e-meter-bar{
+    height: 10px; border-radius: 100px;
+    background: rgba(244,244,255,0.06);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .email[data-theme="light"] .e-meter-bar{ background: rgba(14,14,26,0.06); }
+  .e-meter-fill{
+    height: 100%; width: 90%;
+    background: linear-gradient(90deg, var(--indigo), var(--warning));
+    border-radius: 100px;
+  }
+  .e-meter-foot{
+    font-family: var(--dm); font-size: 13px;
+    color: var(--lavender);
+  }
+  .email[data-theme="light"] .e-meter-foot{ color: #5F5A8A; }
+  .e-meter-foot b{ color: var(--warning); }
+
+  /* Receipt table */
+  .e-receipt{
+    border: 1px solid var(--border); border-radius: 12px;
+    margin-bottom: 22px; overflow: hidden;
+  }
+  .email[data-theme="light"] .e-receipt{ border-color: rgba(14,14,26,0.08); }
+  .e-receipt-head{
+    background: var(--slate); padding: 14px 18px;
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 11px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .email[data-theme="light"] .e-receipt-head{ background: #F4F4FA; border-bottom-color: rgba(14,14,26,0.08); }
+  .e-receipt-head b{ color: var(--ghost); font-weight: 500; }
+  .email[data-theme="light"] .e-receipt-head b{ color: #14141F; }
+  .e-receipt-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 18px;
+    font-family: var(--dm); font-size: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .email[data-theme="light"] .e-receipt-row{ border-bottom-color: rgba(14,14,26,0.05); }
+  .e-receipt-row:last-child{ border-bottom: none; }
+  .e-receipt-row .k{ color: var(--lavender); }
+  .email[data-theme="light"] .e-receipt-row .k{ color: #5F5A8A; }
+  .e-receipt-row .v{ color: var(--ghost); font-weight: 500; font-family: var(--syne); }
+  .email[data-theme="light"] .e-receipt-row .v{ color: #14141F; }
+  .e-receipt-row.total{
+    background: rgba(91,76,255,0.06);
+    border-top: 1px solid rgba(91,76,255,0.2);
+  }
+  .e-receipt-row.total .v{ color: var(--indigo-lt); font-size: 18px; }
+  .email[data-theme="light"] .e-receipt-row.total .v{ color: var(--indigo); }
+
+  /* Footer */
+  .e-footer{
+    padding: 24px 36px 32px;
+    border-top: 1px solid var(--border);
+    background: rgba(244,244,255,0.02);
+  }
+  .email[data-theme="light"] .e-footer{
+    border-top-color: rgba(14,14,26,0.08);
+    background: rgba(14,14,26,0.03);
+  }
+  .e-footer .sig{
+    font-family: var(--dm); font-size: 13px;
+    color: var(--lavender); line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .email[data-theme="light"] .e-footer .sig{ color: #5F5A8A; }
+  .e-footer .sig b{ color: var(--ghost); font-weight: 600; }
+  .email[data-theme="light"] .e-footer .sig b{ color: #14141F; }
+  .e-footer .legal{
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender);
+    letter-spacing: 0.10em;
+    line-height: 1.7;
+  }
+  .e-footer .legal a{ color: var(--lavender); text-decoration: underline; text-decoration-color: rgba(139,133,193,0.4); }
+  .e-footer .socials{
+    display:flex; gap: 12px; margin-bottom: 14px;
+  }
+  .e-footer .socials a{
+    width: 28px; height: 28px; border-radius: 7px;
+    background: rgba(244,244,255,0.06);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--lavender); font-family: var(--mono); font-size: 11px; font-weight: 600;
+  }
+  .email[data-theme="light"] .e-footer .socials a{ background: rgba(14,14,26,0.05); color: #5F5A8A; }
+
+  /* SOURCE VIEW */
+  .source-pane{
+    background: #0A0B12;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: none;
+  }
+  body.view-source .source-pane{ display: block; }
+  body.view-source .client-body .email{ display: none; }
+  body.view-source .client-body{ padding: 0; background: var(--void-2); }
+  body.view-source .client-body{ display: block; }
+  .source-bar{
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    font-family: var(--mono); font-size: 10px;
+    color: var(--lavender); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .source-bar b{ color: var(--ghost); font-weight: 500; }
+  pre.source{
+    margin: 0;
+    padding: 22px 24px;
+    font-family: var(--mono); font-size: 12px;
+    line-height: 1.65;
+    color: var(--ghost);
+    overflow: auto;
+    max-height: 700px;
+    background: transparent;
+  }
+  pre.source .tg{ color: var(--indigo-lt); }
+  pre.source .at{ color: var(--lime); }
+  pre.source .vl{ color: #FF6B6B; }
+  pre.source .cm{ color: var(--lavender); }
+  pre.source .tx{ color: var(--ghost); }
+
+  /* Footer toolbar */
+  .toolbar{
+    position:relative; z-index:5;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding: 12px 36px 32px;
+    flex-wrap:wrap;
+  }
+  .tool{
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:0.12em; text-transform:uppercase;
+    padding: 9px 14px;
+    border:1px solid var(--border); border-radius:8px;
+    background:var(--slate); color:var(--lavender);
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .tool b{ color: var(--ghost); font-weight: 500; }
+  .tool kbd{
+    font-family:var(--mono); font-size:10px;
+    padding:1px 5px; border-radius:4px;
+    background: rgba(244,244,255,0.08); color:var(--ghost);
+    border:1px solid var(--border);
+  }
+
+  /* Small screen */
+  @media (max-width: 1100px){
+    .app{ grid-template-columns: 1fr; }
+    .side{ position: static; }
+  }
+  @media (max-width: 700px){
+    .client-headers{ grid-template-columns: 1fr; }
+    .client-headers .v.right{ display:none; }
+    pre.source{ font-size: 11px; }
+  }
+</style>
+</head>
+<body data-screen-label="Email Templates">
+
+<div class="page-bg"></div>
+<div class="dot-grid"></div>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+      <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+    </div>
+    <div class="crumb">
+      <span class="pill">Launch</span>
+      <span>Email Templates · 6 templates</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="meta">
+      <span>Width · <b>600px</b></span>
+      <span>Themes · <b>Dark · Light</b></span>
+      <span>Stage <b>7/7</b></span>
+    </div>
+    <a class="iconbtn" href="../NuSite Landing Page.html" title="Back to landing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+  </div>
+</header>
+
+<main class="app">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="side-head">
+      <div class="side-title">Lifecycle emails</div>
+      <div class="side-sub">6 templates · Mailchimp / Resend ready</div>
+    </div>
+    <div id="mailList"></div>
+  </aside>
+
+  <!-- MAIN -->
+  <section class="main">
+    <div class="main-head">
+      <div>
+        <div class="main-title" id="mTitle">Waitlist confirmation</div>
+        <div class="main-sub" id="mSub">Sent immediately after waitlist signup</div>
+      </div>
+      <div class="main-tools">
+        <div class="seg" id="viewSeg">
+          <button data-view="preview" class="active">Preview</button>
+          <button data-view="source">HTML source</button>
+        </div>
+        <div class="seg" id="themeSeg">
+          <button data-theme="dark" class="active">Dark</button>
+          <button data-theme="light">Light</button>
+        </div>
+        <button class="copy-btn" id="copyBtn" title="Copy HTML source">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          Copy
+        </button>
+      </div>
+    </div>
+
+    <!-- CLIENT FRAME -->
+    <div class="client">
+      <div class="client-top">
+        <div class="traffic"><span></span><span></span><span></span></div>
+        <div class="client-title">Mail · <b id="mClient">Waitlist confirmation</b></div>
+        <span></span>
+      </div>
+      <div class="client-headers">
+        <div class="row"><div class="k">From</div><div class="v from"><div class="ava" id="mAvatar">N</div><span id="mFrom">NuSite &lt;hello@nusite.app&gt;</span></div><div class="v right" id="mDate">Tue, 13 May 2026 · 09:41</div></div>
+        <div class="row"><div class="k">To</div><div class="v" id="mTo">you@startup.com</div><div></div></div>
+        <div class="row"><div class="k">Subject</div><div class="v subject" id="mSubject">You're in. We'll be in touch when NuSite lands.</div><div></div></div>
+      </div>
+      <div class="client-body">
+        <div class="email" data-theme="dark" id="emailHost"></div>
+        <div class="source-pane">
+          <div class="source-bar">
+            <span>HTML source · <b id="srcLabel">waitlist-confirmation.html</b></span>
+            <span>≈ <b id="srcKb">8.2</b> kb · UTF-8</span>
+          </div>
+          <pre class="source" id="srcView"></pre>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<footer class="toolbar">
+  <span class="tool"><kbd>↑</kbd> <kbd>↓</kbd> Switch email</span>
+  <span class="tool"><kbd>S</kbd> Toggle source</span>
+  <span class="tool"><kbd>T</kbd> Theme</span>
+  <span class="tool">All <b>6 templates</b> ready for handoff</span>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     EMAIL TEMPLATES (data + markup)
+═══════════════════════════════════════════════════════════════ -->
+<template id="tpl-1">
+<div class="e-header">
+  <div class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+    <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+  </div>
+  <div class="meta-time">13 MAY 2026</div>
+</div>
+<div class="e-body">
+  <div class="e-eyebrow"><span class="dot"></span>You're on the list</div>
+  <h1 class="e-h1">You're in. <span class="ac">Welcome aboard.</span></h1>
+  <p class="e-lead">Thanks for joining the NuSite waitlist. We're putting the final polish on the app and you'll be among the first to know when it ships.</p>
+  <p class="e-p">In the meantime — here's what your early-access gets you:</p>
+  <div class="e-grid">
+    <div class="e-card"><div class="icon">✦</div><div class="name">Early access</div><div class="desc">Get in before public launch. Skip the queue.</div></div>
+    <div class="e-card"><div class="icon">⚡</div><div class="name">Free Pro trial</div><div class="desc">30 days on Pro, on us. No card required.</div></div>
+    <div class="e-card"><div class="icon">🎁</div><div class="name">Founding discount</div><div class="desc">Locked in for life. Lower price, forever.</div></div>
+    <div class="e-card"><div class="icon">⌥</div><div class="name">Builder community</div><div class="desc">Private Slack with the team and other early users.</div></div>
+  </div>
+  <p class="e-p">We're aiming to launch in <b>the next few weeks</b>. You'll get a single email when the doors open — nothing in between.</p>
+  <hr class="e-divider"/>
+  <p class="e-p"><span class="muted">Know someone who'd love NuSite?</span> Forward this email, or share the page.</p>
+  <div class="e-cta-row">
+    <a class="e-cta" href="#">Share on X →</a>
+    <a class="e-cta-ghost" href="#">Copy invite link</a>
+  </div>
+</div>
+<div class="e-footer">
+  <div class="socials"><a>X</a><a>in</a><a>GH</a><a>PH</a></div>
+  <div class="sig">Made in Cape Town by <b>Camluk Technologies (Pty) Ltd</b>.<br/>Old code in. New site out.</div>
+  <div class="legal">You're getting this because you joined the NuSite waitlist · <a href="#">Unsubscribe</a> · <a href="#">Update preferences</a><br/>Camluk Technologies (Pty) Ltd · Cape Town, South Africa</div>
+</div>
+</template>
+
+<template id="tpl-2">
+<div class="e-header">
+  <div class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+    <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+  </div>
+  <div class="meta-time">LAUNCH DAY · 13 MAY</div>
+</div>
+<div class="e-body">
+  <div class="e-eyebrow lime"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--void)"></span>NuSite is live today</div>
+  <h1 class="e-h1">Old code in.<br/><span class="ac">New site out.</span></h1>
+  <p class="e-lead">It's launch day. NuSite is officially live — and your waitlist account is ready to use right now.</p>
+  <p class="e-p">As a waitlist member, your <b>30-day Pro trial</b> and <b>founding discount</b> are already loaded into your account. No card required to start.</p>
+  <div class="e-cta-row">
+    <a class="e-cta lime" href="#">Start transforming →</a>
+    <a class="e-cta-ghost" href="#">See what's new</a>
+  </div>
+  <hr class="e-divider"/>
+  <p class="e-p"><b>One favour, if you have a second:</b></p>
+  <p class="e-p">We're on Product Hunt today. An upvote — even a comment — helps us reach the builders who need this most. We'd be grateful forever.</p>
+  <div class="e-cta-row">
+    <a class="e-cta" href="#" style="background:#DA552F;box-shadow:0 12px 32px rgba(218,85,47,0.32);">▲ Upvote NuSite on Product Hunt</a>
+  </div>
+  <hr class="e-divider"/>
+  <p class="e-p"><span class="muted">Built on coffee and stubborness in Cape Town. Thanks for being here at the start.</span></p>
+</div>
+<div class="e-footer">
+  <div class="socials"><a>X</a><a>in</a><a>GH</a><a>PH</a></div>
+  <div class="sig">– The NuSite team<br/><b>Camluk Technologies (Pty) Ltd</b></div>
+  <div class="legal">You're getting this because you joined the NuSite waitlist · <a href="#">Unsubscribe</a> · <a href="#">Update preferences</a></div>
+</div>
+</template>
+
+<template id="tpl-3">
+<div class="e-header">
+  <div class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+    <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+  </div>
+  <div class="meta-time">WELCOME</div>
+</div>
+<div class="e-body">
+  <div class="e-eyebrow"><span class="dot"></span>Welcome to NuSite</div>
+  <h1 class="e-h1">Let's transform <span class="ac">your first site.</span></h1>
+  <p class="e-lead">Your account is ready. Here's the fastest path to a transformed site — start to finish in under five minutes.</p>
+  <ul class="e-steps">
+    <li class="e-step"><div class="n">1</div><div class="t"><b>Pick an input.</b> Paste raw HTML, upload a ZIP, drop a live URL, or connect a GitHub repo on Premium.</div></li>
+    <li class="e-step"><div class="n">2</div><div class="t"><b>Choose a transform.</b> Eight to pick from — make it responsive, add motion, port to React, modernise the design, fix accessibility, or stack a few.</div></li>
+    <li class="e-step"><div class="n">3</div><div class="t"><b>Review the diff.</b> Side-by-side before/after with file-level highlights. Reject and re-run anything you don't love.</div></li>
+    <li class="e-step"><div class="n">4</div><div class="t"><b>Ship it.</b> Download or follow the deployment guide for your host — Vercel, Netlify, GitHub Pages, Cloudflare, cPanel and more.</div></li>
+  </ul>
+  <div class="e-cta-row">
+    <a class="e-cta" href="#">Transform a site now →</a>
+    <a class="e-cta-ghost" href="#">Watch the 90s demo</a>
+  </div>
+  <hr class="e-divider"/>
+  <p class="e-p"><span class="muted">Stuck on something?</span> Reply directly to this email — it lands in our inbox, not a help desk.</p>
+</div>
+<div class="e-footer">
+  <div class="socials"><a>X</a><a>in</a><a>GH</a><a>PH</a></div>
+  <div class="sig">– The NuSite team<br/><b>Camluk Technologies (Pty) Ltd</b></div>
+  <div class="legal">You can manage email preferences in your account · <a href="#">Settings</a> · <a href="#">Unsubscribe</a></div>
+</div>
+</template>
+
+<template id="tpl-4">
+<div class="e-header">
+  <div class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+    <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+  </div>
+  <div class="meta-time">USAGE NUDGE</div>
+</div>
+<div class="e-body">
+  <div class="e-eyebrow"><span class="dot" style="background:var(--warning);box-shadow:0 0 10px var(--warning)"></span>You're shipping a lot</div>
+  <h1 class="e-h1">You've used <span class="ac">45 of 50</span> Pro transforms.</h1>
+  <p class="e-lead">Looks like you're getting real value out of NuSite. You're 5 transforms away from your monthly Pro limit, which resets on the 1st.</p>
+  <div class="e-meter">
+    <div class="e-meter-top"><span>This month · Pro tier</span><b>45 / 50</b></div>
+    <div class="e-meter-bar"><div class="e-meter-fill"></div></div>
+    <div class="e-meter-foot"><b>5 transforms left</b> · resets in 18 days</div>
+  </div>
+  <p class="e-p">If you're consistently hitting the cap, Premium gives you the things that matter most when you're really shipping:</p>
+  <div class="e-grid">
+    <div class="e-card"><div class="icon">∞</div><div class="name">Unlimited transforms</div><div class="desc">No monthly cap. Use it like a power tool.</div></div>
+    <div class="e-card"><div class="icon">⌥</div><div class="name">GitHub repo input</div><div class="desc">Connect a repo, transform the whole tree.</div></div>
+    <div class="e-card"><div class="icon">✎</div><div class="name">Custom prompts</div><div class="desc">Combine transforms or write your own.</div></div>
+    <div class="e-card"><div class="icon">⚡</div><div class="name">Priority support</div><div class="desc">Real humans, same-day replies.</div></div>
+  </div>
+  <div class="e-cta-row">
+    <a class="e-cta lime" href="#">Upgrade to Premium · $20/mo →</a>
+    <a class="e-cta-ghost" href="#">Stay on Pro</a>
+  </div>
+  <hr class="e-divider"/>
+  <p class="e-p"><span class="muted">If $20/mo is the wrong number for you, just reply — we listen.</span></p>
+</div>
+<div class="e-footer">
+  <div class="socials"><a>X</a><a>in</a><a>GH</a><a>PH</a></div>
+  <div class="sig">– The NuSite team<br/><b>Camluk Technologies (Pty) Ltd</b></div>
+  <div class="legal">Sent because you opted into usage alerts · <a href="#">Settings</a> · <a href="#">Unsubscribe</a></div>
+</div>
+</template>
+
+<template id="tpl-5">
+<div class="e-header">
+  <div class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+    <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+  </div>
+  <div class="meta-time">EXPIRES IN 10 MIN</div>
+</div>
+<div class="e-body">
+  <div class="e-eyebrow"><span class="dot"></span>Your sign-in link</div>
+  <h1 class="e-h1">Sign in to <span class="ac">NuSite.</span></h1>
+  <p class="e-lead">Tap the button below to sign in to your account. No password to remember — the link is good for 10 minutes and only works once.</p>
+  <div class="e-cta-row"><a class="e-cta" href="#">Sign in to NuSite →</a></div>
+  <div class="e-magic">
+    <div class="label">Or use this code</div>
+    <div class="code">42-9831</div>
+    <div class="hint">Enter this 6-digit code on the sign-in page. Expires in 10 minutes.</div>
+  </div>
+  <hr class="e-divider"/>
+  <p class="e-p"><span class="muted">You didn't request this?</span> Ignore this email. No one can use this link or code without your inbox.</p>
+  <p class="e-p"><span class="muted">For your records:</span> requested from Cape Town, ZA · Chrome on macOS · 09:41 SAST</p>
+</div>
+<div class="e-footer">
+  <div class="sig">Sent by <b>NuSite Authentication</b> · auth@nusite.app<br/><b>Camluk Technologies (Pty) Ltd</b></div>
+  <div class="legal">This is a transactional email. <a href="#">Security &amp; privacy</a> · <a href="#">Report abuse</a></div>
+</div>
+</template>
+
+<template id="tpl-6">
+<div class="e-header">
+  <div class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 38 38" fill="none"><rect x="4" y="6" width="5" height="26" rx="2.5" fill="white"/><path d="M4 8 L29 30" stroke="white" stroke-width="5" stroke-linecap="round"/><rect x="22" y="6" width="5" height="26" rx="2.5" fill="white"/><circle cx="32" cy="8" r="3" fill="#C8FF00"/></svg></div>
+    <div class="wordmark"><span class="nu">Nu</span><span class="site">Site</span></div>
+  </div>
+  <div class="meta-time">RECEIPT · 13 MAY 2026</div>
+</div>
+<div class="e-body">
+  <div class="e-eyebrow"><span class="dot" style="background:var(--success);box-shadow:0 0 10px var(--success)"></span>Payment received</div>
+  <h1 class="e-h1">Receipt for <span class="ac">NuSite Pro.</span></h1>
+  <p class="e-lead">Thanks for the support. Your subscription has been renewed and you're good to go for another month. Here are the details for your records.</p>
+  <div class="e-receipt">
+    <div class="e-receipt-head"><span>Invoice · <b>NS-2026-04812</b></span><span>13 MAY 2026</span></div>
+    <div class="e-receipt-row"><span class="k">NuSite Pro · Monthly</span><span class="v">$10.00</span></div>
+    <div class="e-receipt-row"><span class="k">Founding discount (locked)</span><span class="v">−$2.00</span></div>
+    <div class="e-receipt-row"><span class="k">VAT (15%)</span><span class="v">$1.20</span></div>
+    <div class="e-receipt-row total"><span class="k">Total charged</span><span class="v">$9.20 USD</span></div>
+  </div>
+  <p class="e-p"><span class="muted">Paid with</span> Visa ending in <b>4242</b> · <span class="muted">Next renewal</span> <b>13 Jun 2026</b></p>
+  <div class="e-cta-row">
+    <a class="e-cta" href="#">Download PDF invoice</a>
+    <a class="e-cta-ghost" href="#">Manage billing</a>
+  </div>
+  <hr class="e-divider"/>
+  <p class="e-p"><span class="muted">Questions about this invoice? Reply to this email or write to <b>billing@nusite.app</b>.</span></p>
+</div>
+<div class="e-footer">
+  <div class="sig">– NuSite Billing<br/><b>Camluk Technologies (Pty) Ltd</b> · VAT 4920-2837-19<br/>Cape Town, South Africa · 8001</div>
+  <div class="legal">This is a transactional receipt and cannot be unsubscribed. <a href="#">Tax info</a> · <a href="#">Refund policy</a></div>
+</div>
+</template>
+
+<script>
+  const EMAILS = [
+    { id:1, num:'01', from:'NuSite <hello@nusite.app>', avatar:'N', subject:"You're in. We'll be in touch when NuSite lands.",
+      to:'you@startup.com', date:'Tue, 13 May 2026 · 09:41', title:'Waitlist confirmation', sub:'Sent immediately after waitlist signup',
+      client:'Waitlist confirmation', pre:"Thanks for joining the NuSite waitlist. We're putting the final polish on the app and you'll be among the first to know when it ships.",
+      kb:'8.2', src:'waitlist-confirmation.html', tpl:'tpl-1' },
+    { id:2, num:'02', from:'NuSite <hello@nusite.app>', avatar:'N', subject:"It's launch day. NuSite is live.",
+      to:'you@startup.com', date:'Tue, 13 May 2026 · 09:00', title:'Launch-day announcement', sub:'Sent to the full waitlist on launch day',
+      client:'Launch day', pre:"It's launch day. NuSite is officially live — and your waitlist account is ready to use right now.",
+      kb:'9.1', src:'launch-day.html', tpl:'tpl-2' },
+    { id:3, num:'03', from:'NuSite <hello@nusite.app>', avatar:'N', subject:"Welcome to NuSite. Let's transform your first site.",
+      to:'you@startup.com', date:'Tue, 13 May 2026 · 09:42', title:'Welcome · First transform', sub:'Sent on first successful signup',
+      client:'Welcome', pre:"Your account is ready. Here's the fastest path to a transformed site — start to finish in under five minutes.",
+      kb:'9.8', src:'welcome-first-transform.html', tpl:'tpl-3' },
+    { id:4, num:'04', from:'NuSite <hello@nusite.app>', avatar:'N', subject:"You're getting close to your transform limit.",
+      to:'you@startup.com', date:'Mon, 12 May 2026 · 16:20', title:'Pricing-tier upgrade nudge', sub:'Sent at 90% usage on Pro tier',
+      client:'Upgrade nudge', pre:"Looks like you're getting real value out of NuSite. You're 5 transforms away from your monthly Pro limit, which resets on the 1st.",
+      kb:'10.4', src:'upgrade-nudge-pro-to-premium.html', tpl:'tpl-4' },
+    { id:5, num:'05', from:'NuSite Authentication <auth@nusite.app>', avatar:'⌥', subject:"Your NuSite sign-in link",
+      to:'you@startup.com', date:'Tue, 13 May 2026 · 09:41', title:'Magic-link sign-in', sub:'Sent on passwordless sign-in request',
+      client:'Sign-in link', pre:"Tap the button below to sign in to your account. No password to remember — the link is good for 10 minutes and only works once.",
+      kb:'6.5', src:'magic-link-signin.html', tpl:'tpl-5' },
+    { id:6, num:'06', from:'NuSite Billing <billing@nusite.app>', avatar:'$', subject:"Receipt for your NuSite Pro subscription",
+      to:'you@startup.com', date:'Tue, 13 May 2026 · 00:01', title:'Receipt · Pro renewal', sub:'Sent on successful subscription charge',
+      client:'Receipt', pre:"Thanks for the support. Your subscription has been renewed and you're good to go for another month. Here are the details for your records.",
+      kb:'7.9', src:'receipt-pro-renewal.html', tpl:'tpl-6' }
+  ];
+
+  // Build sidebar
+  const listWrap = document.getElementById('mailList');
+  EMAILS.forEach((e, i) => {
+    const row = document.createElement('div');
+    row.className = 'mail-row' + (i===0 ? ' active' : '');
+    row.dataset.idx = i;
+    row.innerHTML = `
+      <div class="num">${e.num}</div>
+      <div class="mail-row-text">
+        <div class="mail-row-from">${e.from.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        <div class="mail-row-sub">${e.subject}</div>
+        <div class="mail-row-pre">${e.pre}</div>
+      </div>`;
+    row.addEventListener('click', () => select(i));
+    listWrap.appendChild(row);
+  });
+
+  // Avatar colors
+  const avBg = { N:'#5B4CFF', '⌥':'#3D33B8', '$':'#22D47A' };
+
+  const host = document.getElementById('emailHost');
+  const srcView = document.getElementById('srcView');
+  let cur = 0;
+
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function highlightHtml(s){
+    return escapeHtml(s)
+      .replace(/(&lt;\/?)([a-zA-Z][\w-]*)/g, '$1<span class="tg">$2</span>')
+      .replace(/([a-zA-Z\-]+)=(&quot;)([^&]*?)(&quot;)/g, '<span class="at">$1</span>=<span class="vl">$2$3$4</span>')
+      .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="cm">$1</span>');
+  }
+
+  function select(i){
+    cur = i;
+    const e = EMAILS[i];
+    document.querySelectorAll('.mail-row').forEach((r, idx) => r.classList.toggle('active', idx===i));
+    document.getElementById('mTitle').textContent = e.title;
+    document.getElementById('mSub').textContent = e.sub;
+    document.getElementById('mClient').textContent = e.client;
+    document.getElementById('mFrom').textContent = e.from;
+    document.getElementById('mTo').textContent = e.to;
+    document.getElementById('mDate').textContent = e.date;
+    document.getElementById('mSubject').textContent = e.subject;
+    document.getElementById('srcLabel').textContent = e.src;
+    document.getElementById('srcKb').textContent = e.kb;
+    const ava = document.getElementById('mAvatar');
+    ava.textContent = e.avatar;
+    ava.style.background = avBg[e.avatar] || '#5B4CFF';
+
+    // render template
+    const tpl = document.getElementById(e.tpl);
+    host.innerHTML = '';
+    host.appendChild(tpl.content.cloneNode(true));
+
+    // Source view — use the email's outer HTML
+    const fullHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>${e.subject}</title>
+<style>/* NuSite ${e.title} · 600px max-width responsive · table-based markup in production build */</style>
+</head>
+<body style="margin:0;background:#0A0A0F;font-family:'DM Sans',sans-serif;color:#F4F4FF;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#0A0A0F;padding:24px 12px;">
+<tr><td align="center">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;background:#0A0A0F;border-radius:14px;overflow:hidden;">
+<!-- NuSite — ${e.title} -->
+${host.innerHTML.trim()}
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+    srcView.innerHTML = highlightHtml(fullHtml);
+  }
+
+  // View toggle
+  document.getElementById('viewSeg').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-view]'); if(!btn) return;
+    document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('active', b===btn));
+    document.body.classList.toggle('view-source', btn.dataset.view === 'source');
+  });
+  // Theme toggle (for the email body)
+  document.getElementById('themeSeg').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-theme]'); if(!btn) return;
+    document.querySelectorAll('#themeSeg button').forEach(b => b.classList.toggle('active', b===btn));
+    host.dataset.theme = btn.dataset.theme;
+  });
+  // Copy
+  const copyBtn = document.getElementById('copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    try{
+      await navigator.clipboard.writeText(srcView.textContent);
+      copyBtn.classList.add('ok');
+      const original = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-12"/></svg> Copied';
+      setTimeout(()=>{ copyBtn.classList.remove('ok'); copyBtn.innerHTML = original; }, 1600);
+    }catch{}
+  });
+  // Keys
+  document.addEventListener('keydown', (e) => {
+    if(e.target.matches('input,textarea')) return;
+    if(e.key === 'ArrowDown' || e.key === 'j'){ select((cur+1) % EMAILS.length); }
+    else if(e.key === 'ArrowUp' || e.key === 'k'){ select((cur-1+EMAILS.length) % EMAILS.length); }
+    else if(e.key.toLowerCase() === 's'){
+      document.body.classList.toggle('view-source');
+      document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('active', b.dataset.view === (document.body.classList.contains('view-source')?'source':'preview')));
+    }
+    else if(e.key.toLowerCase() === 't'){
+      const next = host.dataset.theme === 'dark' ? 'light' : 'dark';
+      host.dataset.theme = next;
+      document.querySelectorAll('#themeSeg button').forEach(b => b.classList.toggle('active', b.dataset.theme === next));
+    }
+  });
+  // Sidebar click handler already wired
+
+  select(0);
+</script>
+</body>
+</html>
