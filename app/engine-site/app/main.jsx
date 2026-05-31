@@ -16,7 +16,13 @@ const SCENES = [
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [scene, setScene] = React.useState(() => {
-    try { return localStorage.getItem('nusite-scene') || 'signin'; } catch(e) { return 'signin'; }
+    try {
+      const stored = localStorage.getItem('nusite-scene');
+      const hasUser = !!localStorage.getItem('nusite-email');
+      // Only restore session if a real user is stored
+      if (stored && stored !== 'signin' && hasUser) return stored;
+      return 'signin';
+    } catch(e) { return 'signin'; }
   });
 
   // Theme — drive html[data-theme]

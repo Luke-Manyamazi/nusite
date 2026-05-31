@@ -1,10 +1,27 @@
-﻿// auth.jsx — Sign in screen with Google only. Side panel features live before/after transformation.
+﻿// auth.jsx — Sign in / sign up screen with email input.
 
 const AuthScreen = ({ onSignIn }) => {
   const [loading, setLoading] = React.useState(false);
-  const handleGoogle = () => {
+  const [email, setEmail] = React.useState('');
+  const [error, setError] = React.useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setError('Enter a valid email address.');
+      return;
+    }
+    setError('');
     setLoading(true);
-    setTimeout(onSignIn, 900);
+    // Derive display name from email local part
+    const namePart = trimmed.split('@')[0].replace(/[._-]+/g, ' ');
+    const displayName = namePart.replace(/\b\w/g, c => c.toUpperCase());
+    try {
+      localStorage.setItem('nusite-email', trimmed);
+      localStorage.setItem('nusite-user', displayName);
+    } catch(err) {}
+    setTimeout(onSignIn, 800);
   };
 
   return (
@@ -77,31 +94,49 @@ const AuthScreen = ({ onSignIn }) => {
             One click. No password to remember. Pick up where you left off.
           </p>
 
-          {/* Google sign in */}
-          <button
-            className="btn btn-lg"
-            onClick={handleGoogle}
-            disabled={loading}
-            style={{
-              width: '100%', background: 'var(--ghost)', color: 'var(--void)',
-              fontWeight: 700, justifyContent: 'center', gap: 12, height: 56,
-              fontFamily: 'var(--syne)', fontSize: 15, position: 'relative',
-              border: '1.5px solid var(--ghost)',
-            }}
-          >
-            {loading ? (
-              <>
-                <span className="spark" style={{ animation: 'livePulse 0.8s ease infinite' }}></span>
-                <span>Signing you in…</span>
-              </>
-            ) : (
-              <>
-                <GoogleG />
-                Continue with Google
-                <span style={{ marginLeft: 'auto', color: 'rgba(10,10,15,0.45)' }}>{ic.arr}</span>
-              </>
-            )}
-          </button>
+          {/* Email sign in form */}
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--lavender)', fontFamily: 'var(--mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={e => { setEmail(e.target.value); setError(''); }}
+                placeholder="you@example.com"
+                autoFocus
+                disabled={loading}
+                style={{
+                  width: '100%', height: 52, padding: '0 16px',
+                  borderRadius: 10, border: error ? '1.5px solid var(--error)' : '1.5px solid var(--border-strong)',
+                  background: 'var(--slate)', color: 'var(--ghost)',
+                  fontSize: 15, fontFamily: 'inherit', outline: 'none',
+                  boxSizing: 'border-box',
+                  transition: 'border-color .15s',
+                }}
+              />
+              {error && <span style={{ fontSize: 12, color: 'var(--error)' }}>{error}</span>}
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-lg"
+              disabled={loading}
+              style={{
+                width: '100%', background: 'var(--indigo)', color: '#fff',
+                fontWeight: 700, justifyContent: 'center', gap: 12, height: 52,
+                fontSize: 15, border: 'none',
+              }}
+            >
+              {loading ? (
+                <>
+                  <span className="spark" style={{ animation: 'livePulse 0.8s ease infinite' }}></span>
+                  Signing you in…
+                </>
+              ) : (
+                <>Continue {ic.arr}</>
+              )}
+            </button>
+          </form>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '24px 0', color: 'var(--lavender)', fontSize: 12, fontFamily: 'var(--mono)', letterSpacing: '0.1em' }}>
             <span style={{ flex: 1, height: 1, background: 'var(--border)' }}></span>
@@ -109,11 +144,10 @@ const AuthScreen = ({ onSignIn }) => {
             <span style={{ flex: 1, height: 1, background: 'var(--border)' }}></span>
           </div>
 
-          {/* "Coming soon" auth methods */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+          {/* Coming soon auth methods */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <SoonBtn label="Google" icon={<GoogleG />} />
             <SoonBtn label="GitHub" icon={ic.github} />
-            <SoonBtn label="Apple" icon={<AppleLogo />} />
-            <SoonBtn label="Email" icon={<EmailIcon />} />
           </div>
 
           {/* Perks */}
