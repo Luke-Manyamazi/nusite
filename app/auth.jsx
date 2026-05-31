@@ -2,24 +2,23 @@
 
 const AuthScreen = ({ onSignIn }) => {
   const [loading, setLoading] = React.useState(false);
+  const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
-  const [error, setError] = React.useState('');
+  const [errors, setErrors] = React.useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const trimmed = email.trim().toLowerCase();
-    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      setError('Enter a valid email address.');
-      return;
-    }
-    setError('');
+    const trimmedEmail = email.trim().toLowerCase();
+    const trimmedName = name.trim();
+    const errs = {};
+    if (!trimmedName) errs.name = 'Enter your name.';
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) errs.email = 'Enter a valid email address.';
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setErrors({});
     setLoading(true);
-    // Derive display name from email local part
-    const namePart = trimmed.split('@')[0].replace(/[._-]+/g, ' ');
-    const displayName = namePart.replace(/\b\w/g, c => c.toUpperCase());
     try {
-      localStorage.setItem('nusite-email', trimmed);
-      localStorage.setItem('nusite-user', displayName);
+      localStorage.setItem('nusite-email', trimmedEmail);
+      localStorage.setItem('nusite-user', trimmedName);
     } catch(err) {}
     setTimeout(onSignIn, 800);
   };
@@ -94,27 +93,44 @@ const AuthScreen = ({ onSignIn }) => {
             One click. No password to remember. Pick up where you left off.
           </p>
 
-          {/* Email sign in form */}
+          {/* Sign in form */}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--lavender)', fontFamily: 'var(--mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Full name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={e => { setName(e.target.value); setErrors(p => ({ ...p, name: '' })); }}
+                placeholder="Luke Manyamazi"
+                autoFocus
+                disabled={loading}
+                style={{
+                  width: '100%', height: 52, padding: '0 16px',
+                  borderRadius: 10, border: errors.name ? '1.5px solid var(--error)' : '1.5px solid var(--border-strong)',
+                  background: 'var(--slate)', color: 'var(--ghost)',
+                  fontSize: 15, fontFamily: 'inherit', outline: 'none',
+                  boxSizing: 'border-box', transition: 'border-color .15s',
+                }}
+              />
+              {errors.name && <span style={{ fontSize: 12, color: 'var(--error)' }}>{errors.name}</span>}
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--lavender)', fontFamily: 'var(--mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Email</label>
               <input
                 type="email"
                 value={email}
-                onChange={e => { setEmail(e.target.value); setError(''); }}
+                onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: '' })); }}
                 placeholder="you@example.com"
-                autoFocus
                 disabled={loading}
                 style={{
                   width: '100%', height: 52, padding: '0 16px',
-                  borderRadius: 10, border: error ? '1.5px solid var(--error)' : '1.5px solid var(--border-strong)',
+                  borderRadius: 10, border: errors.email ? '1.5px solid var(--error)' : '1.5px solid var(--border-strong)',
                   background: 'var(--slate)', color: 'var(--ghost)',
                   fontSize: 15, fontFamily: 'inherit', outline: 'none',
-                  boxSizing: 'border-box',
-                  transition: 'border-color .15s',
+                  boxSizing: 'border-box', transition: 'border-color .15s',
                 }}
               />
-              {error && <span style={{ fontSize: 12, color: 'var(--error)' }}>{error}</span>}
+              {errors.email && <span style={{ fontSize: 12, color: 'var(--error)' }}>{errors.email}</span>}
             </div>
 
             <button
